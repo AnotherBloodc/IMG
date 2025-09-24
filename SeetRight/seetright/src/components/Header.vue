@@ -6,8 +6,6 @@
     <div style="width: 100px">下拉框</div>
   </div>
 
-  <el-button>按钮</el-button>
-
 </template>
 
 <style>

@@ -1,8 +1,6 @@
 <template>
   <div>
     <Header></Header>
-    <el-button>按钮</el-button>
-
   </div>
 </template>
 
@@ -14,7 +12,7 @@
 import Header from '@/components/Header.vue';
 
 export default {
-  name: 'Layout',
+  name: 'App',
   components: {
     Header
   }
