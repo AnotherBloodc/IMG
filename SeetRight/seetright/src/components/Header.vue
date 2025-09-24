@@ -1,0 +1,21 @@
+<template>
+
+  <div style="height: 100px;line-height: 50px;border-bottom: 1px solid #ccc;display:flex">
+    <div style="width: 200px;padding-left: 30px;font-weight: bold;color: dodgerblue;">后台管理</div>
+    <div style="flex: 1"></div>
+    <div style="width: 100px">下拉框</div>
+  </div>
+
+  <el-button>按钮</el-button>
+
+</template>
+
+<style>
+
+</style>
+
+<script>
+export default {
+  name: 'Header'
+}
+</script>
