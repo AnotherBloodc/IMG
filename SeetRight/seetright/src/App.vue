@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header>a</Header>
+    <Header/>
   </div>
 </template>
 
