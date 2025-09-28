@@ -55,7 +55,8 @@ public class SeetLeftController {
     }
 
     /**
-     * 插入用户信息
+     * 插入用户信息<br/>
+     * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
      *
      * @param user 用户对象，可为null
      * @return 插入操作的结果状态码
@@ -72,13 +73,13 @@ public class SeetLeftController {
     }
 
     /**
-     * 根据ID删除记录
-     *
+     * 根据ID删除记录 <br/>
+     * 注解：@PathVariable：用于将请求体中的变量值绑定到方法的参数上
      * @param id 要删除的记录ID
      * @return 删除操作影响的行数
      */
     @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
-    public int Delete(@PathVariable @RequestBody(required = false) int id) {
+    public int Delete(@PathVariable int id) {
         System.out.printf("-----------------Delete-----------------" + id);
         //非空验证
         if (id < 1) {
