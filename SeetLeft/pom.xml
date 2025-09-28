@@ -100,16 +100,10 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.yml</include>
-                </includes>
-            </resource>
-
-            <!-- 自定义 Mapper XML 路径（额外添加） -->
-            <resource>
-                <directory>src/main/resources</directory>
-                <includes>
+                    <include>*.properties</include>
                     <include>**/*.xml</include>
+                    <include>*.yml</include>
+                    <include>**/*.html</include>
                 </includes>
             </resource>
         </resources>

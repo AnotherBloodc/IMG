@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Spring Boot 默认的视图解析器是 Thymeleaf 或 InternalResourceViewResolver （用于 JSP）如下<br/>
  * (1) Thymeleaf（推荐）<br/>
- * 默认模板目录： src/main/resources/templates/<br/>
+ * 默认模板目录： src/main/resources/static/<br/>
  * (2) JSP（传统方式）<br/>
  * 默认模板目录： src/main/webapp/WEB-INF/views/
  */
@@ -49,9 +49,9 @@ public class SeetLeftController {
     //相似注解：@RequestPart：用于将请求体中的文件绑定到方法的参数上，required = false：允许请求体中的文件可以为空
     //相似注解：@MatrixVariable：用于将URL路径中的矩阵变量绑定到方法的参数上，required = false：允许URL路径中的矩阵变量可以为空
     @GetMapping("/") //或者是@RequestMapping(value = "/*", method = RequestMethod.GET)注解，效果一样
-    public int Default(@RequestBody(required = false) String name) {
+    public String Default(@RequestBody(required = false) String name) {
         System.out.println("你访问了默认页面" + name);
-        return 1;
+        return "罗启略大王";
     }
 
     /**
