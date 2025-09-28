@@ -60,9 +60,9 @@ public class SeetLeftController {
      * @param user 用户对象，可为null
      * @return 插入操作的结果状态码
      */
-    @PostMapping("/Insert")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
+    @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Integer Insert(@RequestBody(required = false) User user) {
-        System.out.printf("-----------------Controller-----------------" + user);
+        System.out.printf("-----------------insert-----------------" + user);
         //非空验证
         if (user == null) {
             System.out.println("插入用户信息User对象为空");
@@ -77,8 +77,8 @@ public class SeetLeftController {
      * @param id 要删除的记录ID
      * @return 删除操作影响的行数
      */
-    @DeleteMapping("/Delete")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
-    public int Delete(@RequestBody(required = false) int id) {
+    @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
+    public int Delete(@PathVariable @RequestBody(required = false) int id) {
         System.out.printf("-----------------Delete-----------------" + id);
         //非空验证
         if (id < 1) {
@@ -94,7 +94,7 @@ public class SeetLeftController {
      * @param user 要更新的用户对象，可以为null
      * @return 更新操作影响的行数
      */
-    @PutMapping("/Update")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
+    @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public int Update(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Update-----------------" + user);
         //非空验证
@@ -111,7 +111,7 @@ public class SeetLeftController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @RequestMapping(value = "/Server", method = RequestMethod.GET)//或者是GetMapping("/Server")注解，效果一样
+    @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public List<User> Server(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Server-----------------" + user);
         //非空验证

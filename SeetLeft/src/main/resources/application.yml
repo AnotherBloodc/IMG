@@ -17,6 +17,9 @@ spring:
     resources:
       #配置静态资源路径
       static-locations: /static/
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 mybatis:
   mapper-locations: classpath*:Mapper/*.xml
   configuration:
@@ -24,3 +27,7 @@ mybatis:
 logging:
   level:
     com.example.SeetLeft.Mapper: DEBUG
+springdoc:
+  swagger-ui.path: /UI.html
+  api-docs.path: /api-docs
+
