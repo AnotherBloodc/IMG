@@ -2,6 +2,7 @@ package com.example.SeetLeft.Controller;
 
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.SeetLeftService;
+import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,11 @@ import java.util.List;
 @RestController
 public class SeetLeftController {
 
-    //获取当前项目路径
-    private static final String UPLOADED_FOLDER = System.getProperty("user.dir");
-
-
     @Resource
     private SeetLeftService seetLeftService;
+
+    @Resource
+    private ToolController toolController;
 
 
     /**
@@ -64,6 +64,7 @@ public class SeetLeftController {
     @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Integer Insert(@RequestBody(required = false) User user) {
         System.out.printf("-----------------insert-----------------" + user);
+        toolController.usetStyle("插入用户信息");//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("插入用户信息User对象为空");
@@ -82,6 +83,7 @@ public class SeetLeftController {
     @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public int Delete(@PathVariable int id) {
         System.out.printf("-----------------Delete-----------------" + id);
+        toolController.usetStyle("根据ID删除记录");//存储操作记录
         //非空验证
         if (id < 1) {
             System.out.println("删除用户信息id为空");
@@ -99,6 +101,7 @@ public class SeetLeftController {
     @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public int Update(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Update-----------------" + user);
+        toolController.usetStyle("更新用户信息");//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("更新用户信息User对象为空");
@@ -116,6 +119,7 @@ public class SeetLeftController {
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public List<User> Server(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Server-----------------" + user);
+        toolController.usetStyle("根据用户名获取用户列表");//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("查询用户信息user对象为空");
@@ -133,38 +137,12 @@ public class SeetLeftController {
      */
     @RequestMapping(value = "/postFile", method = RequestMethod.POST)
     public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        System.out.println("文件上传成功" + name);
-        System.out.println("前端传输的文件参数名：" + file.getName());
-        System.out.println("文件类型" + file.getContentType());
-        System.out.println("文件大小：" + file.getSize());
-        System.out.println("文件原型：" + file.getOriginalFilename());
-        saveFile(file, request);//保存文件
-        return "postFile";
+        toolController.usetStyle("上传文件");//存储操作记录
+        if (file.isEmpty()) {
+            return "文件为空";
+        }
+        return toolController.saveFile(name, file, request);//保存文件
     }
 
-    /**
-     * 保存文件
-     *
-     * @param file 文件
-     * @throws IOException IOException
-     */
-    public void saveFile(MultipartFile file, HttpServletRequest request) throws IOException {
-        String src = UPLOADED_FOLDER + "/SeetLeft/src/main/resources/img/";//创建：本地保存的路径
-        String srcWeb = request.getServletContext().getRealPath("/static/images/");//创建：服务器保存的路径
-        File upDir = new File(srcWeb);//创建：本地文件夹的对象，用于判断文件夹是否存在
-        boolean i;//赋值：文件是否保存成功的状态码
-        System.out.println("保存文件的文件夹的路径" + src);
-        System.out.println("服务器保存的路径：" + srcWeb);
-        //逻辑：判断文件夹是否存在，不存在则创建
-        if (!upDir.exists()) {
-            System.out.print("文件夹：不存在，开始创建文件夹");
-            System.out.println(upDir.mkdirs());//执行：创建文件夹
-        } else {
-            System.out.println("文件夹：存在，无需创建");
-        }
-        File f = new File(srcWeb + file.getOriginalFilename());//创建：需要保存的文件的对象
-        file.transferTo(f);//执行：保存文件
-        i = f.exists();//赋值：文件是否保存成功的状态码
-        System.out.println("文件保存成功:" + i);
-    }
+
 }

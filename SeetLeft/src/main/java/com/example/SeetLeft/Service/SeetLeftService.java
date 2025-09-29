@@ -1,6 +1,7 @@
 package com.example.SeetLeft.Service;
 
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Entity.UserStyle;
 import com.example.SeetLeft.Mapper.SeetLeftMapper;
 import com.example.SeetLeft.Mapper.SeetLeftMapperImpl;
 import jakarta.annotation.Resource;
@@ -54,4 +55,13 @@ public class SeetLeftService implements SeetLeftMapper {
         return seetLeftMapperImpl.server(user);
     }
 
+    /**
+     * 新增操作记录
+     *
+     * @param us 操作的记录
+     * @return 受影响的行数
+     */
+    public int insertUS(UserStyle us) {
+        return seetLeftMapperImpl.insertUS(us);
+    }
 }

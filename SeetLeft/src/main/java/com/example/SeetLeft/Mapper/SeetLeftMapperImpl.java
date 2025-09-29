@@ -2,6 +2,7 @@ package com.example.SeetLeft.Mapper;
 
 import com.example.SeetLeft.Entity.User;
 
+import com.example.SeetLeft.Entity.UserStyle;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
@@ -52,8 +53,20 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      *
      * @return 包含用户对象的列表
      */
+    @Override
     public List<User> server(User user) {
         return seetLeftMapper.server(user);
+    }
+
+    /**
+     * 新增操作记录
+     *
+     * @param us 操作的记录
+     * @return 受影响的行数
+     */
+    @Override
+    public int insertUS(UserStyle us) {
+        return seetLeftMapper.insertUS(us);
     }
 
 }

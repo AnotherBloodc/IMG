@@ -37,4 +37,9 @@
         </where>
     </select>
 
+    <insert id="insertUS" parameterType="com.example.SeetLeft.Entity.UserStyle">
+        insert into `Seetpro`.`User_Style`(`User_Style`.`Id`, `User_Style`.`Userid`, `User_Style`.`Name`)
+        values (#{id}, #{userid}, #{name})
+    </insert>
+
 </mapper>

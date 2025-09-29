@@ -1,6 +1,7 @@
 package com.example.SeetLeft.Mapper;
 
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Entity.UserStyle;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -34,4 +35,12 @@ public interface SeetLeftMapper {
      * @return 包含用户对象的列表
      */
     List<User> server(User user);
+
+
+    /**
+     * 新增操作记录
+     *
+     * @return 包含用户对象的列表
+     */
+    int insertUS(UserStyle us);
 }
