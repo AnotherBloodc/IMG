@@ -116,7 +116,7 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public List<User> Server(@RequestBody(required = false) User user) {
+    public List<User> select(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Server-----------------" + user);
         toolController.usetStyle("根据用户名获取用户列表");//存储操作记录
         //非空验证
@@ -124,7 +124,7 @@ public class UserController {
             System.out.println("查询用户信息user对象为空");
             return null;
         }
-        return seetLeftService.server(user);
+        return seetLeftService.select(user);
     }
 
     /**

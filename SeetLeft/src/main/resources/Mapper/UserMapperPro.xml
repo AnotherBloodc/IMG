@@ -23,7 +23,7 @@
         where (`User`.`Id` = #{id})
     </delete>
 
-    <select id="server" resultType="com.example.SeetLeft.Entity.User">
+    <select id="select" resultType="com.example.SeetLeft.Entity.User">
         select `User`.`Id`, `User`.`Username`, `User`.`Password`, `User`.`Email`, `User`.`Datetime`, `User`.`Effect`
         from `Seetpro`.`User`
         <where>

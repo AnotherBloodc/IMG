@@ -34,7 +34,7 @@ public interface UserMapper {
      *
      * @return 包含用户对象的列表
      */
-    List<User> server(User user);
+    List<User> select(User user);
 
 
     /**

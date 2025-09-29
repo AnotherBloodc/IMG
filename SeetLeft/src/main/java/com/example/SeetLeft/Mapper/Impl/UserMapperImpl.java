@@ -55,8 +55,8 @@ public class UserMapperImpl implements UserMapper {
      * @return 包含用户对象的列表
      */
     @Override
-    public List<User> server(User user) {
-        return userMapper.server(user);
+    public List<User> select(User user) {
+        return userMapper.select(user);
     }
 
     /**

@@ -51,8 +51,8 @@ public class UserService implements UserMapper {
      *
      * @return 包含用户对象的列表
      */
-    public List<User> server(User user) {
-        return userMapperImpl.server(user);
+    public List<User> select(User user) {
+        return userMapperImpl.select(user);
     }
 
     /**
