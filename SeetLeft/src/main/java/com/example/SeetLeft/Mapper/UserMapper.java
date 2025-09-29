@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface SeetLeftMapper {
+public interface UserMapper {
     /**
      * 插入数据并返回受影响的行数
      *

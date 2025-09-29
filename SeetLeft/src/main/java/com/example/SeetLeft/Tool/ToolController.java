@@ -1,7 +1,7 @@
 package com.example.SeetLeft.Tool;
 
 import com.example.SeetLeft.Entity.UserStyle;
-import com.example.SeetLeft.Service.SeetLeftService;
+import com.example.SeetLeft.Service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class ToolController {
     private static final String UPLOADED_FOLDER = System.getProperty("user.dir");
 
     @Resource
-    private SeetLeftService seetLeftService;
+    private UserService seetLeftService;
 
     /**
      * 保存文件

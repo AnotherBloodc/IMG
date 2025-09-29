@@ -5,6 +5,6 @@ import com.example.SeetLeft.Entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface SeetLeftMapperPro extends BaseMapper<User> {
+public interface UserMapperPro extends BaseMapper<User> {
 
 }

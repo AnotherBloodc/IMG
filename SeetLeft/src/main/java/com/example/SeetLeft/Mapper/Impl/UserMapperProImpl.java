@@ -1,13 +1,14 @@
-package com.example.SeetLeft.Mapper;
+package com.example.SeetLeft.Mapper.Impl;
 
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Mapper.UserMapperPro;
 
 import java.util.Collections;
 import java.util.List;
 
-public class SeetLeftMapperProImpl {
+public class UserMapperProImpl {
 
-    private SeetLeftMapperPro seetLeftMapperPro;
+    private UserMapperPro userMapperPro;
 
     /**
      * 插入用户信息到数据库
@@ -16,7 +17,7 @@ public class SeetLeftMapperProImpl {
      * @return 受影响的行数
      */
     public int insert(User user) {
-        return seetLeftMapperPro.insert(user);
+        return userMapperPro.insert(user);
     }
 
     /**
@@ -26,7 +27,7 @@ public class SeetLeftMapperProImpl {
      * @return 受影响的行数
      */
     public int delete(int Id) {
-        return seetLeftMapperPro.deleteById(Id);
+        return userMapperPro.deleteById(Id);
     }
 
 
@@ -37,7 +38,7 @@ public class SeetLeftMapperProImpl {
      * @return 受影响的行数
      */
     public int update(User user) {
-        return seetLeftMapperPro.updateById(user);
+        return userMapperPro.updateById(user);
     }
 
     /**
@@ -46,7 +47,7 @@ public class SeetLeftMapperProImpl {
      * @return 包含用户对象的列表
      */
     public List<User> server(int user) {
-        return Collections.singletonList(seetLeftMapperPro.selectById(user));
+        return Collections.singletonList(userMapperPro.selectById(user));
     }
 
 }

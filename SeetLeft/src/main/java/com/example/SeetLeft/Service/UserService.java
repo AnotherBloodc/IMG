@@ -1,18 +1,19 @@
-package com.example.SeetLeft.Mapper;
+package com.example.SeetLeft.Service;
 
 import com.example.SeetLeft.Entity.User;
-
 import com.example.SeetLeft.Entity.UserStyle;
+import com.example.SeetLeft.Mapper.UserMapper;
+import com.example.SeetLeft.Mapper.Impl.UserMapperImpl;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Repository
-public class SeetLeftMapperImpl implements SeetLeftMapper {
+@Service
+public class UserService implements UserMapper {
 
     @Resource
-    private SeetLeftMapper seetLeftMapper;
+    private UserMapperImpl userMapperImpl;
 
     /**
      * 插入用户信息到数据库
@@ -20,9 +21,8 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      * @param user 要插入的用户对象
      * @return 受影响的行数
      */
-    @Override
     public int insert(User user) {
-        return seetLeftMapper.insert(user);
+        return userMapperImpl.insert(user);
     }
 
     /**
@@ -31,9 +31,8 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      * @param Id 要删除的记录ID
      * @return 受影响的行数
      */
-    @Override
     public int delete(int Id) {
-        return seetLeftMapper.delete(Id);
+        return userMapperImpl.delete(Id);
     }
 
 
@@ -43,9 +42,8 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      * @param user 包含更新信息的用户对象
      * @return 受影响的行数
      */
-    @Override
     public int update(User user) {
-        return seetLeftMapper.update(user);
+        return userMapperImpl.update(user);
     }
 
     /**
@@ -53,9 +51,8 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      *
      * @return 包含用户对象的列表
      */
-    @Override
     public List<User> server(User user) {
-        return seetLeftMapper.server(user);
+        return userMapperImpl.server(user);
     }
 
     /**
@@ -64,9 +61,7 @@ public class SeetLeftMapperImpl implements SeetLeftMapper {
      * @param us 操作的记录
      * @return 受影响的行数
      */
-    @Override
     public int insertUS(UserStyle us) {
-        return seetLeftMapper.insertUS(us);
+        return userMapperImpl.insertUS(us);
     }
-
 }

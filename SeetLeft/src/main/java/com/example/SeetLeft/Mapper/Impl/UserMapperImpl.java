@@ -1,19 +1,19 @@
-package com.example.SeetLeft.Service;
+package com.example.SeetLeft.Mapper.Impl;
 
 import com.example.SeetLeft.Entity.User;
+
 import com.example.SeetLeft.Entity.UserStyle;
-import com.example.SeetLeft.Mapper.SeetLeftMapper;
-import com.example.SeetLeft.Mapper.SeetLeftMapperImpl;
+import com.example.SeetLeft.Mapper.UserMapper;
 import jakarta.annotation.Resource;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Service
-public class SeetLeftService implements SeetLeftMapper {
+@Repository
+public class UserMapperImpl implements UserMapper {
 
     @Resource
-    private SeetLeftMapperImpl seetLeftMapperImpl;
+    private UserMapper userMapper;
 
     /**
      * 插入用户信息到数据库
@@ -21,8 +21,9 @@ public class SeetLeftService implements SeetLeftMapper {
      * @param user 要插入的用户对象
      * @return 受影响的行数
      */
+    @Override
     public int insert(User user) {
-        return seetLeftMapperImpl.insert(user);
+        return userMapper.insert(user);
     }
 
     /**
@@ -31,8 +32,9 @@ public class SeetLeftService implements SeetLeftMapper {
      * @param Id 要删除的记录ID
      * @return 受影响的行数
      */
+    @Override
     public int delete(int Id) {
-        return seetLeftMapperImpl.delete(Id);
+        return userMapper.delete(Id);
     }
 
 
@@ -42,8 +44,9 @@ public class SeetLeftService implements SeetLeftMapper {
      * @param user 包含更新信息的用户对象
      * @return 受影响的行数
      */
+    @Override
     public int update(User user) {
-        return seetLeftMapperImpl.update(user);
+        return userMapper.update(user);
     }
 
     /**
@@ -51,8 +54,9 @@ public class SeetLeftService implements SeetLeftMapper {
      *
      * @return 包含用户对象的列表
      */
+    @Override
     public List<User> server(User user) {
-        return seetLeftMapperImpl.server(user);
+        return userMapper.server(user);
     }
 
     /**
@@ -61,7 +65,9 @@ public class SeetLeftService implements SeetLeftMapper {
      * @param us 操作的记录
      * @return 受影响的行数
      */
+    @Override
     public int insertUS(UserStyle us) {
-        return seetLeftMapperImpl.insertUS(us);
+        return userMapper.insertUS(us);
     }
+
 }
