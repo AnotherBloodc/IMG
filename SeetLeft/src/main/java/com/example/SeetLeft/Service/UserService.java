@@ -2,18 +2,21 @@ package com.example.SeetLeft.Service;
 
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Entity.UserStyle;
-import com.example.SeetLeft.Mapper.UserMapper;
-import com.example.SeetLeft.Mapper.Impl.UserMapperImpl;
+import com.example.SeetLeft.Mapper.Table.Impl.UserMapperImpl;
+import com.example.SeetLeft.Mapper.TableMax.Impl.User_UserStyleImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService implements UserMapper {
+public class UserService {
 
     @Resource
     private UserMapperImpl userMapperImpl;
+
+    @Resource
+    private User_UserStyleImpl userStyleImpl;
 
     /**
      * 插入用户信息到数据库
@@ -64,4 +67,15 @@ public class UserService implements UserMapper {
     public int insertUS(UserStyle us) {
         return userMapperImpl.insertUS(us);
     }
+
+    /**
+     * 多表条件查询
+     *
+     * @param user 查询条件
+     * @return 包含查询信息的用户列表
+     */
+    public List<User> selectStyle(User user) {
+        return userStyleImpl.selectStyle(user);
+    }
+
 }

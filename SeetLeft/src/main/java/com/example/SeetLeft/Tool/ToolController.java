@@ -60,6 +60,6 @@ public class ToolController {
         UserStyle us = new UserStyle();
         us.setName(name);
         us.setUserid(1);
-        seetLeftService.insertUS(us);
+        System.out.println(seetLeftService.insertUS(us));
     }
 }

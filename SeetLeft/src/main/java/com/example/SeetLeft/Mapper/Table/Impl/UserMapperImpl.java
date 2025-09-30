@@ -1,16 +1,15 @@
-package com.example.SeetLeft.Mapper.Impl;
+package com.example.SeetLeft.Mapper.Table.Impl;
 
 import com.example.SeetLeft.Entity.User;
-
 import com.example.SeetLeft.Entity.UserStyle;
-import com.example.SeetLeft.Mapper.UserMapper;
+import com.example.SeetLeft.Mapper.Table.UserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class UserMapperImpl implements UserMapper {
+public class UserMapperImpl {
 
     @Resource
     private UserMapper userMapper;
@@ -21,7 +20,6 @@ public class UserMapperImpl implements UserMapper {
      * @param user 要插入的用户对象
      * @return 受影响的行数
      */
-    @Override
     public int insert(User user) {
         return userMapper.insert(user);
     }
@@ -32,7 +30,6 @@ public class UserMapperImpl implements UserMapper {
      * @param Id 要删除的记录ID
      * @return 受影响的行数
      */
-    @Override
     public int delete(int Id) {
         return userMapper.delete(Id);
     }
@@ -44,7 +41,6 @@ public class UserMapperImpl implements UserMapper {
      * @param user 包含更新信息的用户对象
      * @return 受影响的行数
      */
-    @Override
     public int update(User user) {
         return userMapper.update(user);
     }
@@ -54,7 +50,6 @@ public class UserMapperImpl implements UserMapper {
      *
      * @return 包含用户对象的列表
      */
-    @Override
     public List<User> select(User user) {
         return userMapper.select(user);
     }
@@ -65,7 +60,6 @@ public class UserMapperImpl implements UserMapper {
      * @param us 操作的记录
      * @return 受影响的行数
      */
-    @Override
     public int insertUS(UserStyle us) {
         return userMapper.insertUS(us);
     }

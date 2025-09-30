@@ -32,7 +32,6 @@ public class UserController {
     @Resource
     private ToolController toolController;
 
-
     /**
      * 处理根路径的POST请求
      *
@@ -63,7 +62,7 @@ public class UserController {
     @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Integer Insert(@RequestBody(required = false) User user) {
         System.out.printf("-----------------insert-----------------" + user);
-        toolController.usetStyle("插入用户信息");//存储操作记录
+        toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("插入用户信息User对象为空");
@@ -82,7 +81,7 @@ public class UserController {
     @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public int Delete(@PathVariable int id) {
         System.out.printf("-----------------Delete-----------------" + id);
-        toolController.usetStyle("根据ID删除记录");//存储操作记录
+        toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
         //非空验证
         if (id < 1) {
             System.out.println("删除用户信息id为空");
@@ -100,7 +99,7 @@ public class UserController {
     @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public int Update(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Update-----------------" + user);
-        toolController.usetStyle("更新用户信息");//存储操作记录
+        toolController.usetStyle("访问：PutMappping.user,更新用户信息,更新记录:" + user);//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("更新用户信息User对象为空");
@@ -110,7 +109,7 @@ public class UserController {
     }
 
     /**
-     * 根据用户名获取用户列表
+     * 根据条件获取用户列表
      *
      * @param user 要查询的用户名
      * @return 匹配的用户列表
@@ -118,7 +117,7 @@ public class UserController {
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public List<User> select(@RequestBody(required = false) User user) {
         System.out.printf("-----------------Server-----------------" + user);
-        toolController.usetStyle("根据用户名获取用户列表");//存储操作记录
+        toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("查询用户信息user对象为空");
@@ -136,12 +135,24 @@ public class UserController {
      */
     @RequestMapping(value = "/postFile", method = RequestMethod.POST)
     public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        toolController.usetStyle("上传文件");//存储操作记录
+        toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
         if (file.isEmpty()) {
             return "文件为空";
         }
         return toolController.saveFile(name, file, request);//保存文件
     }
 
-
+    /**
+     * 查询多表用户列表（一对多：User→UserStyle）<br/>
+     * 注解@ModelAttribute：用于将请求参数绑定到方法的参数上，required = false：允许请求参数可以为空
+     *
+     * @param user 查询条件（用@ModelAttribute绑定GET参数）
+     * @return 用户列表（含关联的风格）
+     */
+    @GetMapping("/user/userStyle")
+    public List<User> selectStyle(@RequestBody(required = false) User user) {
+        toolController.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
+        System.out.println("你访问了userStyle（一对多查询），条件：" + user);
+        return seetLeftService.selectStyle(user);
+    }
 }

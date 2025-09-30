@@ -1,11 +1,13 @@
-package com.example.SeetLeft.Mapper.Impl;
+package com.example.SeetLeft.MapperPro.Impl;
 
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Mapper.UserMapperPro;
+import com.example.SeetLeft.MapperPro.UserMapperPro;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
 
+@Repository
 public class UserMapperProImpl {
 
     private UserMapperPro userMapperPro;

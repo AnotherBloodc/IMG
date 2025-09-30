@@ -1,4 +1,4 @@
-package com.example.SeetLeft.Mapper;
+package com.example.SeetLeft.Mapper.Table;
 
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Entity.UserStyle;
@@ -36,11 +36,12 @@ public interface UserMapper {
      */
     List<User> select(User user);
 
-
     /**
      * 新增操作记录
      *
      * @return 包含用户对象的列表
      */
     int insertUS(UserStyle us);
+
+
 }

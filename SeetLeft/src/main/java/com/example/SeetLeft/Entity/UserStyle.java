@@ -21,4 +21,7 @@ public class UserStyle {
 
     @Column(nullable = false)
     private String name;
+
+    @Transient
+    private User user;
 }
