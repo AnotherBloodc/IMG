@@ -18,7 +18,6 @@ public class ToolController {
 
     @Resource
     private UserService seetLeftService;
-
     /**
      * 保存文件
      *
@@ -49,8 +48,6 @@ public class ToolController {
         i = f.exists();//赋值：文件是否保存成功的状态码
         return "文件上传成功" + i;
     }
-
-
     /**
      * 新增操作记录
      *
