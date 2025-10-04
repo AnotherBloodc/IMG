@@ -60,9 +60,8 @@ public interface User_UserStyle extends BaseMapper<User> {
             @Result(column = "Password", property = "password"),
             @Result(column = "Email", property = "email"),
             @Result(column = "Id", property = "userStyle", javaType = List.class,
-                    // 修正：关联当前接口中的 selectById 方法（路径正确）
                     many = @Many(select = "com.example.SeetLeft.Mapper.TableMax.User_UserStyle.selectById"))
     })
-    List<User> selectUser(User user); // 移除无用参数 User user（SQL中未使用）
+    List<User> selectUser(User user);
 
 }
