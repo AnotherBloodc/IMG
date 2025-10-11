@@ -3,7 +3,7 @@ package com.example.SeetLeft.Interceptor;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 //HandlerInterceptor：Spring MVC框架提供的拦截器接口
@@ -22,7 +22,6 @@ public class Loginlnterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
         System.out.println("当前请求正在访问带有拦截器的接口");
-
         return true;
     }
 }

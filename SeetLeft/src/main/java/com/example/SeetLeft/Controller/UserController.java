@@ -57,7 +57,7 @@ public class UserController {
     }
 
     /**
-     * 插入用户信息<br/>
+     * 新增用户信息：JSON<br/>
      * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
      *
      * @param user 用户对象，可为null
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     /**
-     * 根据ID删除记录 <br/>
+     * 删除用户信息：ID <br/>
      * 注解：@PathVariable：用于将请求体中的变量值绑定到方法的参数上
      *
      * @param id 要删除的记录ID
@@ -95,7 +95,7 @@ public class UserController {
     }
 
     /**
-     * 更新用户信息
+     * 修改用户信息：JSON
      *
      * @param user 要更新的用户对象，可以为null
      * @return 更新操作影响的行数
@@ -113,7 +113,7 @@ public class UserController {
     }
 
     /**
-     * 根据条件获取用户列表
+     * 查询用户信息：JSON
      *
      * @param user 要查询的用户名
      * @return 匹配的用户列表
@@ -131,7 +131,7 @@ public class UserController {
     }
 
     /**
-     * 上传文件
+     * 上传文件：文件和名字
      *
      * @param name 文件名
      * @param file 文件
@@ -147,7 +147,7 @@ public class UserController {
     }
 
     /**
-     * 查询多表用户列表（一对多：User→UserStyle）<br/>
+     * 查询多表用户信息（一对多：User→UserStyle）：JSON<br/>
      * 注解@ModelAttribute：用于将请求参数绑定到方法的参数上，required = false：允许请求参数可以为空
      *
      * @param user 查询条件（用@ModelAttribute绑定GET参数）
@@ -160,6 +160,12 @@ public class UserController {
         return seetLeftService.selectStyle(user);
     }
 
+    /**
+     * 查询用户信息PRO：JSON
+     *
+     * @param user 要查询的用户名
+     * @return 匹配的用户列表
+     */
     @GetMapping("/user/pro")
     public List<User> selectPro(User user) {
         return userMapperProImpl.selectPro(user);

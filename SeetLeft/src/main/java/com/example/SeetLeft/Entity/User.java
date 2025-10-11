@@ -1,5 +1,6 @@
 package com.example.SeetLeft.Entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -32,7 +33,8 @@ public class User {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean effect;
 
-    //Transient:标识一个数据库没有的字段，定义后MybatisPlus就不会去数据库中查询这个字段
+    //Transient:标识一个数据库没有的字段，定义后MybatisPlus和JPA都不会去数据库中查询这个字段
+    @TableField(exist = false)
     @Transient
     private List<UserStyle> userStyle;
 }

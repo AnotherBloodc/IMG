@@ -52,7 +52,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
-            <scope>annotationProcessor</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -67,10 +67,11 @@
             <version>3.0.5</version>
         </dependency>
 
+        <!--mybatis-plus依赖，已经包括了mybatis的依赖了-->
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.2</version>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.14</version>
         </dependency>
 
         <dependency>
