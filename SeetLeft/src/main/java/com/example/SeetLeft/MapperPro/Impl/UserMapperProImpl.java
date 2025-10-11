@@ -2,6 +2,7 @@ package com.example.SeetLeft.MapperPro.Impl;
 
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.MapperPro.UserMapperPro;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -10,6 +11,8 @@ import java.util.List;
 @Repository
 public class UserMapperProImpl {
 
+
+    @Resource
     private UserMapperPro userMapperPro;
 
     /**
@@ -48,8 +51,18 @@ public class UserMapperProImpl {
      *
      * @return 包含用户对象的列表
      */
-    public List<User> server(int user) {
+    public List<User> select(int user) {
         return Collections.singletonList(userMapperPro.selectById(user));
+    }
+
+    /**
+     * 插入用户信息到数据库
+     *
+     * @param user 要插入的用户对象
+     * @return 受影响的行数
+     */
+    public List<User> selectPro(User user) {
+        return userMapperPro.selectList(null);
     }
 
 }

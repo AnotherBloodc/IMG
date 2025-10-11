@@ -1,6 +1,7 @@
 package com.example.SeetLeft.Controller;
 
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.MapperPro.Impl.UserMapperProImpl;
 import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
@@ -31,6 +32,9 @@ public class UserController {
 
     @Resource
     private ToolController toolController;
+
+    @Resource
+    private UserMapperProImpl userMapperProImpl;
 
     /**
      * 处理根路径的POST请求
@@ -154,5 +158,10 @@ public class UserController {
         toolController.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
         System.out.println("你访问了userStyle（一对多查询），条件：" + user);
         return seetLeftService.selectStyle(user);
+    }
+
+    @GetMapping("/user/pro")
+    public List<User> selectPro(User user) {
+        return userMapperProImpl.selectPro(user);
     }
 }
