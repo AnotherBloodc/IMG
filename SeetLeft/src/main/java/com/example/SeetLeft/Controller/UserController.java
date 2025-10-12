@@ -65,7 +65,7 @@ public class UserController {
      */
     @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Integer Insert(@RequestBody(required = false) User user) {
-        System.out.printf("-----------------insert-----------------" + user);
+        System.out.print("-----------------insert-----------------" + user);
         toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
         //非空验证
         if (user == null) {
@@ -84,13 +84,12 @@ public class UserController {
      */
     @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public int Delete(@PathVariable int id) {
-        System.out.printf("-----------------Delete-----------------" + id);
-        toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-        //非空验证
+        System.out.print("-----------------Delete-----------------" + id);
         if (id < 1) {
             System.out.println("删除用户信息id为空");
             return 0;
         }
+        toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
         return seetLeftService.delete(id);
     }
 
@@ -102,13 +101,12 @@ public class UserController {
      */
     @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public int Update(@RequestBody(required = false) User user) {
-        System.out.printf("-----------------Update-----------------" + user);
-        toolController.usetStyle("访问：PutMappping.user,更新用户信息,更新记录:" + user);//存储操作记录
-        //非空验证
+        System.out.print("-----------------Update-----------------" + user);
         if (user == null) {
             System.out.println("更新用户信息User对象为空");
             return 0;
         }
+        toolController.usetStyle("访问：PutMappping.user,更新用户信息,更新记录:" + user);//存储操作记录
         return seetLeftService.update(user);
     }
 
@@ -120,13 +118,12 @@ public class UserController {
      */
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public List<User> select(@RequestBody(required = false) User user) {
-        System.out.printf("-----------------Server-----------------" + user);
-        toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        //非空验证
+        System.out.print("-----------------Server-----------------" + user);
         if (user == null) {
             System.out.println("查询用户信息user对象为空");
             return null;
         }
+        toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         return seetLeftService.select(user);
     }
 
@@ -139,10 +136,13 @@ public class UserController {
      */
     @RequestMapping(value = "/postFile", method = RequestMethod.POST)
     public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
-        if (file.isEmpty()) {
-            return "文件为空";
+        System.out.print("-----------------postFile-----------------");
+        if (file == null) {
+            System.out.println("上传文件file为空");
+            return "上传文件不存在";
         }
+        System.out.println("访问:文件上传(postFile)");
+        toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
         return toolController.saveFile(name, file, request);//保存文件
     }
 
@@ -155,8 +155,13 @@ public class UserController {
      */
     @GetMapping("/user/userStyle")
     public List<User> selectStyle(@RequestBody(required = false) User user) {
-        toolController.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
-        System.out.println("你访问了userStyle（一对多查询），条件：" + user);
+        System.out.print("-----------------selectStyle-----------------");
+        if (user == null) {
+            System.out.println("查询用户信息user对象为空");
+            return null;
+        }
+        System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
+        toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
         return seetLeftService.selectStyle(user);
     }
 
@@ -168,6 +173,13 @@ public class UserController {
      */
     @GetMapping("/user/pro")
     public List<User> selectPro(@RequestBody(required = false) User user) {
+        System.out.print("-----------------selectPro-----------------");
+        if (user == null) {
+            System.out.println("selectPro.user为空：" + user);
+            return null;
+        }
+        System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
+        toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
         return userMapperProImpl.selectPro(user);
     }
 }

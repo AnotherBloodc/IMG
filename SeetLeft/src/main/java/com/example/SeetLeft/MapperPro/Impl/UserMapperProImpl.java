@@ -17,7 +17,7 @@ public class UserMapperProImpl {
     private UserMapperPro userMapperPro;
 
     /**
-     * 插入用户信息到数据库
+     * 新增用户:JSON
      *
      * @param user 要插入的用户对象
      * @return 受影响的行数
@@ -27,7 +27,7 @@ public class UserMapperProImpl {
     }
 
     /**
-     * 根据ID删除记录
+     * 删除用户：ID
      *
      * @param Id 要删除的记录ID
      * @return 受影响的行数
@@ -38,7 +38,7 @@ public class UserMapperProImpl {
 
 
     /**
-     * 更新用户信息
+     * 修改用户信息:JSON
      *
      * @param user 包含更新信息的用户对象
      * @return 受影响的行数
@@ -48,7 +48,7 @@ public class UserMapperProImpl {
     }
 
     /**
-     * 获取用户列表
+     * 查询用户信息：ID
      *
      * @return 包含用户对象的列表
      */
@@ -57,17 +57,12 @@ public class UserMapperProImpl {
     }
 
     /**
-     * 根据条件查询用户列表
+     * 查询用户信息pro
      *
      * @param user 查询条件，如果为null则返回所有用户
      * @return 符合条件的用户列表
      */
     public List<User> selectPro(User user) {
-        if (user == null) {
-            // 如果user为null，返回所有用户
-            return userMapperPro.selectList(null);
-        }
-
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
                 .eq(user.getUsername() != null, "username", user.getUsername())
