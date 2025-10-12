@@ -2,13 +2,10 @@ package com.example.SeetLeft.Controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Mapper.Table.Impl.UserMapperImpl;
-import com.example.SeetLeft.MapperPro.Impl.UserMapperProImpl;
 import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -183,8 +180,19 @@ public class UserController {
         return userService.selectPro(user);
     }
 
-    @GetMapping("/user/findByPage")
-    public IPage findByPage() {
-        return null;
+    /**
+     * 分页查询用户信息
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页数量
+     * @return 分页查询结果
+     */
+    @GetMapping("/user/selectPage")
+    public IPage<User> selectPag(@RequestParam(required = false) Integer pageNum,
+                                 @RequestParam(required = false) Integer pageSize) {
+        System.out.print("-----------------selectPage-----------------");
+        System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
+        toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
+        return userService.selectPage(pageNum, pageSize);
     }
 }

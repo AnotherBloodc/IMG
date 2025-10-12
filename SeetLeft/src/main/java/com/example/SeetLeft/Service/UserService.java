@@ -1,5 +1,6 @@
 package com.example.SeetLeft.Service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Entity.UserStyle;
 import com.example.SeetLeft.Mapper.Table.Impl.UserMapperImpl;
@@ -90,5 +91,16 @@ public class UserService {
      */
     public List<User> selectPro(User user) {
         return userMapperProImpl.selectPro(user);
+    }
+
+    /**
+     * 分页查询用户信息：最大页数，最小页数
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页数量
+     * @return 分页查询结果
+     */
+    public Page<User> selectPage(Integer pageNum, Integer pageSize) {
+        return userMapperProImpl.selectPage(pageNum, pageSize);
     }
 }

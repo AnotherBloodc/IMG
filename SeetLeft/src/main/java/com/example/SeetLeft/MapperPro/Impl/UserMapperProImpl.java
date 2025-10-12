@@ -1,6 +1,7 @@
 package com.example.SeetLeft.MapperPro.Impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.MapperPro.UserMapperPro;
 import jakarta.annotation.Resource;
@@ -70,6 +71,22 @@ public class UserMapperProImpl {
                 .eq(user.getId() != null, "id", user.getId());
 
         return userMapperPro.selectList(queryWrapper);
+    }
+
+    /**
+     * 分页查询用户信息：最大页数，最小页数
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页数量
+     * @return 分页查询结果
+     */
+    public Page<User> selectPage(Integer pageNum, Integer pageSize) {
+        // 设置默认值，如果参数为null则使用默认值
+        pageNum = (pageNum != null) ? pageNum : 0;
+        pageSize = (pageSize != null) ? pageSize : 5;
+
+        Page<User> page = new Page<>(pageNum, pageSize);
+        return userMapperPro.selectPage(page, null);
     }
 
 }
