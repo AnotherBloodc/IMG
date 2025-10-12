@@ -167,7 +167,7 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping("/user/pro")
-    public List<User> selectPro(User user) {
+    public List<User> selectPro(@RequestBody(required = false) User user) {
         return userMapperProImpl.selectPro(user);
     }
 }

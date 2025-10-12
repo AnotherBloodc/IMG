@@ -1,5 +1,6 @@
 package com.example.SeetLeft.MapperPro.Impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.MapperPro.UserMapperPro;
 import jakarta.annotation.Resource;
@@ -56,13 +57,24 @@ public class UserMapperProImpl {
     }
 
     /**
-     * 插入用户信息到数据库
+     * 根据条件查询用户列表
      *
-     * @param user 要插入的用户对象
-     * @return 受影响的行数
+     * @param user 查询条件，如果为null则返回所有用户
+     * @return 符合条件的用户列表
      */
     public List<User> selectPro(User user) {
-        return userMapperPro.selectList(null);
+        if (user == null) {
+            // 如果user为null，返回所有用户
+            return userMapperPro.selectList(null);
+        }
+
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper
+                .eq(user.getUsername() != null, "username", user.getUsername())
+                .eq(user.getEmail() != null, "email", user.getEmail())
+                .eq(user.getId() != null, "id", user.getId());
+
+        return userMapperPro.selectList(queryWrapper);
     }
 
 }
