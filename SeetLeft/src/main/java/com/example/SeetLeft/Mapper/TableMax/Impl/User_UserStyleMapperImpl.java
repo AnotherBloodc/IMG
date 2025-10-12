@@ -1,17 +1,17 @@
 package com.example.SeetLeft.Mapper.TableMax.Impl;
 
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Mapper.TableMax.User_UserStyle;
+import com.example.SeetLeft.Mapper.TableMax.User_UserMapperStyle;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class User_UserStyleImpl {
+public class User_UserStyleMapperImpl {
 
     @Resource
-    private User_UserStyle userStyle;
+    private User_UserMapperStyle userStyle;
 
     /**
      * 多表条件查询

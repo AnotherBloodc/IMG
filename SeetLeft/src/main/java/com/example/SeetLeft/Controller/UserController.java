@@ -1,11 +1,14 @@
 package com.example.SeetLeft.Controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Mapper.Table.Impl.UserMapperImpl;
 import com.example.SeetLeft.MapperPro.Impl.UserMapperProImpl;
 import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,13 +31,10 @@ import java.util.List;
 public class UserController {
 
     @Resource
-    private UserService seetLeftService;
+    private UserService userService;
 
     @Resource
     private ToolController toolController;
-
-    @Resource
-    private UserMapperProImpl userMapperProImpl;
 
     /**
      * 处理根路径的POST请求
@@ -72,7 +72,7 @@ public class UserController {
             System.out.println("插入用户信息User对象为空");
             return 0;
         }
-        return seetLeftService.insert(user);
+        return userService.insert(user);
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserController {
             return 0;
         }
         toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-        return seetLeftService.delete(id);
+        return userService.delete(id);
     }
 
     /**
@@ -107,7 +107,7 @@ public class UserController {
             return 0;
         }
         toolController.usetStyle("访问：PutMappping.user,更新用户信息,更新记录:" + user);//存储操作记录
-        return seetLeftService.update(user);
+        return userService.update(user);
     }
 
     /**
@@ -124,7 +124,7 @@ public class UserController {
             return null;
         }
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        return seetLeftService.select(user);
+        return userService.select(user);
     }
 
     /**
@@ -162,7 +162,7 @@ public class UserController {
         }
         System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
         toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
-        return seetLeftService.selectStyle(user);
+        return userService.selectStyle(user);
     }
 
     /**
@@ -175,11 +175,16 @@ public class UserController {
     public List<User> selectPro(@RequestBody(required = false) User user) {
         System.out.print("-----------------selectPro-----------------");
         if (user == null) {
-            System.out.println("selectPro.user为空：" + user);
+            System.out.println("selectPro.user为空：");
             return null;
         }
         System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
         toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
-        return userMapperProImpl.selectPro(user);
+        return userService.selectPro(user);
+    }
+
+    @GetMapping("/user/findByPage")
+    public IPage findByPage() {
+        return null;
     }
 }
