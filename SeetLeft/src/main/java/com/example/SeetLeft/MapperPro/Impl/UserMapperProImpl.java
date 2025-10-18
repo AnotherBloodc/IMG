@@ -81,9 +81,10 @@ public class UserMapperProImpl {
      * @return 分页查询结果
      */
     public Page<User> selectPage(Integer pageNum, Integer pageSize) {
+        System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
         // 设置默认值，如果参数为null则使用默认值
-        pageNum = (pageNum != null) ? pageNum : 0;
-        pageSize = (pageSize != null) ? pageSize : 5;
+        pageNum = (pageNum != null && pageNum > 0) ? pageNum : 1;
+        pageSize = (pageSize != null && pageSize > 0) ? pageSize : 5;
 
         Page<User> page = new Page<>(pageNum, pageSize);
         return userMapperPro.selectPage(page, null);

@@ -14,21 +14,21 @@ public interface User_UserMapperStyle extends BaseMapper<User> {
     /**
      * 根据用户ID查询该用户的所有风格（供用户一对多关联）
      *
-     * @param userid 用户ID
+     * @param Userid 用户ID
      * @return 风格列表
      */
     @Select("select * from `Seetpro`.`User_Style` where `Userid` = #{userid}")
-    List<UserStyle> selectById(@Param("userid") int userid); // 加 @Param 确保参数绑定
+    List<UserStyle> selectById(@Param("Userid") int Userid); // 加 @Param 确保参数绑定
 
 
     /**
      * 根据用户ID查询单个用户（供风格多对一关联）
      *
-     * @param id 用户ID
+     * @param Id 用户ID
      * @return 单个用户
      */
     @Select("select * from `Seetpro`.`User` where `Id` = #{id}")
-    User selectUserById(@Param("id") int id); // 加 @Param 确保参数绑定
+    User selectUserById(@Param("Id") int Id); // 加 @Param 确保参数绑定
 
 
     /**

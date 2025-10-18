@@ -131,7 +131,7 @@ public class UserController {
      * @param file 文件
      * @return postFile
      */
-    @RequestMapping(value = "/postFile", method = RequestMethod.POST)
+    @PostMapping("/postFile")
     public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
         if (file == null) {
@@ -187,9 +187,8 @@ public class UserController {
      * @param pageSize 每页数量
      * @return 分页查询结果
      */
-    @GetMapping("/user/selectPage")
-    public IPage<User> selectPag(@RequestParam(required = false) Integer pageNum,
-                                 @RequestParam(required = false) Integer pageSize) {
+    @PostMapping("/user/selectPage")
+    public IPage<User> selectPag(Integer pageNum, Integer pageSize) {
         System.out.print("-----------------selectPage-----------------");
         System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
         toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录

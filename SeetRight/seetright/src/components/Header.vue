@@ -1,28 +1,9 @@
 <template>
 
-  <div style="height: 200px;border-bottom: 1px solid #ccc">
-
-    <a v-bind:href="url">http://localhost:8081/</a>
-
-    <div>a</div>
-    <div>a</div>
-    <div>a</div>
-    <div>a</div>
-    <div>a</div>
-
-    <p v-if="visible">1</p>
-    <p v-if="visible">1</p>
-    <p v-if="visible">1</p>
-    <p v-if="visible">1</p>
-    <p v-else>2</p>
-
-    <ul>
-      <li v-for="item in items" :key="item.id">{{ item.text }}</li>
-    </ul>
-
-    <input v-model="message" placeholder="">
+  <div id="app" style="height: 200px;border-bottom: 1px solid #ccc">
 
     <p>Message is: {{ message }}</p>
+    <input v-model="message" placeholder="">
 
   </div>
 
@@ -33,13 +14,23 @@
 
 <script>
 
-export default {
+const hello = {
+  data() {
+    return {
+      message: 'Hello World'
+    }
+  }
+}
+const app = Vue.createApp(hello)
+app.mount("#app")
+
+/*export default {
   name: 'Header',
   data() {
     return {
       message: 'Hello Vue!!'
     }
   }
-}
+}*/
 
 </script>
