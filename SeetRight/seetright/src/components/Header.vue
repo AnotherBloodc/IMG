@@ -2,8 +2,8 @@
 
   <div id="app" style="height: 200px;border-bottom: 1px solid #ccc">
 
-    <p>Message is: {{ message }}</p>
-    <input v-model="message" placeholder="">
+    <p>{{ message }}</p>
+    <p>{{ name2 }}</p>
 
   </div>
 
@@ -13,24 +13,17 @@
 </style>
 
 <script>
+export default {
+  name: 'Header',
 
-const hello = {
-  data() {
+  data: function () {
     return {
-      message: 'Hello World'
+      message: 'Hello World!',
+      name2: 'Hwadwadfasfasdf!'
     }
+  },
+  methods: {
+
   }
 }
-const app = Vue.createApp(hello)
-app.mount("#app")
-
-/*export default {
-  name: 'Header',
-  data() {
-    return {
-      message: 'Hello Vue!!'
-    }
-  }
-}*/
-
 </script>
