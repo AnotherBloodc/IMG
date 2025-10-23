@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Scanner;
 
 
 //RestController：用于将返回值直接作为HTTP响应体返回给客户端
@@ -23,7 +25,7 @@ import java.util.List;
  * (2) JSP（传统方式）<br/>
  * 默认模板目录： src/main/webapp/WEB-INF/views/
  */
-
+@CrossOrigin
 @RestController
 public class UserController {
 
@@ -61,7 +63,7 @@ public class UserController {
      * @return 插入操作的结果状态码
      */
     @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
-    public Integer Insert(@RequestBody(required = false) User user) {
+    public Integer Insert(@RequestBody(required = false) User user, InputStream inputStream) {
         System.out.print("-----------------insert-----------------" + user);
         toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
         //非空验证
@@ -117,8 +119,7 @@ public class UserController {
     public List<User> select(@RequestBody(required = false) User user) {
         System.out.print("-----------------Server-----------------" + user);
         if (user == null) {
-            System.out.println("查询用户信息user对象为空");
-            return null;
+            System.out.println("用户信息user对象为空");
         }
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         return userService.select(user);
