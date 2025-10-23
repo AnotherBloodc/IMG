@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Hello v-for="users in user" :key="users.id" :id="users.id" :titles="users.Username"
-           :message="users.Password"></Hello>
-    <Header></Header>
+    <router-link to="/HomeView">HomeView</router-link>
+    <router-link to="/AboutView">AboutView</router-link>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
   },
   data: function () {
     return {
-      users: [
+      user: [
         {
           id: 1,
           Username: "张三",
@@ -50,7 +50,6 @@ export default {
   },
 }
 </script>
-
 
 <style>
 </style>
