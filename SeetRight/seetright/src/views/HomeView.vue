@@ -1,6 +1,7 @@
 <template>
   <div>
-<H1>12</H1>
+    <router-link to="/AboutView">aaaaaaaaaaaaaaaaaa</router-link>
+    <router-view></router-view>
   </div>
 </template>
 
