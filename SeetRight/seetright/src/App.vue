@@ -1,7 +1,11 @@
 <template>
   <div>
     <router-link to="/HomeView">HomeView</router-link>
+    <br>
     <router-link to="/AboutView">AboutView</router-link>
+    <br>
+    <router-link to="/Header">Header</router-link>
+    <br>
     <router-view></router-view>
   </div>
 </template>
@@ -9,6 +13,7 @@
 <script>
 import Header from './components/Header.vue';
 import Hello from './components/Hello.vue';
+import axios from "axios";
 
 export default {
   name: 'App',
@@ -21,31 +26,27 @@ export default {
   },
   mounted: function () {
     console.log("App.vue被创建后")
+    axios.get("/user").then(res => {
+      this.user = res.data;
+    })
+
+    //定义回调函数
+    function myCallback(a) {
+      console.log("回调函数被调用:" + a);
+    }
+
+    //定义主函数
+    function doSomething(callback) {
+      let result = "处理完成";
+      callback(result);
+    }
+
+    //调用主函数，传递回调函数
+    doSomething(myCallback);
   },
   data: function () {
     return {
-      user: [
-        {
-          id: 1,
-          Username: "张三",
-          Password: "123456"
-        },
-        {
-          id: 2,
-          Username: "张三",
-          Password: "123456"
-        },
-        {
-          id: 3,
-          Username: "张三",
-          Password: "123456"
-        },
-        {
-          id: 4,
-          Username: "张三",
-          Password: "123456"
-        },
-      ]
+      user: []
     }
   },
 }

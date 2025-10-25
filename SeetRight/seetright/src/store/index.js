@@ -14,7 +14,8 @@ const store = createStore({
                 text: 'todo2',
                 done: false
             }
-        ]
+        ],
+        user: null
     },
     getters: {
         doneTodos(state) {
@@ -24,6 +25,9 @@ const store = createStore({
     mutations: {
         increment(state) {
             state.count++;
+        },
+        setUser(state, user) {
+            state.user = user
         }
     }
 })

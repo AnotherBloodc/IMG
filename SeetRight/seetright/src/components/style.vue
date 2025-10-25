@@ -29,7 +29,6 @@ export default {
     <ul>
       <li v-for="todo in doneTodos" :key="todo.id">{{ todo.text }}</li>
     </ul>
-
     <ul>
       <li v-for="todo in todos" :key="todo.id">{{ todo.text }}</li>
     </ul>

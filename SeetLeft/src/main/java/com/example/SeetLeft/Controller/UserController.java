@@ -132,7 +132,7 @@ public class UserController {
      * @param file 文件
      * @return postFile
      */
-    @PostMapping("/postFile")
+    @PostMapping("/user/postFile")
     public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
         if (file == null) {

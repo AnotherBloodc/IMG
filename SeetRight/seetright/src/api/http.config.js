@@ -1,6 +1,3 @@
-import axios from 'axios';
-import {ElMessage} from 'element-plus';
-
 const axion = require('axios');
 
 //发起一个get请求
@@ -10,7 +7,7 @@ axion.get('/Server')
         console.log(response);
     })
     //处理失败响应结果
-    .then(function (error){
+    .then(function (error) {
         console.log(error)
     })
     //不管成功失败都会执行
