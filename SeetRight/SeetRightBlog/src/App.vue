@@ -6,13 +6,15 @@
     <br>
     <router-link to="/Header">Header</router-link>
     <br>
+    <router-link to="/Hello">Hello</router-link>
+    <br>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Header from './components/Header.vue';
-import Hello from './components/Hello.vue';
+import Header from './views/Header.vue';
+import Hello from './views/Hello.vue';
 import axios from "axios";
 
 export default {

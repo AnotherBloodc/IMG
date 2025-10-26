@@ -2,7 +2,7 @@ import {createStore} from 'vuex'
 
 const store = createStore({
     state: {
-        count: 2,
+        count: 100,
         todos: [
             {
                 id: 1,
