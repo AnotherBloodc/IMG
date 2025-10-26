@@ -115,9 +115,9 @@ public class UserController {
             System.out.println("用户信息user对象为空");
             return null;
         }
-        String token = JwtUtils.generateToken(user.getUsername());
-        Result.ok().data("token", token);
-        System.out.println("token" + token);
+        String token = JwtUtils.generateToken(user.getUsername());//获取token
+        Result.ok().data("token", token);//设置token
+        System.out.println("token:" + token);
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         return userService.select(user);
     }

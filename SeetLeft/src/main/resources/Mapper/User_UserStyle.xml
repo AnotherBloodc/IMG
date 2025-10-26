@@ -28,6 +28,9 @@
         from `Seetpro`.`User`
         <where>
             Effect = 1
+            <if test="id != null">
+                and `User`.`Id` = #{id}
+            </if>
             <if test="username != null">
                 and `User`.`Username` = #{username}
             </if>
