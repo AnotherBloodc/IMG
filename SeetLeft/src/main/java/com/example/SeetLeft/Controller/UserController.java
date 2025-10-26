@@ -3,6 +3,8 @@ package com.example.SeetLeft.Controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.UserService;
+import com.example.SeetLeft.Tool.JwtUtils;
+import com.example.SeetLeft.Tool.Result;
 import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,8 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Scanner;
-
 
 //RestController：用于将返回值直接作为HTTP响应体返回给客户端
 //Controller：用于将返回值作为视图名称，然后由视图解析器解析为实际的视图对象
@@ -36,19 +36,12 @@ public class UserController {
     private ToolController toolController;
 
     /**
-     * 处理根路径的POST请求
+     * 处理根路径的Get请求
+     * 注解：GetMapping: 用于处理前端传递过来的GET请求
+     * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
      *
      * @return 固定返回1表示请求处理成功
      */
-    //@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
-    //相似注解：@RequestParam：用于将请求参数绑定到方法的参数上，required = false：允许请求参数可以为空
-    //相似注解：@PathVariable：用于将URL路径中的变量绑定到方法的参数上，required = false：允许URL路径中的变量可以为空
-    //相似注解：@CookieValue：用于将Cookie中的值绑定到方法的参数上，required = false：允许Cookie中的值可以为空
-    //相似注解：@RequestHeader：用于将请求头中的值绑定到方法的参数上，required = false：允许请求头中的值可以为空
-    //相似注解：@ModelAttribute：用于将请求参数绑定到方法的参数上，required = false：允许请求参数可以为空
-    //相似注解：@SessionAttribute：用于将Session中的值绑定到方法的参数上，required = false：允许Session中的值可以为空
-    //相似注解：@RequestPart：用于将请求体中的文件绑定到方法的参数上，required = false：允许请求体中的文件可以为空
-    //相似注解：@MatrixVariable：用于将URL路径中的矩阵变量绑定到方法的参数上，required = false：允许URL路径中的矩阵变量可以为空
     @GetMapping("/") //或者是@RequestMapping(value = "/*", method = RequestMethod.GET)注解，效果一样
     public String Default(@RequestBody(required = false) String name) {
         System.out.println("你访问了默认页面" + name);
@@ -120,7 +113,11 @@ public class UserController {
         System.out.print("-----------------Server-----------------" + user);
         if (user == null) {
             System.out.println("用户信息user对象为空");
+            return null;
         }
+        String token = JwtUtils.generateToken(user.getUsername());
+        Result.ok().data("token", token);
+        System.out.println("token" + token);
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         return userService.select(user);
     }

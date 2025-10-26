@@ -13,16 +13,10 @@
 </template>
 
 <script>
-import Header from './views/Header.vue';
-import Hello from './views/Hello.vue';
 import axios from "axios";
 
 export default {
   name: 'App',
-  components: {
-    Header,
-    Hello
-  },
   created: function () {
     console.log("App.vue被创建时")
   },
