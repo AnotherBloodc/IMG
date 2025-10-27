@@ -15,18 +15,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-//RestController：用于将返回值直接作为HTTP响应体返回给客户端
-//Controller：用于将返回值作为视图名称，然后由视图解析器解析为实际的视图对象
+//@RestController：类，这个类下的所有方法返回值的返回形式设置成HTTP响应体形式返回
+//@Controller：类，这个类下的所有方法返回值的返回形式设置成视图对象的形式返回
+//@RequestMapping：类，方法，类上添加可设置类下所有方法统一映射至这个路径，方法上添加可设置方法下所有参数统一映射至这个路径
 
 /**
- * Spring Boot 默认的视图解析器是 Thymeleaf 或 InternalResourceViewResolver （用于 JSP）如下<br/>
+ * Spring Boot 默认的视图解析器是 Thymeleaf 或 InternalResourceViewResolver如下<br/>
  * (1) Thymeleaf（推荐）<br/>
  * 默认模板目录： src/main/resources/static/<br/>
- * (2) JSP（传统方式）<br/>
+ * (2) JSP（传统方式）（用于 JSP）<br/>
  * 默认模板目录： src/main/webapp/WEB-INF/views/
  */
 @CrossOrigin
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Resource
