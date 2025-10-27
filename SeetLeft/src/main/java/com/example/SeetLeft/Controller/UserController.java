@@ -8,10 +8,13 @@ import com.example.SeetLeft.Tool.Result;
 import com.example.SeetLeft.Tool.ToolController;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 
 //@RestController：类，这个类下的所有方法返回值的返回形式设置成HTTP响应体形式返回
@@ -29,6 +32,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
     private UserService userService;
@@ -55,7 +60,7 @@ public class UserController {
      * @param user 用户对象，可为null
      * @return 插入操作的结果状态码
      */
-    @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
+    @PostMapping//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Result Insert(@RequestBody(required = false) User user) {
         System.out.print("-----------------insert-----------------" + user);
         //非空验证
@@ -78,7 +83,7 @@ public class UserController {
      * @param id 要删除的记录ID
      * @return 删除操作影响的行数
      */
-    @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
+    @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public Result Delete(@PathVariable int id) {
         System.out.print("-----------------Delete-----------------" + id);
         //判断ID是否合法
@@ -100,7 +105,7 @@ public class UserController {
      * @param user 要更新的用户对象，可以为null
      * @return 更新操作影响的行数
      */
-    @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
+    @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public Result Update(@RequestBody(required = false) User user) {
         System.out.print("-----------------Update-----------------" + user);
         //非空验证
@@ -122,18 +127,33 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public Result select(@ModelAttribute User user) {
         System.out.print("-----------------Server-----------------" + user);
         //非空验证
+        Class<?> clazz = user.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                String fieldName = field.getName();
+                Object fieldValue = field.get(user);
+                System.out.println(fieldName + ":" + fieldValue);
+            } catch (IllegalAccessException e) {
+                logger.error("反射访问字段时发生异常", e);
+            }
+        }
         if (user.getId() == null) {
             System.out.println("查询用户信息条件为空:" + user);
             return Result.error();
         } else {
             toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
             String token = JwtUtils.generateToken(user.getUsername());//获取token
-            Result.ok().data("token", token);//设置token
+            Result r = Result.ok();//设置token
+            Result r1 = r.data("token", token);
             System.out.println("token:" + token);
+            System.out.println("r:" + r);
+            System.out.println("r1:" + r1);
             List<User> list = userService.select(user);//查询用户列表
             System.out.println("查询用户信息成功：" + list);
             return Result.ok();
@@ -147,7 +167,7 @@ public class UserController {
      * @param user 查询条件（用@ModelAttribute绑定GET参数）
      * @return 用户列表（含关联的风格）
      */
-    @GetMapping("/user/userStyle")
+    @GetMapping("/userStyle")
     public Result selectStyle(@ModelAttribute User user) {
         System.out.print("-----------------selectStyle-----------------");
         if (user.getId() == null) {
@@ -168,7 +188,7 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @GetMapping("/user/pro")
+    @GetMapping("/pro")
     public Result selectPro(@ModelAttribute User user) {
         System.out.print("-----------------selectPro-----------------");
         if (user.getId() == null) {
@@ -191,14 +211,14 @@ public class UserController {
      * @param pageSize 每页数量
      * @return 分页查询结果
      */
-    @PostMapping("/user/selectPage")
-    public Result selectPag(Integer pageNum, Integer pageSize) {
+    @PostMapping("/Page")
+    public Result selectPage(Integer pageNum, Integer pageSize) {
         System.out.print("-----------------selectPage-----------------");
         if ((pageNum + pageSize) < 1) {
             System.out.println("传递过来的页码有问题");
             return Result.error();
         } else {
-            System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
+            System.out.println("访问:分页查询用户信息(selectPage)页码：" + pageNum + "，每页数量：" + pageSize);
             toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userService.selectPage(pageNum, pageSize);
             System.out.println("分页查询用户信息成功：" + ipage);
@@ -214,7 +234,7 @@ public class UserController {
      * @param file 文件
      * @return postFile
      */
-    @PostMapping("/user/postFile")
+    @PostMapping("/postFile")
     public Result postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
         if (file == null) {

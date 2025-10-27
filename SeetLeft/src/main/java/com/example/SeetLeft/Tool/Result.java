@@ -29,7 +29,7 @@ public class Result {
     }
 
     /**
-     * 创建一个表示操作成功的Result对象
+     * 成功结果Result对象
      *
      * @return 返回封装了成功状态信息的Result对象
      */
@@ -38,12 +38,11 @@ public class Result {
         r.setSuccess(true);//设置状态码为真，代表成功
         r.setCode(ResultCode.SUCCESS);//设置状态数据为成功状态码
         r.setMessage("成功");
-        System.out.println("r=" + r);
         return r;
     }
 
     /**
-     * 创建一个表示错误结果的Result对象
+     * 错误结果Result对象
      *
      * @return Result 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
      */
