@@ -116,17 +116,18 @@ public class UserController {
     }
 
     /**
-     * 查询用户信息：JSON
+     * 查询用户信息 JSON
+     * 注解@ModelAttribute：获取请求路径中的对象类型参数，如果对象为null，这创建所有属性为空的对象
      *
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public Result select(@RequestBody(required = false) User user) {
+    public Result select(@ModelAttribute User user) {
         System.out.print("-----------------Server-----------------" + user);
         //非空验证
-        if (user == null) {
-            System.out.println("用户信息user对象为空");
+        if (user.getId() == null) {
+            System.out.println("查询用户信息条件为空:" + user);
             return Result.error();
         } else {
             toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
@@ -135,6 +136,72 @@ public class UserController {
             System.out.println("token:" + token);
             List<User> list = userService.select(user);//查询用户列表
             System.out.println("查询用户信息成功：" + list);
+            return Result.ok();
+        }
+    }
+
+
+    /**
+     * 查询多表用户信息 1对多（User→UserStyle） JSON
+     *
+     * @param user 查询条件（用@ModelAttribute绑定GET参数）
+     * @return 用户列表（含关联的风格）
+     */
+    @GetMapping("/user/userStyle")
+    public Result selectStyle(@ModelAttribute User user) {
+        System.out.print("-----------------selectStyle-----------------");
+        if (user.getId() == null) {
+            System.out.println("查询多表用户信息条件为空:" + user);
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
+            System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
+            List<User> list = userService.selectStyle(user);
+            System.out.println("查询多表用户信息查询成功：" + list);
+            return Result.ok();
+        }
+    }
+
+    /**
+     * 查询用户信息 PRO JSON
+     *
+     * @param user 要查询的用户名
+     * @return 匹配的用户列表
+     */
+    @GetMapping("/user/pro")
+    public Result selectPro(@ModelAttribute User user) {
+        System.out.print("-----------------selectPro-----------------");
+        if (user.getId() == null) {
+            System.out.println("查询用户信息PRO条件为空：" + user);
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
+            System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
+            List<User> list = userService.selectPro(user);
+            System.out.println("查询用户信息PRO查询成功：" + list);
+            return Result.ok();
+
+        }
+    }
+
+    /**
+     * 查询用户信息 分页 JSON
+     *
+     * @param pageNum  页码
+     * @param pageSize 每页数量
+     * @return 分页查询结果
+     */
+    @PostMapping("/user/selectPage")
+    public Result selectPag(Integer pageNum, Integer pageSize) {
+        System.out.print("-----------------selectPage-----------------");
+        if ((pageNum + pageSize) < 1) {
+            System.out.println("传递过来的页码有问题");
+            return Result.error();
+        } else {
+            System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
+            toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
+            IPage<User> ipage = userService.selectPage(pageNum, pageSize);
+            System.out.println("分页查询用户信息成功：" + ipage);
             return Result.ok();
         }
     }
@@ -158,71 +225,6 @@ public class UserController {
             System.out.println("访问:文件上传(postFile)");
             String s = toolController.saveFile(name, file, request);//保存文件
             System.out.println("上传文件文件保存成功：" + s);
-            return Result.ok();
-        }
-    }
-
-    /**
-     * 查询多表用户信息（一对多：User→UserStyle）：JSON
-     *
-     * @param user 查询条件（用@ModelAttribute绑定GET参数）
-     * @return 用户列表（含关联的风格）
-     */
-    @GetMapping("/user/userStyle")
-    public Result selectStyle(@RequestBody(required = false) User user) {
-        System.out.print("-----------------selectStyle-----------------");
-        if (user == null) {
-            System.out.println("查询用户信息user对象为空");
-            return Result.error();
-        } else {
-            toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
-            System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
-            List<User> list = userService.selectStyle(user);
-            System.out.println("查询多表用户信息查询成功：" + list);
-            return Result.ok();
-        }
-    }
-
-    /**
-     * 查询用户信息PRO：JSON
-     *
-     * @param user 要查询的用户名
-     * @return 匹配的用户列表
-     */
-    @GetMapping("/user/pro")
-    public Result selectPro(@RequestBody(required = false) User user) {
-        System.out.print("-----------------selectPro-----------------");
-        if (user == null) {
-            System.out.println("selectPro.user为空：");
-            return Result.error();
-        } else {
-            toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
-            System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
-            List<User> list = userService.selectPro(user);
-            System.out.println("查询用户信息PRO查询成功：" + list);
-            return Result.ok();
-
-        }
-    }
-
-    /**
-     * 分页查询用户信息
-     *
-     * @param pageNum  页码
-     * @param pageSize 每页数量
-     * @return 分页查询结果
-     */
-    @PostMapping("/user/selectPage")
-    public Result selectPag(Integer pageNum, Integer pageSize) {
-        System.out.print("-----------------selectPage-----------------");
-        if (pageNum == null || pageSize == null || pageNum + pageSize > 1) {
-            System.out.println("传递过来的页码有问题");
-            return Result.error();
-        } else {
-            System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
-            toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
-            IPage<User> ipage = userService.selectPage(pageNum, pageSize);
-            System.out.println("分页查询用户信息成功：" + ipage);
             return Result.ok();
         }
     }
