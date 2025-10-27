@@ -38,21 +38,20 @@ public class UserController {
     private ToolController toolController;
 
     /**
-     * 处理根路径的Get请求
-     * 注解：GetMapping: 用于处理前端传递过来的GET请求
+     * 处理根路径的Get请求<br/>
+     * 注解：@GetMapping: 用于设置传递过来的GET请求的访问路径
      * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
      *
      * @return 固定返回1表示请求处理成功
      */
-    @GetMapping("/") //或者是@RequestMapping(value = "/*", method = RequestMethod.GET)注解，效果一样
-    public String Default(@RequestBody(required = false) String name) {
+    @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
+    public String Default(@RequestParam(required = false) String name) {
         System.out.println("你访问了默认页面" + name);
         return "罗启略大王";
     }
 
     /**
      * 新增用户信息：JSON<br/>
-     * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
      *
      * @param user 用户对象，可为null
      * @return 插入操作的结果状态码
@@ -72,6 +71,7 @@ public class UserController {
     /**
      * 删除用户信息：ID <br/>
      * 注解：@PathVariable：用于将请求体中的变量值绑定到方法的参数上
+     * 注解：@DeleteMapping: 用于设置传递过来的Delete请求的访问路径
      *
      * @param id 要删除的记录ID
      * @return 删除操作影响的行数
@@ -89,6 +89,7 @@ public class UserController {
 
     /**
      * 修改用户信息：JSON
+     * 注解：@PutMapping: 用于设置传递过来的Put请求的访问路径
      *
      * @param user 要更新的用户对象，可以为null
      * @return 更新操作影响的行数
@@ -125,7 +126,8 @@ public class UserController {
     }
 
     /**
-     * 上传文件：文件和名字
+     * 上传文件：文件和名字<br/>
+     * 注解：@PostMapping: 用于设置传递过来的Post请求的访问路径
      *
      * @param name 文件名
      * @param file 文件
@@ -144,8 +146,7 @@ public class UserController {
     }
 
     /**
-     * 查询多表用户信息（一对多：User→UserStyle）：JSON<br/>
-     * 注解@ModelAttribute：用于将请求参数绑定到方法的参数上，required = false：允许请求参数可以为空
+     * 查询多表用户信息（一对多：User→UserStyle）：JSON
      *
      * @param user 查询条件（用@ModelAttribute绑定GET参数）
      * @return 用户列表（含关联的风格）
