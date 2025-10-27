@@ -2,6 +2,7 @@ package com.example.SeetLeft.Tool;
 
 import lombok.Data;
 
+import javax.crypto.SecretKey;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ public class Result {
     private Boolean success;
     private String message;
     private Integer code;
-    private Map<String, Object> data = new HashMap<>();
+    private Map<String, SecretKey> data = new HashMap<>();
 
     //重写构造方法，将构造方法私有化
     private Result() {
@@ -23,8 +24,9 @@ public class Result {
      * @param value 数据的值
      * @return 返回当前Result对象，支持链式调用
      */
-    public Result data(String key, Object value) {
+    public Result data(String key, SecretKey value) {
         this.data.put(key, value);
+        System.out.println("data:" + data);
         return this;
     }
 

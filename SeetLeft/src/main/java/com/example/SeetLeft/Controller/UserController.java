@@ -6,6 +6,7 @@ import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Result;
 import com.example.SeetLeft.Tool.ToolController;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -121,7 +123,7 @@ public class UserController {
     }
 
     /**
-     * 查询用户信息 JSON
+     * 查询用户信息 JSON<br/>
      * 注解@ModelAttribute：获取请求路径中的对象类型参数，如果对象为null，这创建所有属性为空的对象
      *
      * @param user 要查询的用户名
@@ -129,7 +131,7 @@ public class UserController {
      */
     @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public Result select(@ModelAttribute User user) {
-        System.out.print("-----------------Server-----------------" + user);
+        System.out.println("-----------------Server-----------------" + user);
         //非空验证
         Class<?> clazz = user.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -139,25 +141,23 @@ public class UserController {
                 String fieldName = field.getName();
                 Object fieldValue = field.get(user);
                 System.out.println(fieldName + ":" + fieldValue);
+                if (fieldName.equals("username") && fieldValue == null) {
+                    return Result.error();
+                }
             } catch (IllegalAccessException e) {
                 logger.error("反射访问字段时发生异常", e);
             }
         }
-        if (user.getId() == null) {
-            System.out.println("查询用户信息条件为空:" + user);
-            return Result.error();
-        } else {
-            toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-            String token = JwtUtils.generateToken(user.getUsername());//获取token
-            Result r = Result.ok();//设置token
-            Result r1 = r.data("token", token);
-            System.out.println("token:" + token);
-            System.out.println("r:" + r);
-            System.out.println("r1:" + r1);
-            List<User> list = userService.select(user);//查询用户列表
-            System.out.println("查询用户信息成功：" + list);
-            return Result.ok();
-        }
+        toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+        SecretKey token = JwtUtils.generateToken(user.getUsername());//获取token
+        Result r = Result.ok().data(user.getUsername(), token);//设置token的键值对
+        List<User> list = userService.select(user);//查询用户列表
+        System.out.println("查询用户信息成功：" + list);
+        System.out.println("r:" + r);
+
+        Claims token2 = JwtUtils.getClaimsByToken(r.getData().get(token), user.getUsername());//获取token
+        System.out.println("token2:" + token2);
+        return Result.ok();
     }
 
 
