@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 //@RestController：类，这个类下的所有方法返回值的返回形式设置成HTTP响应体形式返回
@@ -45,9 +44,9 @@ public class UserController {
      * @return 固定返回1表示请求处理成功
      */
     @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
-    public String Default(@RequestParam(required = false) String name) {
+    public Result Default(@RequestParam(required = false) String name) {
         System.out.println("你访问了默认页面" + name);
-        return "罗启略大王";
+        return Result.ok();
     }
 
     /**
@@ -57,15 +56,18 @@ public class UserController {
      * @return 插入操作的结果状态码
      */
     @PostMapping("/user")//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
-    public Integer Insert(@RequestBody(required = false) User user, InputStream inputStream) {
+    public Result Insert(@RequestBody(required = false) User user) {
         System.out.print("-----------------insert-----------------" + user);
-        toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
         //非空验证
         if (user == null) {
             System.out.println("插入用户信息User对象为空");
-            return 0;
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
+            int i = userService.insert(user);
+            System.out.println("新增用户信息成功：" + i);
+            return Result.ok();
         }
-        return userService.insert(user);
     }
 
     /**
@@ -77,14 +79,18 @@ public class UserController {
      * @return 删除操作影响的行数
      */
     @DeleteMapping("/user/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
-    public int Delete(@PathVariable int id) {
+    public Result Delete(@PathVariable int id) {
         System.out.print("-----------------Delete-----------------" + id);
+        //判断ID是否合法
         if (id < 1) {
-            System.out.println("删除用户信息id为空");
-            return 0;
+            System.out.println("删除用户信息的ID为空");
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
+            int i = userService.delete(id);
+            System.out.println("删除用户信息成功：" + i);
+            return Result.ok();
         }
-        toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-        return userService.delete(id);
     }
 
     /**
@@ -95,14 +101,18 @@ public class UserController {
      * @return 更新操作影响的行数
      */
     @PutMapping("/user")//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
-    public int Update(@RequestBody(required = false) User user) {
+    public Result Update(@RequestBody(required = false) User user) {
         System.out.print("-----------------Update-----------------" + user);
+        //非空验证
         if (user == null) {
             System.out.println("更新用户信息User对象为空");
-            return 0;
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
+            int i = userService.update(user);
+            System.out.println("修改用户信息成功：" + i);
+            return Result.ok();
         }
-        toolController.usetStyle("访问：PutMappping.user,更新用户信息,更新记录:" + user);//存储操作记录
-        return userService.update(user);
     }
 
     /**
@@ -112,17 +122,21 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping("/user")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public List<User> select(@RequestBody(required = false) User user) {
+    public Result select(@RequestBody(required = false) User user) {
         System.out.print("-----------------Server-----------------" + user);
+        //非空验证
         if (user == null) {
             System.out.println("用户信息user对象为空");
-            return null;
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+            String token = JwtUtils.generateToken(user.getUsername());//获取token
+            Result.ok().data("token", token);//设置token
+            System.out.println("token:" + token);
+            List<User> list = userService.select(user);//查询用户列表
+            System.out.println("查询用户信息成功：" + list);
+            return Result.ok();
         }
-        String token = JwtUtils.generateToken(user.getUsername());//获取token
-        Result.ok().data("token", token);//设置token
-        System.out.println("token:" + token);
-        toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        return userService.select(user);
     }
 
     /**
@@ -134,15 +148,18 @@ public class UserController {
      * @return postFile
      */
     @PostMapping("/user/postFile")
-    public String postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
+    public Result postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
         if (file == null) {
             System.out.println("上传文件file为空");
-            return "上传文件不存在";
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
+            System.out.println("访问:文件上传(postFile)");
+            String s = toolController.saveFile(name, file, request);//保存文件
+            System.out.println("上传文件文件保存成功：" + s);
+            return Result.ok();
         }
-        System.out.println("访问:文件上传(postFile)");
-        toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
-        return toolController.saveFile(name, file, request);//保存文件
     }
 
     /**
@@ -152,15 +169,18 @@ public class UserController {
      * @return 用户列表（含关联的风格）
      */
     @GetMapping("/user/userStyle")
-    public List<User> selectStyle(@RequestBody(required = false) User user) {
+    public Result selectStyle(@RequestBody(required = false) User user) {
         System.out.print("-----------------selectStyle-----------------");
         if (user == null) {
             System.out.println("查询用户信息user对象为空");
-            return null;
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
+            System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
+            List<User> list = userService.selectStyle(user);
+            System.out.println("查询多表用户信息查询成功：" + list);
+            return Result.ok();
         }
-        System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
-        toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
-        return userService.selectStyle(user);
     }
 
     /**
@@ -170,15 +190,19 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping("/user/pro")
-    public List<User> selectPro(@RequestBody(required = false) User user) {
+    public Result selectPro(@RequestBody(required = false) User user) {
         System.out.print("-----------------selectPro-----------------");
         if (user == null) {
             System.out.println("selectPro.user为空：");
-            return null;
+            return Result.error();
+        } else {
+            toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
+            System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
+            List<User> list = userService.selectPro(user);
+            System.out.println("查询用户信息PRO查询成功：" + list);
+            return Result.ok();
+
         }
-        System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
-        toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
-        return userService.selectPro(user);
     }
 
     /**
@@ -189,10 +213,17 @@ public class UserController {
      * @return 分页查询结果
      */
     @PostMapping("/user/selectPage")
-    public IPage<User> selectPag(Integer pageNum, Integer pageSize) {
+    public Result selectPag(Integer pageNum, Integer pageSize) {
         System.out.print("-----------------selectPage-----------------");
-        System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
-        toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
-        return userService.selectPage(pageNum, pageSize);
+        if (pageNum == null || pageSize == null || pageNum + pageSize > 1) {
+            System.out.println("传递过来的页码有问题");
+            return Result.error();
+        } else {
+            System.out.println("访问:分页查询用户信息(selectPag)页码：" + pageNum + "，每页数量：" + pageSize);
+            toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
+            IPage<User> ipage = userService.selectPage(pageNum, pageSize);
+            System.out.println("分页查询用户信息成功：" + ipage);
+            return Result.ok();
+        }
     }
 }

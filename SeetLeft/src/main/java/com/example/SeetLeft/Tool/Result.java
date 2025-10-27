@@ -38,6 +38,7 @@ public class Result {
         r.setSuccess(true);//设置状态码为真，代表成功
         r.setCode(ResultCode.SUCCESS);//设置状态数据为成功状态码
         r.setMessage("成功");
+        System.out.println("r=" + r);
         return r;
     }
 
@@ -53,4 +54,5 @@ public class Result {
         r.setMessage("失败");
         return r;
     }
+
 }
