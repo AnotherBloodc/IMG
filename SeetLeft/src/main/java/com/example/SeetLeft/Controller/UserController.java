@@ -149,14 +149,20 @@ public class UserController {
             }
         }
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        SecretKey token = JwtUtils.generateToken(user.getUsername());//获取token
+        String token = JwtUtils.generateToken(user.getUsername());//通过用户名生成token
         Result r = Result.ok().data(user.getUsername(), token);//设置token的键值对
         List<User> list = userService.select(user);//查询用户列表
-        System.out.println("查询用户信息成功：" + list);
-        System.out.println("r:" + r);
+        Claims claims = JwtUtils.getClaimsByToken(token);//解密token
 
-        Claims token2 = JwtUtils.getClaimsByToken(r.getData().get(token), user.getUsername());//获取token
-        System.out.println("token2:" + token2);
+        System.out.println("查询用户信息成功：" + list);
+        System.out.println("----------------------------------");
+        System.out.println("r:" + r);
+        System.out.println("----------------------------------");
+        System.out.println("r.getData().get(user.getUsername()):" + r.getData().get(user.getUsername()));
+        System.out.println("----------------------------------");
+        System.out.println("token2:" + claims);
+        System.out.println("用户名:" + claims.getSubject());
+        System.out.println("之前设置的过期时间:" + claims.getExpiration());
         return Result.ok();
     }
 

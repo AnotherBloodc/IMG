@@ -11,7 +11,7 @@ public class Result {
     private Boolean success;
     private String message;
     private Integer code;
-    private Map<String, SecretKey> data = new HashMap<>();
+    private Map<String, String> data = new HashMap<>();
 
     //重写构造方法，将构造方法私有化
     private Result() {
@@ -24,7 +24,7 @@ public class Result {
      * @param value 数据的值
      * @return 返回当前Result对象，支持链式调用
      */
-    public Result data(String key, SecretKey value) {
+    public Result data(String key, String value) {
         this.data.put(key, value);
         System.out.println("data:" + data);
         return this;
