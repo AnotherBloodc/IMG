@@ -218,7 +218,7 @@ public class UserController {
      * @return 分页查询结果
      */
     @PostMapping("/Page")
-    public Result selectPage(Integer pageNum, Integer pageSize) {
+    public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         System.out.print("-----------------selectPage-----------------");
         if ((pageNum + pageSize) < 1) {
             System.out.println("传递过来的页码有问题");
