@@ -61,13 +61,13 @@
             <version>8.2.0</version>
         </dependency>
 
+        <!--mybatis-plus依赖，已经包括了mybatis的依赖了-->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>3.0.5</version>
         </dependency>
 
-        <!--mybatis-plus依赖，已经包括了mybatis的依赖了-->
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>

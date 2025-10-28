@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.JwtUtils;
-import com.example.SeetLeft.Tool.Result;
+import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -51,9 +50,9 @@ public class UserController {
      * @return 固定返回1表示请求处理成功
      */
     @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
-    public Result Default(@RequestParam(required = false) String name) {
+    public Return Default(@RequestParam(required = false) String name) {
         System.out.println("你访问了默认页面" + name);
-        return Result.ok();
+        return Return.ok();
     }
 
     /**
@@ -63,17 +62,17 @@ public class UserController {
      * @return 插入操作的结果状态码
      */
     @PostMapping//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
-    public Result Insert(@RequestBody(required = false) User user) {
+    public Return Insert(@RequestBody(required = false) User user) {
         System.out.print("-----------------insert-----------------" + user);
         //非空验证
         if (user == null) {
             System.out.println("插入用户信息User对象为空");
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
             int i = userService.insert(user);
             System.out.println("新增用户信息成功：" + i);
-            return Result.ok();
+            return Return.ok();
         }
     }
 
@@ -86,17 +85,17 @@ public class UserController {
      * @return 删除操作影响的行数
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
-    public Result Delete(@PathVariable int id) {
+    public Return Delete(@PathVariable int id) {
         System.out.print("-----------------Delete-----------------" + id);
         //判断ID是否合法
         if (id < 1) {
             System.out.println("删除用户信息的ID为空");
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
             int i = userService.delete(id);
             System.out.println("删除用户信息成功：" + i);
-            return Result.ok();
+            return Return.ok();
         }
     }
 
@@ -108,17 +107,17 @@ public class UserController {
      * @return 更新操作影响的行数
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
-    public Result Update(@RequestBody(required = false) User user) {
+    public Return Update(@RequestBody(required = false) User user) {
         System.out.print("-----------------Update-----------------" + user);
         //非空验证
         if (user == null) {
             System.out.println("更新用户信息User对象为空");
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
             int i = userService.update(user);
             System.out.println("修改用户信息成功：" + i);
-            return Result.ok();
+            return Return.ok();
         }
     }
 
@@ -130,7 +129,7 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public Result select(@ModelAttribute User user) {
+    public Return select(@ModelAttribute User user) {
         System.out.println("-----------------Server-----------------" + user);
         //非空验证
         Class<?> clazz = user.getClass();
@@ -142,7 +141,7 @@ public class UserController {
                 Object fieldValue = field.get(user);
                 System.out.println(fieldName + ":" + fieldValue);
                 if (fieldName.equals("username") && fieldValue == null) {
-                    return Result.error();
+                    return Return.error();
                 }
             } catch (IllegalAccessException e) {
                 logger.error("反射访问字段时发生异常", e);
@@ -150,7 +149,7 @@ public class UserController {
         }
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         String token = JwtUtils.generateToken(user.getUsername());//通过用户名生成token
-        Result r = Result.ok().data(user.getUsername(), token);//设置token的键值对
+        Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
         List<User> list = userService.select(user);//查询用户列表
         Claims claims = JwtUtils.getClaimsByToken(token);//解密token
 
@@ -163,7 +162,7 @@ public class UserController {
         System.out.println("token2:" + claims);
         System.out.println("用户名:" + claims.getSubject());
         System.out.println("之前设置的过期时间:" + claims.getExpiration());
-        return Result.ok();
+        return Return.ok();
     }
 
 
@@ -174,17 +173,17 @@ public class UserController {
      * @return 用户列表（含关联的风格）
      */
     @GetMapping("/userStyle")
-    public Result selectStyle(@ModelAttribute User user) {
+    public Return selectStyle(@ModelAttribute User user) {
         System.out.print("-----------------selectStyle-----------------");
         if (user.getId() == null) {
             System.out.println("查询多表用户信息条件为空:" + user);
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
             System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
             List<User> list = userService.selectStyle(user);
             System.out.println("查询多表用户信息查询成功：" + list);
-            return Result.ok();
+            return Return.ok();
         }
     }
 
@@ -195,17 +194,17 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping("/pro")
-    public Result selectPro(@ModelAttribute User user) {
+    public Return selectPro(@ModelAttribute User user) {
         System.out.print("-----------------selectPro-----------------");
         if (user.getId() == null) {
             System.out.println("查询用户信息PRO条件为空：" + user);
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
             System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
             List<User> list = userService.selectPro(user);
             System.out.println("查询用户信息PRO查询成功：" + list);
-            return Result.ok();
+            return Return.ok();
 
         }
     }
@@ -218,17 +217,17 @@ public class UserController {
      * @return 分页查询结果
      */
     @PostMapping("/Page")
-    public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
+    public Return selectPage(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         System.out.print("-----------------selectPage-----------------");
         if ((pageNum + pageSize) < 1) {
             System.out.println("传递过来的页码有问题");
-            return Result.error();
+            return Return.error();
         } else {
             System.out.println("访问:分页查询用户信息(selectPage)页码：" + pageNum + "，每页数量：" + pageSize);
             toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userService.selectPage(pageNum, pageSize);
             System.out.println("分页查询用户信息成功：" + ipage);
-            return Result.ok();
+            return Return.ok();
         }
     }
 
@@ -241,17 +240,17 @@ public class UserController {
      * @return postFile
      */
     @PostMapping("/postFile")
-    public Result postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
+    public Return postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
         if (file == null) {
             System.out.println("上传文件file为空");
-            return Result.error();
+            return Return.error();
         } else {
             toolController.usetStyle("访问：postFile,上传文件");//存储操作记录
             System.out.println("访问:文件上传(postFile)");
             String s = toolController.saveFile(name, file, request);//保存文件
             System.out.println("上传文件文件保存成功：" + s);
-            return Result.ok();
+            return Return.ok();
         }
     }
 }

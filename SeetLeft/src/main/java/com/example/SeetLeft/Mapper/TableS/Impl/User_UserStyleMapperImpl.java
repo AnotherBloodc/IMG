@@ -1,7 +1,7 @@
-package com.example.SeetLeft.Mapper.TableMax.Impl;
+package com.example.SeetLeft.Mapper.TableS.Impl;
 
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Mapper.TableMax.User_UserMapperStyle;
+import com.example.SeetLeft.Mapper.TableS.User_UserMapperStyle;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Entity.UserStyle;
 import com.example.SeetLeft.Mapper.Table.Impl.UserMapperImpl;
-import com.example.SeetLeft.Mapper.TableMax.Impl.User_UserStyleMapperImpl;
+import com.example.SeetLeft.Mapper.TableS.Impl.User_UserStyleMapperImpl;
 import com.example.SeetLeft.MapperPro.Impl.UserMapperProImpl;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

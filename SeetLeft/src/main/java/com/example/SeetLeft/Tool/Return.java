@@ -2,19 +2,18 @@ package com.example.SeetLeft.Tool;
 
 import lombok.Data;
 
-import javax.crypto.SecretKey;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class Result {
+public class Return {
     private Boolean success;
     private String message;
     private Integer code;
     private Map<String, String> data = new HashMap<>();
 
     //重写构造方法，将构造方法私有化
-    private Result() {
+    private Return() {
     }
 
     /**
@@ -24,7 +23,7 @@ public class Result {
      * @param value 数据的值
      * @return 返回当前Result对象，支持链式调用
      */
-    public Result data(String key, String value) {
+    public Return data(String key, String value) {
         this.data.put(key, value);
         System.out.println("data:" + data);
         return this;
@@ -35,8 +34,8 @@ public class Result {
      *
      * @return 返回封装了成功状态信息的Result对象
      */
-    public static Result ok() {
-        Result r = new Result();//创建Result对象，用来封装用户状态数据
+    public static Return ok() {
+        Return r = new Return();//创建Result对象，用来封装用户状态数据
         r.setSuccess(true);//设置状态码为真，代表成功
         r.setCode(ResultCode.SUCCESS);//设置状态数据为成功状态码
         r.setMessage("成功");
@@ -46,10 +45,10 @@ public class Result {
     /**
      * 错误结果Result对象
      *
-     * @return Result 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
+     * @return Return 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
      */
-    public static Result error() {
-        Result r = new Result();
+    public static Return error() {
+        Return r = new Return();
         r.setSuccess(false);//设置状态码为假，代表失败
         r.setCode(ResultCode.ERROR);//设置状态数据为失败状态码
         r.setMessage("失败");

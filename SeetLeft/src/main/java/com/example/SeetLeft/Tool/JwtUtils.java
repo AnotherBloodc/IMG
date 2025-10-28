@@ -3,7 +3,6 @@ package com.example.SeetLeft.Tool;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 import javax.crypto.SecretKey;
 import java.util.Date;

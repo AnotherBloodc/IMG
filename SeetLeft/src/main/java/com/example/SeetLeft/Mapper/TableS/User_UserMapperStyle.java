@@ -1,4 +1,4 @@
-package com.example.SeetLeft.Mapper.TableMax;
+package com.example.SeetLeft.Mapper.TableS;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.SeetLeft.Entity.User;
