@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 public class UserStyle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
-    private int userid;
+    private Integer userid;
 
     @Column(columnDefinition = "datetime default current_timestamp()")
     private LocalDateTime datetime;

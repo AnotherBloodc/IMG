@@ -2,7 +2,7 @@ package com.example.SeetLeft.Controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Service.UserService;
+import com.example.SeetLeft.Service.Impl.UserServiceImpl;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
@@ -37,7 +37,7 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Resource
     private ToolController toolController;
@@ -55,6 +55,14 @@ public class UserController {
         return Return.ok();
     }
 
+    @PostMapping("/register")
+    public Return register(@RequestBody User user) {
+        String name = user.getUsername();
+        String password = user.getPassword();
+        List<User> byuser = userServiceImpl.list(user);
+        return Return.error();
+    }
+
     /**
      * 新增用户信息：JSON<br/>
      *
@@ -70,7 +78,7 @@ public class UserController {
             return Return.error();
         } else {
             toolController.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
-            int i = userService.insert(user);
+            int i = userServiceImpl.insert(user);
             System.out.println("新增用户信息成功：" + i);
             return Return.ok();
         }
@@ -93,7 +101,7 @@ public class UserController {
             return Return.error();
         } else {
             toolController.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-            int i = userService.delete(id);
+            int i = userServiceImpl.delete(id);
             System.out.println("删除用户信息成功：" + i);
             return Return.ok();
         }
@@ -115,7 +123,7 @@ public class UserController {
             return Return.error();
         } else {
             toolController.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
-            int i = userService.update(user);
+            int i = userServiceImpl.update(user);
             System.out.println("修改用户信息成功：" + i);
             return Return.ok();
         }
@@ -150,7 +158,7 @@ public class UserController {
         toolController.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         String token = JwtUtils.generateToken(user.getUsername());//通过用户名生成token
         Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
-        List<User> list = userService.select(user);//查询用户列表
+        List<User> list = userServiceImpl.select(user);//查询用户列表
         Claims claims = JwtUtils.getClaimsByToken(token);//解密token
 
         System.out.println("查询用户信息成功：" + list);
@@ -172,16 +180,16 @@ public class UserController {
      * @param user 查询条件（用@ModelAttribute绑定GET参数）
      * @return 用户列表（含关联的风格）
      */
-    @GetMapping("/userStyle")
-    public Return selectStyle(@ModelAttribute User user) {
-        System.out.print("-----------------selectStyle-----------------");
-        if (user.getId() == null) {
-            System.out.println("查询多表用户信息条件为空:" + user);
+    @PostMapping("/user_userStyle")
+    public Return user_userStyle(@RequestBody User user) {
+        System.out.print("-----------------user_userStyle-----------------");
+        if (user == null) {
+            System.out.println("查询多表用户信息条件为空");
             return Return.error();
         } else {
-            toolController.usetStyle("访问：selectStyle,一对多查询,条件：" + user);//存储操作记录
-            System.out.println("访问:一对多查询(selectStyle)，条件：" + user);
-            List<User> list = userService.selectStyle(user);
+            toolController.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
+            System.out.println("访问:一对多查询(userStyle)，条件：" + user);
+            List<User> list = userServiceImpl.selectStyle(user);
             System.out.println("查询多表用户信息查询成功：" + list);
             return Return.ok();
         }
@@ -193,19 +201,18 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @GetMapping("/pro")
-    public Return selectPro(@ModelAttribute User user) {
-        System.out.print("-----------------selectPro-----------------");
-        if (user.getId() == null) {
-            System.out.println("查询用户信息PRO条件为空：" + user);
+    @PostMapping("/pro")
+    public Return pro(@RequestBody User user) {
+        System.out.print("-----------------pro-----------------:" + user);
+        if (user == null) {
+            System.out.println("查询用户信息PRO条件为空");
             return Return.error();
         } else {
-            toolController.usetStyle("访问：selectPro,查询用户信息PRO,条件：" + user);//存储操作记录
-            System.out.println("访问:查询用户信息PRO(selectPro),条件：" + user);
-            List<User> list = userService.selectPro(user);
-            System.out.println("查询用户信息PRO查询成功：" + list);
+            toolController.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
+            System.out.println("访问:查询用户信息PRO(pro),条件：" + user);
+            List<User> userList = userServiceImpl.list(user);
+            System.out.println("查询用户信息PRO查询成功：" + userList);
             return Return.ok();
-
         }
     }
 
@@ -216,16 +223,16 @@ public class UserController {
      * @param pageSize 每页数量
      * @return 分页查询结果
      */
-    @PostMapping("/Page")
-    public Return selectPage(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
-        System.out.print("-----------------selectPage-----------------");
+    @GetMapping("/Page")
+    public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
+        System.out.print("-----------------Page-----------------");
         if ((pageNum + pageSize) < 1) {
             System.out.println("传递过来的页码有问题");
             return Return.error();
         } else {
-            System.out.println("访问:分页查询用户信息(selectPage)页码：" + pageNum + "，每页数量：" + pageSize);
-            toolController.usetStyle("访问：selectPage,分页查询用户信息");//存储操作记录
-            IPage<User> ipage = userService.selectPage(pageNum, pageSize);
+            System.out.println("访问:分页查询用户信息(Page)页码：" + pageNum + "，每页数量：" + pageSize);
+            toolController.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
+            IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
             System.out.println("分页查询用户信息成功：" + ipage);
             return Return.ok();
         }
