@@ -18,6 +18,7 @@ public class ToolController {
 
     @Resource
     private UserServiceImpl seetLeftService;
+
     /**
      * 保存文件
      *
@@ -48,6 +49,7 @@ public class ToolController {
         i = f.exists();//赋值：文件是否保存成功的状态码
         return "文件上传成功" + i;
     }
+
     /**
      * 新增操作记录
      *
@@ -58,5 +60,13 @@ public class ToolController {
         us.setName(name);
         us.setUserid(1);
         System.out.println(seetLeftService.insertUS(us));
+    }
+
+    public boolean isNull(Object obj) {
+        return obj != null;
+    }
+
+    public boolean isNull(int i) {
+        return i > 0;
     }
 }
