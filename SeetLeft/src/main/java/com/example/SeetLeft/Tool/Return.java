@@ -17,19 +17,6 @@ public class Return {
     }
 
     /**
-     * 向Result对象中的data属性添加token数据键值对
-     *
-     * @param key   数据的键名
-     * @param value 数据的值
-     * @return 返回当前Result对象，支持链式调用
-     */
-    public Return data(String key, String value) {
-        this.data.put(key, value);
-        System.out.println("data:" + data);
-        return this;
-    }
-
-    /**
      * 成功结果Result对象
      *
      * @return 返回封装了成功状态信息的Result对象
@@ -53,6 +40,19 @@ public class Return {
         r.setCode(ResultCode.ERROR);//设置状态数据为失败状态码
         r.setMessage("失败");
         return r;
+    }
+
+    /**
+     * 向Result对象中的data属性添加token数据键值对
+     *
+     * @param key   数据的键名
+     * @param value 数据的值
+     * @return 返回当前Result对象，支持链式调用
+     */
+    public Return data(String key, String value) {
+        this.data.put(key, value);
+        System.out.println("data:" + data);
+        return this;
     }
 
 }

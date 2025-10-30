@@ -4,30 +4,30 @@
 
     <el-table :data="user" style="width: 100%">
       <el-table-column
-          prop="id"
           label="编号"
+          prop="id"
           width="180">
       </el-table-column>
       <el-table-column
-          prop="username"
           label="姓名"
+          prop="username"
           width="180">
       </el-table-column>
       <el-table-column
-          prop="password"
-          label="密码">
+          label="密码"
+          prop="password">
       </el-table-column>
       <el-table-column
-          prop="email"
-          label="邮箱">
+          label="邮箱"
+          prop="email">
       </el-table-column>
       <el-table-column
-          prop="datetime"
-          label="创建日期">
+          label="创建日期"
+          prop="datetime">
       </el-table-column>
       <el-table-column
-          prop="effect"
-          label="是否删除">
+          label="是否删除"
+          prop="effect">
       </el-table-column>
     </el-table>
 

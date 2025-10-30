@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/SeetLeft/src/main/java/com/example/SeetLeft/Mapper/Table/UserMapper.java" value="d887c4aa-7e3d-4e27-8993-6bee7d6f3c61" />
-    <file url="file://$PROJECT_DIR$/SeetLeft/src/main/resources/Mapper/UserMapper.xml" value="d887c4aa-7e3d-4e27-8993-6bee7d6f3c61" />
     <file url="file://$PROJECT_DIR$/SeetSQL/SeetSQL.sql" value="d887c4aa-7e3d-4e27-8993-6bee7d6f3c61" />
   </component>
 </project>
