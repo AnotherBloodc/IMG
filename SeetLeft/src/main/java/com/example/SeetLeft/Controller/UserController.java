@@ -51,7 +51,7 @@ public class UserController {
      */
     @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
     public Return Default(@RequestParam(required = false) String name) {
-        System.out.println("你访问了默认页面" + name);
+        logger.info("访问了默认页面{}", name);
         return Return.ok();
     }
 
@@ -69,10 +69,10 @@ public class UserController {
                 tool.isNull(user.getEmail()) &&
                 tool.isNull(userServiceImpl.list(user))) {
             userServiceImpl.insert(user);
-            System.out.println("添加成功");
+            logger.info("注册用户成功：{}", user);
             return Return.ok();
         } else {
-            System.out.println("用户已存在");
+            logger.info("用户已存在，无法注册：{}", user);
             return Return.error();
         }
     }
@@ -87,16 +87,17 @@ public class UserController {
     @PostMapping("/login")
     public Return login(@RequestBody User user, HttpServletRequest request) {
         if (tool.isNull(user.getUsername()) && tool.isNull(user.getPassword())) {
-            System.out.println("用户不存在");
+            logger.info("账户或密码有问题：{}", user);
             return Return.error();
         } else {
             List<User> list = userServiceImpl.list(user);
             if (!list.isEmpty()) {
                 String token = JwtUtils.generateToken(list.get(1).getUsername());
                 request.getSession().setAttribute("token", token);
+                logger.info("登录成功：{}", user);
                 return Return.ok().data("token", token);
             } else {
-                System.out.println("用户不存在");
+                logger.info("用户不存在：{}", user);
                 return Return.error();
             }
         }
@@ -110,7 +111,7 @@ public class UserController {
      */
     @PostMapping//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
     public Return Insert(@RequestBody(required = false) User user) {
-        System.out.print("-----------------insert-----------------" + user);
+        logger.info("-----------------insert-----------------{}", user);
         //非空验证
         if (tool.isNull(user)) {
             System.out.println("插入用户信息User对象为空");
