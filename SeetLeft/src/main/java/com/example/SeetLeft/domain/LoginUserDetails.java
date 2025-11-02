@@ -2,6 +2,7 @@ package com.example.SeetLeft.domain;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.example.SeetLeft.Entity.User;
+import jakarta.annotation.Resource;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,9 +13,10 @@ import java.util.Collection;
 @Data
 public class LoginUserDetails implements UserDetails {
 
-    private String token;//登录凭证
-
+    @Resource
     private User user;//用户信息
+
+    private String token;//登录凭证
 
     //获取权限
     @JSONField(serialize = false)
