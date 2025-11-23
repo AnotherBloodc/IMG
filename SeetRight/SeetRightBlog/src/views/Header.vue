@@ -55,7 +55,7 @@ export default {
   methods: {
     //访问：查询全部接口
     selectUser() {
-      this.$http.get('http://localhost:8080/user').then((response) => {
+      this.axiosTool.get('http://localhost:8080/user').then((response) => {
         this.user = response.data
       })
     }

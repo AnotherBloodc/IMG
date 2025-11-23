@@ -1,20 +1,13 @@
 <template>
-  <div>
-    <router-link to="/HomeView">HomeView</router-link>
-    <br>
-    <router-link to="/AboutView">AboutView</router-link>
-    <br>
-    <router-link to="/Header">Header</router-link>
-    <br>
-    <router-link to="/Hello">Hello</router-link>
-    <br>
-    <router-view></router-view>
-  </div>
+  <router-link to="/Login2"></router-link>
+  <!--    <router-link to="/HomeView">HomeView</router-link><br>-->
+  <!--    <router-link to="/AboutView">AboutView</router-link><br>-->
+  <!--    <router-link to="/Header">Header</router-link><br>-->
+  <!--    <router-link to="/Hello">Hello</router-link><br>-->
+  <router-view></router-view>
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   name: 'App',
   created: function () {
@@ -22,7 +15,7 @@ export default {
   },
   mounted: function () {
     console.log("App.vue被创建后")
-    axios.get("/user").then(res => {
+    this.axiosTool.get("/user").then(res => {
       this.user = res.data;
     })
 
@@ -49,4 +42,5 @@ export default {
 </script>
 
 <style>
+@import "@/assets/css/Global.css";
 </style>

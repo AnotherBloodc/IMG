@@ -22,6 +22,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 10s
 mybatis:
   mapper-locations: classpath*:Mapper/*.xml
   configuration:
