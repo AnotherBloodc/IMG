@@ -1,13 +1,13 @@
-const axion = require('axios');
+const axios = require('axios');
 
 //发起一个get请求
-axion.get('/Server')
+axios.get('/Server')
     //处理成功响应结果
     .then(function (response) {
         console.log(response);
     })
     //处理失败响应结果
-    .then(function (error) {
+    .catch(function (error) {
         console.log(error)
     })
     //不管成功失败都会执行

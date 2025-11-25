@@ -34,7 +34,7 @@
 
         <a href="#">Forgot Password?</a>
 
-        <button type="submit">{{ Text }}</button>
+        <button type="submit" @click="Login">{{ Text }}</button>
 
         <p>or login with social platform</p>
 
@@ -60,7 +60,6 @@
   </div>
 
 </template>
-
 
 <style>
 @import "../assets/css/Login2.css";
@@ -109,6 +108,17 @@ export default {
           this.LogGotBut = false;
         }, 180)
       }
+    },
+    Login() {
+      this.axiosTool.post("/user/login", this.user).then(res => {
+        if (res.data === "登录成功") {
+          this.router.push("/AboutView");
+        } else if (res.data === "用户不存在") {
+          alert("用户不存在")
+        } else {
+          alert("密码错误")
+        }
+      })
     }
   }
 }

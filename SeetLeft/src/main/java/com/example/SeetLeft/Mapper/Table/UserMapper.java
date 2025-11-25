@@ -37,6 +37,13 @@ public interface UserMapper {
     List<User> select(User user);
 
     /**
+     * 获取单用户
+     *
+     * @return 获取单用户
+     */
+    User selectUser(User user);
+
+    /**
      * 新增操作记录
      *
      * @return 包含用户对象的列表

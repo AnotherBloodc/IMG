@@ -40,7 +40,7 @@ public class UserController {
     private UserServiceImpl userServiceImpl;
 
     @Resource
-    private ToolController tool;
+    private ToolController T;
 
     /**
      * 处理根路径的Get请求<br/>
@@ -64,17 +64,25 @@ public class UserController {
      */
     @PostMapping("/register")
     public Return register(@RequestBody User user) {
-        if (tool.isNull(user.getUsername()) &&
-                tool.isNull(user.getPassword()) &&
-                tool.isNull(user.getEmail()) &&
-                tool.isNull(userServiceImpl.list(user))) {
-            userServiceImpl.insert(user);
-            logger.info("注册用户成功：{}", user);
-            return Return.ok();
-        } else {
-            logger.info("用户已存在，无法注册：{}", user);
-            return Return.error();
+        logger.info("{}\n用户注册(post/register)：", "\n条件=" + user + "\n结果=");
+        //判断注册条件是否合法
+        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
+
+            //判断用户是否存在
+            if (T.isNull(userServiceImpl.list(user))) {
+                logger.info("注册失败:用户已存在");
+                return Return.error();
+            }
+
+            //判断注册是否成功
+            if (T.isNull(userServiceImpl.insert(user))) {
+                logger.info("注册成功");
+                return Return.ok();
+            }
+
         }
+        logger.info("注册失败：条件\n");
+        return Return.error();
     }
 
     /**
@@ -84,45 +92,38 @@ public class UserController {
      * @param user 用户对象，可为null
      * @return 登录操作的结果状态码
      */
-    @PostMapping("/login")
+    @GetMapping("/login")
     public Return login(@RequestBody User user, HttpServletRequest request) {
-        if (tool.isNull(user.getUsername()) && tool.isNull(user.getPassword())) {
-            logger.info("账户或密码有问题：{}", user);
-            return Return.error();
-        } else {
-            List<User> list = userServiceImpl.list(user);
-            if (!list.isEmpty()) {
-                String token = JwtUtils.generateToken(list.get(1).getUsername());
+        logger.info("用户登录(/login){}", "\n条件：" + user + "\n结果：");
+
+        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
+            //根据条件查询此用户
+            User users = userServiceImpl.getOne(user);
+
+            //判断此用户是否存在
+            if (T.isNull(users)) {
+
+                //根据Username生成token
+                String token = JwtUtils.generateToken(users.getUsername());
+
+                //保存token
                 request.getSession().setAttribute("token", token);
-                logger.info("登录成功：{}", user);
+
+                logger.info("登录成功");
+
+                //存储操作记录
+                T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
                 return Return.ok().data("token", token);
-            } else {
-                logger.info("用户不存在：{}", user);
-                return Return.error();
             }
+            logger.info("登录失败：逻辑");
+            return Return.error();
         }
+
+        logger.info("登录失败：条件");
+        return Return.error();
+
     }
 
-    /**
-     * 新增用户信息：JSON<br/>
-     *
-     * @param user 用户对象，可为null
-     * @return 插入操作的结果状态码
-     */
-    @PostMapping//或者是@RequestMapping(value = "/Insert", method = RequestMethod.POST)注解，效果一样
-    public Return Insert(@RequestBody(required = false) User user) {
-        logger.info("-----------------insert-----------------{}", user);
-        //非空验证
-        if (tool.isNull(user)) {
-            System.out.println("插入用户信息User对象为空");
-            return Return.error();
-        } else {
-            tool.usetStyle("访问：PostMapping.Insert,插入用户信息,插入记录:" + user);//存储操作记录
-            int i = userServiceImpl.insert(user);
-            System.out.println("新增用户信息成功：" + i);
-            return Return.ok();
-        }
-    }
 
     /**
      * 删除用户信息：ID <br/>
@@ -134,17 +135,19 @@ public class UserController {
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public Return Delete(@PathVariable int id) {
-        System.out.print("-----------------Delete-----------------" + id);
-        //判断ID是否合法
-        if (tool.isNull(id)) {
-            System.out.println("删除用户信息的ID为空");
+        logger.info("用户删除：{}", "\n条件：" + id + "\n结果：");
+        //判断删除条件ID是否合法
+        if (T.isNull(id)) {
+            if (T.isNull(userServiceImpl.delete(id))) {
+                logger.info("删除成功");
+                T.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
+                return Return.ok();
+            }
+            logger.info("删除失败:逻辑");
             return Return.error();
-        } else {
-            tool.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-            int i = userServiceImpl.delete(id);
-            System.out.println("删除用户信息成功：" + i);
-            return Return.ok();
         }
+        logger.info("删除失败:条件\n");
+        return Return.error();
     }
 
     /**
@@ -156,17 +159,19 @@ public class UserController {
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public Return Update(@RequestBody(required = false) User user) {
-        System.out.print("-----------------Update-----------------" + user);
+        logger.info("用户修改：{}", "\n条件" + user + "\n结果=");
         //非空验证
-        if (tool.isNull(user)) {
-            System.out.println("更新用户信息User对象为空");
+        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
+            if (T.isNull(userServiceImpl.update(user))) {
+                logger.info("修改成功");
+                T.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
+                return Return.ok();
+            }
+            logger.info("修改失败:逻辑");
             return Return.error();
-        } else {
-            tool.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
-            int i = userServiceImpl.update(user);
-            System.out.println("修改用户信息成功：" + i);
-            return Return.ok();
         }
+        logger.info("修改失败:条件");
+        return Return.error();
     }
 
     /**
@@ -195,7 +200,7 @@ public class UserController {
                 logger.error("反射访问字段时发生异常", e);
             }
         }
-        tool.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+        T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         String token = JwtUtils.generateToken(user.getUsername());//通过用户名生成token
         Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
         List<User> list = userServiceImpl.select(user);//查询用户列表
@@ -222,16 +227,15 @@ public class UserController {
     @PostMapping("/user_userStyle")
     public Return user_userStyle(@RequestBody User user) {
         System.out.print("-----------------user_userStyle-----------------");
-        if (tool.isNull(user)) {
+        if (T.isNull(user)) {
             System.out.println("查询多表用户信息条件为空");
             return Return.error();
-        } else {
-            tool.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
-            System.out.println("访问:一对多查询(userStyle)，条件：" + user);
-            List<User> list = userServiceImpl.selectStyle(user);
-            System.out.println("查询多表用户信息查询成功：" + list);
-            return Return.ok();
         }
+        T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
+        System.out.println("访问:一对多查询(userStyle)，条件：" + user);
+        List<User> list = userServiceImpl.selectStyle(user);
+        System.out.println("查询多表用户信息查询成功：" + list);
+        return Return.ok();
     }
 
     /**
@@ -243,16 +247,15 @@ public class UserController {
     @PostMapping("/pro")
     public Return pro(@RequestBody User user) {
         System.out.print("-----------------pro-----------------:" + user);
-        if (tool.isNull(user)) {
+        if (T.isNull(user)) {
             System.out.println("查询用户信息PRO条件为空");
             return Return.error();
-        } else {
-            tool.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
-            System.out.println("访问:查询用户信息PRO(pro),条件：" + user);
-            List<User> userList = userServiceImpl.list(user);
-            System.out.println("查询用户信息PRO查询成功：" + userList);
-            return Return.ok();
         }
+        T.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
+        System.out.println("访问:查询用户信息PRO(pro),条件：" + user);
+        List<User> userList = userServiceImpl.list(user);
+        System.out.println("查询用户信息PRO查询成功：" + userList);
+        return Return.ok();
     }
 
     /**
@@ -265,12 +268,12 @@ public class UserController {
     @GetMapping("/Page")
     public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         System.out.print("-----------------Page-----------------");
-        if (tool.isNull(pageNum + pageSize)) {
+        if (T.isNull(pageNum + pageSize)) {
             System.out.println("传递过来的页码有问题");
             return Return.error();
         } else {
             System.out.println("访问:分页查询用户信息(Page)页码：" + pageNum + "，每页数量：" + pageSize);
-            tool.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
+            T.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
             System.out.println("分页查询用户信息成功：" + ipage);
             return Return.ok();
@@ -288,13 +291,13 @@ public class UserController {
     @PostMapping("/postFile")
     public Return postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         System.out.print("-----------------postFile-----------------");
-        if (tool.isNull(file)) {
+        if (T.isNull(file)) {
             System.out.println("上传文件file为空");
             return Return.error();
         } else {
-            tool.usetStyle("访问：postFile,上传文件");//存储操作记录
+            T.usetStyle("访问：postFile,上传文件");//存储操作记录
             System.out.println("访问:文件上传(postFile)");
-            String s = tool.saveFile(name, file, request);//保存文件
+            String s = T.saveFile(name, file, request);//保存文件
             System.out.println("上传文件文件保存成功：" + s);
             return Return.ok();
         }

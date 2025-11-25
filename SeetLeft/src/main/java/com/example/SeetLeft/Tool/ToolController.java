@@ -4,6 +4,7 @@ import com.example.SeetLeft.Entity.UserStyle;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,7 @@ public class ToolController {
     private static final String UPLOADED_FOLDER = System.getProperty("user.dir");
 
     @Resource
+    @Lazy
     private UserServiceImpl seetLeftService;
 
     /**
@@ -62,11 +64,18 @@ public class ToolController {
         System.out.println(seetLeftService.insertUS(us));
     }
 
-    public boolean isNull(Object obj) {
-        return obj != null;
+    public boolean isNull(Object... obj) {
+        if (obj != null) {
+            for (Object o : obj) {
+                if (o != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
-    public boolean isNull(int i) {
-        return i > 0;
+    public boolean isNull(Integer i) {
+        return i != null && i > 0;
     }
 }

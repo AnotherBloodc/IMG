@@ -15,7 +15,7 @@ export default {
   },
   mounted: function () {
     console.log("App.vue被创建后")
-    this.axiosTool.get("/user").then(res => {
+    this.$axiosTool.get("/user").then(res => {
       this.user = res.data;
     })
 
