@@ -100,7 +100,7 @@ public class UserController {
             //根据条件查询此用户
             User users = userServiceImpl.getOne(user);
 
-            //判断此用户是否存在
+            //判断查询出来的用户是否合法
             if (T.isNull(users)) {
 
                 //根据Username生成token

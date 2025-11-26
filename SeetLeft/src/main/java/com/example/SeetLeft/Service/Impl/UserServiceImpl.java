@@ -126,15 +126,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapperPro, User> implements
      */
     public User getOne(User user) {
         if (T.isNull(user)) {
-            logger.info("登录失败：用户不存在");
-            return null;
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper
+                    .eq(T.isNull(user.getId()), "id", user.getId())
+                    .eq(T.isNull(user.getUsername()), "username", user.getUsername())
+                    .eq(T.isNull(user.getEmail()), "email", user.getEmail());
+            return this.getOne(queryWrapper);
         }
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper
-                .eq(T.isNull(user.getId()), "id", user.getId())
-                .eq(T.isNull(user.getUsername()), "username", user.getUsername())
-                .eq(T.isNull(user.getEmail()), "email", user.getEmail());
-        return this.getOne(queryWrapper);
+        logger.info("登录失败：用户不存在");
+        return null;
     }
 
     /**
