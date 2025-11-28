@@ -43,7 +43,7 @@ public interface User_UserStyleMapper extends BaseMapper<User> {
             @Result(column = "Name", property = "name"),
             @Result(column = "Userid", property = "user", javaType = User.class,
                     // 修正：关联当前接口中的 selectUserById 方法（路径正确）
-                    one = @One(select = "com.example.SeetLeft.Mapper.TableMax.User_UserStyleMapper.selectUserById"))
+                    one = @One(select = "com.example.SeetLeft.Mapper.TableS.User_UserStyleMapper.selectUserById"))
     })
     List<UserStyle> selectUserStyle(User user); // 移除无用参数 User user（SQL中未使用）
 
@@ -53,15 +53,15 @@ public interface User_UserStyleMapper extends BaseMapper<User> {
      *
      * @return 用户列表（含关联风格）
      */
-    @Select("select * from `Seetpro`.`User`")
+/*    @Select("select * from `Seetpro`.`User`")
     @Results({
             @Result(column = "Id", property = "id"),
             @Result(column = "Username", property = "username"),
             @Result(column = "Password", property = "password"),
             @Result(column = "Email", property = "email"),
             @Result(column = "Id", property = "userStyle", javaType = List.class,
-                    many = @Many(select = "com.example.SeetLeft.Mapper.TableMax.User_UserStyleMapper.selectById"))
-    })
+                    many = @Many(select = "com.example.SeetLeft.Mapper.TableS.User_UserStyleMapper.selectById"))
+    })*/
     List<User> SelectUser_UserStyle(User user);
 
 }

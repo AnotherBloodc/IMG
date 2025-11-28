@@ -221,6 +221,7 @@ public class UserController {
         if (T.isNull(user)) {
             List<User> list = userServiceImpl.selectStyle(user);
             logger.info("查询成功：{}", list);
+            System.out.println(list);
             T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
             return Return.ok();
         }
@@ -237,16 +238,17 @@ public class UserController {
      */
     @PostMapping("/pro")
     public Return pro(@RequestBody User user) {
-        System.out.print("-----------------pro-----------------:" + user);
+        logger.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
         if (T.isNull(user)) {
-            System.out.println("查询用户信息PRO条件为空");
-            return Return.error();
+
+            T.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
+            List<User> userList = userServiceImpl.list(user);
+            logger.info("查询成功PRO：{}", userList);
+            return Return.ok();
+
         }
-        T.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
-        System.out.println("访问:查询用户信息PRO(pro),条件：" + user);
-        List<User> userList = userServiceImpl.list(user);
-        System.out.println("查询用户信息PRO查询成功：" + userList);
-        return Return.ok();
+        logger.info("查询失败PRO：条件");
+        return Return.error();
     }
 
     /**
@@ -258,17 +260,15 @@ public class UserController {
      */
     @GetMapping("/Page")
     public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
-        System.out.print("-----------------Page-----------------");
+        logger.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
         if (T.isNull(pageNum + pageSize)) {
-            System.out.println("传递过来的页码有问题");
-            return Return.error();
-        } else {
-            System.out.println("访问:分页查询用户信息(Page)页码：" + pageNum + "，每页数量：" + pageSize);
             T.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
-            System.out.println("分页查询用户信息成功：" + ipage);
+            logger.info("分页查询成功{}", ipage);
             return Return.ok();
         }
+        logger.info("分页查询失败：条件");
+        return Return.error();
     }
 
     /**
@@ -281,16 +281,14 @@ public class UserController {
      */
     @PostMapping("/postFile")
     public Return postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        System.out.print("-----------------postFile-----------------");
+        logger.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
         if (T.isNull(file)) {
-            System.out.println("上传文件file为空");
-            return Return.error();
-        } else {
-            T.usetStyle("访问：postFile,上传文件");//存储操作记录
-            System.out.println("访问:文件上传(postFile)");
             String s = T.saveFile(name, file, request);//保存文件
-            System.out.println("上传文件文件保存成功：" + s);
+            logger.info("上传文件成功{}", s);
+            T.usetStyle("访问：postFile,上传文件");//存储操作记录
             return Return.ok();
         }
+        logger.info("上传文件失败：条件，file为空");
+        return Return.error();
     }
 }
