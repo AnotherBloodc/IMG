@@ -12,7 +12,7 @@
         <!-- 一对多关联查询 -->
         <collection property="userStyle"
                     ofType="com.example.SeetLeft.Entity.UserStyle"
-                    select="com.example.SeetLeft.Mapper.TableMax.User_UserStyleMapper.selectById"
+                    select="com.example.SeetLeft.Mapper.TableS.User_UserStyleMapper.selectById"
                     column="Id"/>
     </resultMap>
 

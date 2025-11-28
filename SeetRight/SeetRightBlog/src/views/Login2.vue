@@ -23,12 +23,12 @@
         <h1>{{ Text }}</h1>
 
         <div>
-          <input type="text" placeholder="Username (Phone or Email)" v-model="user.Username" required>
+          <input type="text" placeholder="Username (Phone or Email)" v-model="user.username" required>
           <i class='bx  bx-user'></i>
         </div>
 
         <div>
-          <input type="password" placeholder="Password" v-model="user.Password" required>
+          <input type="password" placeholder="Password" v-model="user.password" required>
           <i class='bx  bx-lock'></i>
         </div>
 
@@ -74,8 +74,8 @@ export default {
   data: function () {
     return {
       user: {
-        Username: null,
-        Password: null,
+        username: null,
+        password: null,
       },
       Text: "Login",
       Texts: "Register",
@@ -111,12 +111,11 @@ export default {
     },
     Login() {
       this.axiosTool.post("/user/login", this.user).then(res => {
-        if (res.data === "登录成功") {
+        if (res.data.message === "1") {
+          alert("登录成功")
           this.router.push("/AboutView");
-        } else if (res.data === "用户不存在") {
-          alert("用户不存在")
-        } else {
-          alert("密码错误")
+        } else if (res.data.message === "0") {
+          alert("登录失败")
         }
       })
     }

@@ -25,7 +25,7 @@ public class Return {
         Return r = new Return();//创建Result对象，用来封装用户状态数据
         r.setSuccess(true);//设置状态码为真，代表成功
         r.setCode(ResultCode.SUCCESS);//设置状态数据为成功状态码
-        r.setMessage("成功");
+        r.setMessage("1");
         return r;
     }
 
@@ -38,7 +38,7 @@ public class Return {
         Return r = new Return();
         r.setSuccess(false);//设置状态码为假，代表失败
         r.setCode(ResultCode.ERROR);//设置状态数据为失败状态码
-        r.setMessage("失败");
+        r.setMessage("0");
         return r;
     }
 
