@@ -53,15 +53,15 @@ public interface User_UserStyleMapper extends BaseMapper<User> {
      *
      * @return 用户列表（含关联风格）
      */
-//    @Select("select * from `Seetpro`.`User`")
-//    @Results({
-//            @Result(column = "Id", property = "id"),
-//            @Result(column = "Username", property = "username"),
-//            @Result(column = "Password", property = "password"),
-//            @Result(column = "Email", property = "email"),
-//            @Result(column = "Id", property = "userStyle", javaType = List.class,
-//                    many = @Many(select = "com.example.SeetLeft.Mapper.TableMax.User_UserStyleMapper.selectById"))
-//    })
+    @Select("select * from `Seetpro`.`User`")
+    @Results({
+            @Result(column = "Id", property = "id"),
+            @Result(column = "Username", property = "username"),
+            @Result(column = "Password", property = "password"),
+            @Result(column = "Email", property = "email"),
+            @Result(column = "Id", property = "userStyle", javaType = List.class,
+                    many = @Many(select = "com.example.SeetLeft.Mapper.TableMax.User_UserStyleMapper.selectById"))
+    })
     List<User> SelectUser_UserStyle(User user);
 
 }

@@ -61,7 +61,6 @@ public class ToolController {
         UserStyle us = new UserStyle();
         us.setName(name);
         us.setUserid(1);
-        System.out.println(seetLeftService.insertUS(us));
     }
 
     public boolean isNull(Object... obj) {

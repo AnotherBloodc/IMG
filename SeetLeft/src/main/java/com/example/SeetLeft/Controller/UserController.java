@@ -3,6 +3,7 @@ package com.example.SeetLeft.Controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
+import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
@@ -64,7 +65,7 @@ public class UserController {
      */
     @PostMapping("/register")
     public Return register(@RequestBody User user) {
-        logger.info("{}\n用户注册(post/register)：", "\n条件=" + user + "\n结果=");
+        logger.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
         //判断注册条件是否合法
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
 
@@ -85,45 +86,6 @@ public class UserController {
         return Return.error();
     }
 
-    /**
-     * 登录用户：JSON<br/>
-     * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
-     *
-     * @param user 用户对象，可为null
-     * @return 登录操作的结果状态码
-     */
-    @GetMapping("/login")
-    public Return login(@RequestBody User user, HttpServletRequest request) {
-        logger.info("用户登录(/login){}", "\n条件：" + user + "\n结果：");
-
-        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
-            //根据条件查询此用户
-            User users = userServiceImpl.getOne(user);
-
-            //判断查询出来的用户是否合法
-            if (T.isNull(users)) {
-
-                //根据Username生成token
-                String token = JwtUtils.generateToken(users.getUsername());
-
-                //保存token
-                request.getSession().setAttribute("token", token);
-
-                logger.info("登录成功");
-
-                //存储操作记录
-                T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
-                return Return.ok().data("token", token);
-            }
-            logger.info("登录失败：逻辑");
-            return Return.error();
-        }
-
-        logger.info("登录失败：条件");
-        return Return.error();
-
-    }
-
 
     /**
      * 删除用户信息：ID <br/>
@@ -135,7 +97,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public Return Delete(@PathVariable int id) {
-        logger.info("用户删除：{}", "\n条件：" + id + "\n结果：");
+        logger.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
         //判断删除条件ID是否合法
         if (T.isNull(id)) {
             if (T.isNull(userServiceImpl.delete(id))) {
@@ -159,7 +121,7 @@ public class UserController {
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public Return Update(@RequestBody(required = false) User user) {
-        logger.info("用户修改：{}", "\n条件" + user + "\n结果=");
+        logger.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
         //非空验证
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
             if (T.isNull(userServiceImpl.update(user))) {
@@ -181,41 +143,69 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public Return select(@ModelAttribute User user) {
-        System.out.println("-----------------Server-----------------" + user);
-        //非空验证
-        Class<?> clazz = user.getClass();
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            try {
-                field.setAccessible(true);
-                String fieldName = field.getName();
-                Object fieldValue = field.get(user);
-                System.out.println(fieldName + ":" + fieldValue);
-                if (fieldName.equals("username") && fieldValue == null) {
-                    return Return.error();
-                }
-            } catch (IllegalAccessException e) {
-                logger.error("反射访问字段时发生异常", e);
+    @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    public Return select(@RequestBody(required = false) User user) {
+        logger.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
+        if (T.isNull(user)) {
+            List<User> list = userServiceImpl.list(user);
+            if (T.isNull(list)) {
+                logger.info("查询成功");
+                T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+                return Return.ok();
             }
+            logger.info("查询成功:不存在");
+            return Return.ok();
         }
-        T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        String token = JwtUtils.generateToken(user.getUsername());//通过用户名生成token
-        Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
-        List<User> list = userServiceImpl.select(user);//查询用户列表
-        Claims claims = JwtUtils.getClaimsByToken(token);//解密token
+        logger.info("查询失败:条件");
+        return Return.error();
+    }
 
-        System.out.println("查询用户信息成功：" + list);
-        System.out.println("----------------------------------");
-        System.out.println("r:" + r);
-        System.out.println("----------------------------------");
-        System.out.println("r.getData().get(user.getUsername()):" + r.getData().get(user.getUsername()));
-        System.out.println("----------------------------------");
-        System.out.println("token2:" + claims);
-        System.out.println("用户名:" + claims.getSubject());
-        System.out.println("之前设置的过期时间:" + claims.getExpiration());
-        return Return.ok();
+
+    /**
+     * 登录用户：JSON<br/>
+     * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
+     *
+     * @param user 用户对象，可为null
+     * @return 登录操作的结果状态码
+     */
+    @GetMapping("/login")
+    public Return login(@RequestBody User user, HttpServletRequest request) {
+        logger.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
+
+        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
+            //根据条件查询此用户
+            User users = userServiceImpl.getOne(user);
+
+            //判断查询出来的用户是否合法
+            if (T.isNull(users)) {
+
+                //根据Username生成token
+                String token = JwtUtils.generateToken(users.getUsername());
+
+                //保存token
+                request.getSession().setAttribute("token", token);
+
+                Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
+
+                Claims claims = JwtUtils.getClaimsByToken(token);//解密token
+
+                logger.info("查询成功");
+                logger.info("通过用户名生成token:{}", token);
+                logger.info("解密token:{}", claims);
+                logger.info("设置token键值对:{}", r);
+                logger.info("过期时间:{}", claims.getExpiration());
+                logger.info("登录成功");
+
+                //存储操作记录
+                T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
+                return Return.ok().data("token", token);
+            }
+            logger.info("登录失败：逻辑");
+            return Return.error();
+        }
+
+        logger.info("登录失败：条件");
+        return Return.error();
     }
 
     /**
@@ -226,16 +216,17 @@ public class UserController {
      */
     @PostMapping("/user_userStyle")
     public Return user_userStyle(@RequestBody User user) {
-        System.out.print("-----------------user_userStyle-----------------");
+        logger.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
+
         if (T.isNull(user)) {
-            System.out.println("查询多表用户信息条件为空");
-            return Return.error();
+            List<User> list = userServiceImpl.selectStyle(user);
+            logger.info("查询成功：{}", list);
+            T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
+            return Return.ok();
         }
-        T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
-        System.out.println("访问:一对多查询(userStyle)，条件：" + user);
-        List<User> list = userServiceImpl.selectStyle(user);
-        System.out.println("查询多表用户信息查询成功：" + list);
-        return Return.ok();
+        logger.info("查询失败：条件");
+        return Return.error();
+
     }
 
     /**
