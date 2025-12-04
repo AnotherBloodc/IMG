@@ -38,6 +38,9 @@ public class User implements Serializable {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean effect;
 
+    @Column(nullable = false, columnDefinition = "1")
+    private String role;
+
     //Transient:标识一个数据库没有的字段，定义后MybatisPlus和JPA都不会去数据库中查询这个字段
     @TableField(exist = false)
     @Transient

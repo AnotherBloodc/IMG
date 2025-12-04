@@ -31,9 +31,8 @@
             <if test="id != null">
                 and `User`.`Id` = #{id}
             </if>
-            <if test="username != null">
                 and `User`.`Username` = #{username}
-            </if>
+                and `User`.`Password` = #{password}
             <if test="email != null">
                 and `User`.`Email` = #{email}
             </if>

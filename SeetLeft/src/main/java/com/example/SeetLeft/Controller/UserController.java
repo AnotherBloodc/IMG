@@ -143,16 +143,16 @@ public class UserController {
      */
     @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public Return select(@RequestBody(required = false) User user) {
-        logger.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
+        logger.info("\n\n用户查询(post/){}", "\n条件" + user + "\n结果=");
         if (T.isNull(user)) {
             List<User> list = userServiceImpl.list(user);
             if (T.isNull(list)) {
                 logger.info("查询成功");
                 T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-                return Return.ok();
+                return Return.ok().data("list", list);
             }
-            logger.info("查询成功:不存在");
-            return Return.ok();
+            logger.info("查询成功:无符合条件数据");
+            return Return.ok().data("list", list);
         }
         logger.info("查询失败:条件");
         return Return.error();

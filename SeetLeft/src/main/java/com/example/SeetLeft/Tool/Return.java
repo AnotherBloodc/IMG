@@ -10,7 +10,7 @@ public class Return {
     private Boolean success;
     private String message;
     private Integer code;
-    private Map<String, String> data = new HashMap<>();
+    private Map<String, Object> returns = new HashMap<>();
 
     //重写构造方法，将构造方法私有化
     private Return() {
@@ -49,9 +49,15 @@ public class Return {
      * @param value 数据的值
      * @return 返回当前Result对象，支持链式调用
      */
-    public Return data(String key, String value) {
-        this.data.put(key, value);
+    public Return data(String key, Object value) {
+        this.returns.put(key, value);
         return this;
     }
+
+    public Return data(String key, Object[] value) {
+        this.returns.put(key, value);
+        return this;
+    }
+
 
 }

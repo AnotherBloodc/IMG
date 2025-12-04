@@ -998,7 +998,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="288" parent="1" name="another">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-28.01:54:02</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-12-03.00:19:27</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_unicode_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="backdnd">
@@ -1016,7 +1016,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="293" parent="1" name="seetpro">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-28.01:54:02</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-12-03.00:19:27</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="294" parent="1" name="spring_boot">
@@ -3453,7 +3453,7 @@ job_group</ColNames>
       <UnderlyingIndexName>Email</UnderlyingIndexName>
     </key>
     <column id="721" parent="337" name="Id">
-      <AutoIncrement>24</AutoIncrement>
+      <AutoIncrement>4</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
@@ -3485,69 +3485,75 @@ job_group</ColNames>
       <Position>6</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <index id="727" parent="337" name="PRIMARY">
+    <column id="727" parent="337" name="Role">
+      <DefaultExpression>1</DefaultExpression>
+      <NotNull>1</NotNull>
+      <Position>7</Position>
+      <StoredType>tinyint|0s</StoredType>
+    </column>
+    <index id="728" parent="337" name="PRIMARY">
       <ColNames>Id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="728" parent="337" name="Username">
+    <index id="729" parent="337" name="Username">
       <ColNames>Username</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="729" parent="337" name="Email">
+    <index id="730" parent="337" name="Email">
       <ColNames>Email</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="730" parent="337" name="PRIMARY">
+    <key id="731" parent="337" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="731" parent="337" name="Username">
+    <key id="732" parent="337" name="Username">
       <UnderlyingIndexName>Username</UnderlyingIndexName>
     </key>
-    <key id="732" parent="337" name="Email">
+    <key id="733" parent="337" name="Email">
       <UnderlyingIndexName>Email</UnderlyingIndexName>
     </key>
-    <column id="733" parent="338" name="Id">
+    <column id="734" parent="338" name="Id">
       <AutoIncrement>316</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="734" parent="338" name="Userid">
+    <column id="735" parent="338" name="Userid">
       <Position>2</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="735" parent="338" name="Datetime">
+    <column id="736" parent="338" name="Datetime">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="736" parent="338" name="Name">
+    <column id="737" parent="338" name="Name">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="737" parent="338" name="User_Style_User_Id_Fk">
+    <foreign-key id="738" parent="338" name="User_Style_User_Id_Fk">
       <ColNames>Userid</ColNames>
       <RefColNames>Id</RefColNames>
       <RefTableName>user</RefTableName>
     </foreign-key>
-    <index id="738" parent="338" name="PRIMARY">
+    <index id="739" parent="338" name="PRIMARY">
       <ColNames>Id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="739" parent="338" name="User_Style_User_Id_Fk">
+    <index id="740" parent="338" name="User_Style_User_Id_Fk">
       <ColNames>Userid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="740" parent="338" name="PRIMARY">
+    <key id="741" parent="338" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

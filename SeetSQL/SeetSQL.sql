@@ -13,14 +13,15 @@ create table if not exists `Seetpro`.`User`
     `Password` varchar(255) not null,/* 密码 */
     `Email`    varchar(255) not null unique,/* 邮箱 */
     `Datetime` datetime     not null default current_timestamp(),/* 创建时间 */
-    `Effect`   boolean      not null default true /* 是否有效 */
+    `Effect`   boolean      not null default true, /* 是否有效 */
+    `Role`     tinyint      not null default 1 /* 是否有效 */
 );
 
 /* 添加默认数据 */
-insert into `Seetpro`.`User` (`Username`, `Password`, `Email`, `Datetime`)
-values ('admin', 'admin123', 'admin@example.com', current_timestamp),
-       ('user1', 'password1', 'user1@example.com', current_timestamp),
-       ('user2', 'password2', 'user2@example.com', current_timestamp);
+insert into `Seetpro`.`User` (`Username`, `Password`, `Email`)
+values ('admin', 'admin123', 'admin@example.com'),
+       ('user1', 'password1', 'user1@example.com'),
+       ('user2', 'password2', 'user2@example.com');
 
 
 create table if not exists `Seetpro`.`User_Style`

@@ -1,73 +1,82 @@
 <template>
 
-  <div class="Login2">
+  <div class="Login2_CSS">
 
-    <div class="Login2_toggle" :class="{ 'Log': Log }">
+    <div class="Login2">
 
-      <div class="Login2_toggle_panel">
+      <div class="Login2_toggle" :class="{ 'Log': Log }">
 
-        <h1>Hello,Welcome</h1>
+        <div class="Login2_toggle_panel">
 
-        <p>Don 't have an account?</p>
+          <h1>Hello,Welcome</h1>
 
-        <button @click="toLogin" :class="{'LogGotBut':LogGotBut }">{{ Texts }}</button>
+          <p>Don 't have an account?</p>
+
+          <button @click="toLogin" :class="{'LogGotBut':LogGotBut }">{{ Texts }}</button>
+
+        </div>
+
+      </div>
+
+      <div class="Login2_Style" :class="{ 'Log': Log }">
+
+        <div id="Login2_Style_DivID" :class="{ 'Logins': Logins }">
+
+          <h1>{{ Text }}</h1>
+
+          <div>
+            <input type="text" placeholder="Username (Phone or Email)" v-model="user.username" required>
+            <i class='bx  bx-user'></i>
+          </div>
+
+          <div>
+            <input type="password" placeholder="Password" v-model="user.password" required>
+            <i class='bx  bx-lock'></i>
+          </div>
+
+          <a href="#">Forgot Password?</a>
+
+          <button type="submit" @click="Login">{{ Text }}</button>
+
+          <p>or login with social platform</p>
+
+          <div id="Login2_Style_icons">
+            <a href="#">
+              <i class='bxl  bx-google'></i>
+            </a>
+            <a href="#">
+              <i class='bxl  bx-facebook-circle'></i>
+            </a>
+            <a href="#">
+              <i class='bxl  bx-github'></i>
+            </a>
+            <a href="#">
+              <i class='bxl  bx-steam'></i>
+            </a>
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-    <div class="Login2_Style" :class="{ 'Log': Log }">
-
-      <form action="" :class="{ 'Logins': Logins }">
-
-        <h1>{{ Text }}</h1>
-
-        <div>
-          <input type="text" placeholder="Username (Phone or Email)" v-model="user.username" required>
-          <i class='bx  bx-user'></i>
-        </div>
-
-        <div>
-          <input type="password" placeholder="Password" v-model="user.password" required>
-          <i class='bx  bx-lock'></i>
-        </div>
-
-        <a href="#">Forgot Password?</a>
-
-        <button type="submit" @click="Login">{{ Text }}</button>
-
-        <p>or login with social platform</p>
-
-        <div id="Login2_Style_icons">
-          <a href="#">
-            <i class='bxl  bx-google'></i>
-          </a>
-          <a href="#">
-            <i class='bxl  bx-facebook-circle'></i>
-          </a>
-          <a href="#">
-            <i class='bxl  bx-github'></i>
-          </a>
-          <a href="#">
-            <i class='bxl  bx-steam'></i>
-          </a>
-        </div>
-
-      </form>
-
-    </div>
-
   </div>
-
 </template>
 
-<style>
+<style scoped>
 @import "../assets/css/Login2.css";
 </style>
 
 <script>
+import {useRouter} from 'vue-router'
+
 export default {
   name: "Login2",
+  setup() {
+    const router = useRouter()
+    return {router}
+  },
   created: function () {
     console.log("Login2.vue被创建时")
   },
@@ -113,9 +122,11 @@ export default {
       this.axiosTool.post("/user/login", this.user).then(res => {
         if (res.data.message === "1") {
           alert("登录成功")
-          this.router.push("/AboutView");
+          this.router.push("/Header");
         } else if (res.data.message === "0") {
           alert("登录失败")
+        } else {
+          alert("系统错误")
         }
       })
     }

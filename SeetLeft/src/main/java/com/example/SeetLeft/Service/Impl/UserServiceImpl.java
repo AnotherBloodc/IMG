@@ -125,11 +125,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapperPro, User> implements
      * @return 获取单用户MybatisPlus
      */
     public User getOne(User user) {
-        if (T.isNull(user)) {
+        if (T.isNull(user, user.getUsername(), user.getPassword())) {
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
             queryWrapper
                     .eq(T.isNull(user.getId()), "id", user.getId())
-                    .eq(T.isNull(user.getUsername()), "username", user.getUsername())
+                    .eq("username", user.getUsername())
+                    .eq("password", user.getPassword())
                     .eq(T.isNull(user.getEmail()), "email", user.getEmail());
             return this.getOne(queryWrapper);
         }
