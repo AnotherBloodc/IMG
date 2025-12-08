@@ -85,6 +85,7 @@ export default {
       user: {
         username: null,
         password: null,
+        token: null
       },
       Text: "Login",
       Texts: "Register",
@@ -119,16 +120,37 @@ export default {
       }
     },
     Login() {
-      this.axiosTool.post("/user/login", this.user).then(res => {
-        if (res.data.message === "1") {
-          alert("登录成功")
-          this.router.push("/Header");
-        } else if (res.data.message === "0") {
-          alert("登录失败")
-        } else {
-          alert("系统错误")
-        }
-      })
+      this.token = localStorage.getItem("token");
+      if (this.token != null) {
+        this.axiosTool.get("/user/Tokens", {
+          headers: {Authorization: `Bearer ${this.token}`}
+        }).then(res => {
+          if (res.data.message === "1") {
+            alert("登录成功")
+            this.router.push("/Header");
+          } else if (res.data.message === "0") {
+            localStorage.removeItem("token");
+            alert("登录失败")
+          } else {
+            localStorage.removeItem("token");
+            alert("系统错误")
+          }
+        })
+      } else {
+        this.axiosTool.post("/user/login", this.user).then(res => {
+          if (res.data.message === "1") {
+            alert("登录成功")
+            this.token = res.data.returns.token;
+            // 保存数据
+            localStorage.setItem("token", this.token);
+            this.router.push("/Header");
+          } else if (res.data.message === "0") {
+            alert("登录失败")
+          } else {
+            alert("系统错误")
+          }
+        })
+      }
     }
   }
 }

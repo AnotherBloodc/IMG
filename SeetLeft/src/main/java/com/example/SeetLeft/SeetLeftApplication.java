@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 @SpringBootApplication
 public class SeetLeftApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(SeetLeftApplication.class, args);
     }

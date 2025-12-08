@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 //@RestController：类，这个类下的所有方法返回值的返回形式设置成HTTP响应体形式返回
@@ -203,6 +204,31 @@ public class UserController {
         }
 
         logger.info("登录失败：条件");
+        return Return.error();
+    }
+
+    @GetMapping("/tokens")
+    public Return Tokens(@RequestBody String token) {
+        logger.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
+        if (T.isNull(token)) {
+            Claims claims = JwtUtils.getClaimsByToken(token);//解密token
+            if (claims.getExpiration().before(new Date())) {
+                // token已过期
+                logger.info("Token已过期");
+                return Return.error();
+            }
+            if (JwtUtils.validateToken(token)) {
+                logger.info("Token无效");
+                return Return.error();
+            }
+            logger.info("Token有效");
+            User user = new User();
+            user.setUsername(claims.get("username").toString());
+            user.setPassword(claims.get("password").toString());
+            User users = userServiceImpl.getOne(user);
+            return Return.ok().data("users", users);
+        }
+        logger.info("解析失败：条件");
         return Return.error();
     }
 
