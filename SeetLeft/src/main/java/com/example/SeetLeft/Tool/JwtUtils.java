@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 //JWT工具类
+@Slf4j
 public class JwtUtils {
 
     //token有效期,单位：毫秒
@@ -26,7 +28,6 @@ public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     //从yaml文件中jwt.secret中读取数据
-    @Value("${jwt.secret}")
     private static String jwtSecret;
 
 
@@ -39,16 +40,20 @@ public class JwtUtils {
     public static String generateToken(String username) {
         //创建时间对象
         Date now = new Date();
+
         //设置token的失效时间，用now.getTime()获取当前时间戳，设置置未来何时到期
         Date expireDate = new Date(now.getTime() + expire);
+
         //调用builder()方法，生成token
-        return Jwts.builder()
+        String token = Jwts.builder()
                 //.setHeaderParam("typ", "JWT")//设置token类型
                 .subject(username)//设置token的载荷，主体
                 .issuedAt(now)//设置token的生效时间
                 .expiration(expireDate)//设置token过期时间
                 .signWith(key)//设置签名算法和密钥
                 .compact();//生成token
+        log.info("生成token成功:{}", token);
+        return token;
     }
 
     //解析token
@@ -57,13 +62,14 @@ public class JwtUtils {
                 .verifyWith(key)//设置签名算法和密钥，查看token有没有被篡改
                 .build()//获取token并解析
                 .parseSignedClaims(token);//提供一个字符串进行解析得到一个Jws类型的对象claims
+        log.info("解析token成功:{}", claims);
         return claims.getPayload();
     }
 
     //验证令牌有效期
     public static boolean validateToken(String token) {
         try {
-            getClaimsByToken(token);
+            logger.error("token验证成功{}", getClaimsByToken(token));
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             logger.error("token验证失败", e);

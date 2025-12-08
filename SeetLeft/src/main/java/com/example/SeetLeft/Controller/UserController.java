@@ -9,8 +9,7 @@ import com.example.SeetLeft.Tool.ToolController;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,9 +31,8 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Resource
     private UserServiceImpl userServiceImpl;
@@ -51,7 +49,7 @@ public class UserController {
      */
     @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
     public Return Default(@RequestParam(required = false) String name) {
-        logger.info("访问了默认页面{}", name);
+        log.info("访问了默认页面{}", name);
         return Return.ok();
     }
 
@@ -64,24 +62,24 @@ public class UserController {
      */
     @PostMapping("/register")
     public Return register(@RequestBody User user) {
-        logger.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
+        log.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
         //判断注册条件是否合法
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
 
             //判断用户是否存在
             if (T.isNull(userServiceImpl.list(user))) {
-                logger.info("注册失败:用户已存在");
+                log.info("注册失败:用户已存在");
                 return Return.error();
             }
 
             //判断注册是否成功
             if (T.isNull(userServiceImpl.insert(user))) {
-                logger.info("注册成功");
+                log.info("注册成功");
                 return Return.ok();
             }
 
         }
-        logger.info("注册失败：条件\n");
+        log.info("注册失败：条件\n");
         return Return.error();
     }
 
@@ -96,18 +94,18 @@ public class UserController {
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public Return Delete(@PathVariable int id) {
-        logger.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
+        log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
         //判断删除条件ID是否合法
         if (T.isNull(id)) {
             if (T.isNull(userServiceImpl.delete(id))) {
-                logger.info("删除成功");
+                log.info("删除成功");
                 T.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
                 return Return.ok();
             }
-            logger.info("删除失败:逻辑");
+            log.info("删除失败:逻辑");
             return Return.error();
         }
-        logger.info("删除失败:条件\n");
+        log.info("删除失败:条件\n");
         return Return.error();
     }
 
@@ -120,18 +118,18 @@ public class UserController {
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public Return Update(@RequestBody(required = false) User user) {
-        logger.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
+        log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
         //非空验证
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
             if (T.isNull(userServiceImpl.update(user))) {
-                logger.info("修改成功");
+                log.info("修改成功");
                 T.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
                 return Return.ok();
             }
-            logger.info("修改失败:逻辑");
+            log.info("修改失败:逻辑");
             return Return.error();
         }
-        logger.info("修改失败:条件");
+        log.info("修改失败:条件");
         return Return.error();
     }
 
@@ -144,18 +142,18 @@ public class UserController {
      */
     @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public Return select(@RequestBody(required = false) User user) {
-        logger.info("\n\n用户查询(post/){}", "\n条件" + user + "\n结果=");
+        log.info("\n\n用户查询(post/){}", "\n条件" + user + "\n结果=");
         if (T.isNull(user)) {
             List<User> list = userServiceImpl.list(user);
             if (T.isNull(list)) {
-                logger.info("查询成功");
+                log.info("查询成功");
                 T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
                 return Return.ok().data("list", list);
             }
-            logger.info("查询成功:无符合条件数据");
+            log.info("查询成功:无符合条件数据");
             return Return.ok().data("list", list);
         }
-        logger.info("查询失败:条件");
+        log.info("查询失败:条件");
         return Return.error();
     }
 
@@ -169,7 +167,7 @@ public class UserController {
      */
     @PostMapping("/login")
     public Return login(@RequestBody User user, HttpServletRequest request) {
-        logger.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
+        log.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
             //根据条件查询此用户
@@ -178,57 +176,65 @@ public class UserController {
             //判断查询出来的用户是否合法
             if (T.isNull(users)) {
 
-                //根据Username生成token
+                //保存token数据
                 String token = JwtUtils.generateToken(users.getUsername());
+                log.info("根据Username生成token{}", token);
 
-                //保存token
+                //讲token保存到session中，真实的token数据已经保存在上方，这里保存的是指向真实数据的Session ID
                 request.getSession().setAttribute("token", token);
 
                 Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
 
                 Claims claims = JwtUtils.getClaimsByToken(token);//解密token
 
-                logger.info("查询成功");
-                logger.info("通过用户名生成token:{}", token);
-                logger.info("解密token:{}", claims);
-                logger.info("设置token键值对:{}", r);
-                logger.info("过期时间:{}", claims.getExpiration());
-                logger.info("登录成功");
+                log.info("查询成功");
+                log.info("通过用户名生成token:{}", token);
+                log.info("解密token:{}", claims);
+                log.info("设置token键值对:{}", r);
+                log.info("过期时间:{}", claims.getExpiration());
+                log.info("登录成功");
 
                 //存储操作记录
                 T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
                 return Return.ok().data("token", token);
             }
-            logger.info("登录失败：逻辑");
+            log.info("登录失败：逻辑");
             return Return.error();
         }
 
-        logger.info("登录失败：条件");
+        log.info("登录失败：条件");
         return Return.error();
     }
 
-    @GetMapping("/tokens")
-    public Return Tokens(@RequestBody String token) {
-        logger.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
+    /**
+     * 获取token信息：JSON<br/>
+     * 注解：@GetMapping: 用于设置传递过来的Get请求的访问路径
+     *
+     * @param token 用户token
+     * @return 登录操作的结果状态码
+     */
+    @GetMapping("/Tokens")
+    public Return Tokens(@RequestHeader("token") String token) {
+        log.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
         if (T.isNull(token)) {
             Claims claims = JwtUtils.getClaimsByToken(token);//解密token
             if (claims.getExpiration().before(new Date())) {
                 // token已过期
-                logger.info("Token已过期");
+                log.info("Token已过期");
                 return Return.error();
             }
             if (JwtUtils.validateToken(token)) {
-                logger.info("Token无效");
+                log.info("Token无效");
                 return Return.error();
             }
-            logger.info("Token有效");
+            log.info("Token有效");
             User user = new User();
             user.setUsername(claims.get("username").toString());
             user.setPassword(claims.get("password").toString());
             User users = userServiceImpl.getOne(user);
             return Return.ok().data("users", users);
         }
-        logger.info("解析失败：条件");
+        log.info("解析失败：条件");
         return Return.error();
     }
 
@@ -240,16 +246,16 @@ public class UserController {
      */
     @PostMapping("/user_userStyle")
     public Return user_userStyle(@RequestBody User user) {
-        logger.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
+        log.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user)) {
             List<User> list = userServiceImpl.selectStyle(user);
-            logger.info("查询成功：{}", list);
+            log.info("查询成功：{}", list);
             System.out.println(list);
             T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
             return Return.ok();
         }
-        logger.info("查询失败：条件");
+        log.info("查询失败：条件");
         return Return.error();
 
     }
@@ -262,16 +268,16 @@ public class UserController {
      */
     @PostMapping("/pro")
     public Return pro(@RequestBody User user) {
-        logger.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
+        log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
         if (T.isNull(user)) {
 
             T.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
             List<User> userList = userServiceImpl.list(user);
-            logger.info("查询成功PRO：{}", userList);
+            log.info("查询成功PRO：{}", userList);
             return Return.ok();
 
         }
-        logger.info("查询失败PRO：条件");
+        log.info("查询失败PRO：条件");
         return Return.error();
     }
 
@@ -284,14 +290,14 @@ public class UserController {
      */
     @GetMapping("/Page")
     public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
-        logger.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
+        log.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
         if (T.isNull(pageNum + pageSize)) {
             T.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
-            logger.info("分页查询成功{}", ipage);
+            log.info("分页查询成功{}", ipage);
             return Return.ok();
         }
-        logger.info("分页查询失败：条件");
+        log.info("分页查询失败：条件");
         return Return.error();
     }
 
@@ -305,14 +311,14 @@ public class UserController {
      */
     @PostMapping("/postFile")
     public Return postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        logger.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
+        log.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
         if (T.isNull(file)) {
             String s = T.saveFile(name, file, request);//保存文件
-            logger.info("上传文件成功{}", s);
+            log.info("上传文件成功{}", s);
             T.usetStyle("访问：postFile,上传文件");//存储操作记录
             return Return.ok();
         }
-        logger.info("上传文件失败：条件，file为空");
+        log.info("上传文件失败：条件，file为空");
         return Return.error();
     }
 }

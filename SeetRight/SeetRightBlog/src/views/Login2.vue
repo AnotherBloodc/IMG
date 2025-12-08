@@ -70,16 +70,10 @@
 
 <script>
 import {useRouter} from 'vue-router'
+import {onMounted} from 'vue'
 
 export default {
   name: "Login2",
-  setup() {
-    const router = useRouter()
-    return {router}
-  },
-  created: function () {
-    console.log("Login2.vue被创建时")
-  },
   data: function () {
     return {
       user: {
@@ -93,6 +87,33 @@ export default {
       Registers: false,  // 添加控制元素显示状态的数据
       Log: false,
       LogGotBut: false,//欢迎页面按钮
+    }
+  },
+  beforeUnmount() {
+    localStorage.clear();
+  },
+  setup() {
+    const router = useRouter()
+    return {router}
+  },
+  created: function () {
+    alert("Login2.vue被创建时");
+    alert(this.token);
+    localStorage.clear();
+    if (this.token != null) {
+      this.axiosTool.get("/user/Tokens", {
+        headers: {token: this.token}
+      }).then(res => {
+        if (res.data.message === "1") {
+          alert("登录成功")
+          this.router.push("/Header");
+        } else if (res.data.message === "0") {
+          alert("登录失败")
+        } else {
+          alert("系统错误")
+        }
+        localStorage.removeItem("token");
+      })
     }
   },
   methods: {
@@ -120,38 +141,20 @@ export default {
       }
     },
     Login() {
-      this.token = localStorage.getItem("token");
-      if (this.token != null) {
-        this.axiosTool.get("/user/Tokens", {
-          headers: {Authorization: `Bearer ${this.token}`}
-        }).then(res => {
-          if (res.data.message === "1") {
-            alert("登录成功")
-            this.router.push("/Header");
-          } else if (res.data.message === "0") {
-            localStorage.removeItem("token");
-            alert("登录失败")
-          } else {
-            localStorage.removeItem("token");
-            alert("系统错误")
-          }
-        })
-      } else {
-        this.axiosTool.post("/user/login", this.user).then(res => {
-          if (res.data.message === "1") {
-            alert("登录成功")
-            this.token = res.data.returns.token;
-            // 保存数据
-            localStorage.setItem("token", this.token);
-            this.router.push("/Header");
-          } else if (res.data.message === "0") {
-            alert("登录失败")
-          } else {
-            alert("系统错误")
-          }
-        })
-      }
-    }
+      this.axiosTool.post("/user/login", this.user).then(res => {
+        if (res.data.message === "1") {
+          alert("登录成功")
+          this.token = res.data.returns.token;
+          // 保存数据在浏览器本地
+          localStorage.setItem("token", this.token);
+          this.router.push("/Header");
+        } else if (res.data.message === "0") {
+          alert("登录失败")
+        } else {
+          alert("系统错误")
+        }
+      })
+    },
   }
 }
 </script>
