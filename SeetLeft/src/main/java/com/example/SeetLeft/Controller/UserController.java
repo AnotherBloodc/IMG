@@ -164,7 +164,7 @@ public class UserController {
      * @return 登录操作的结果状态码
      */
     @PostMapping("/login")
-    public Return login(@RequestBody User user, HttpServletRequest request) {
+    public Return login(@RequestBody User user) {
         log.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
@@ -198,15 +198,18 @@ public class UserController {
      * 获取token信息：JSON<br/>
      * 注解：@GetMapping: 用于设置传递过来的Get请求的访问路径
      *
-     * @param token 用户token
+     * @param request 用户token
      * @return 登录操作的结果状态码
      */
     @GetMapping("/Tokens")
-    public Return Tokens(@RequestHeader("token") String token) {
+    public Return Tokens(HttpServletRequest request) {
+        String token = request.getHeader("token");
         log.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
         if (T.isNull(token)) {
             Claims claims = JwtUtils.getClaimsByToken(token);//解析token
+            //非空验证
             if (T.isNull(claims)) {
+                //noinspection ConstantConditions
                 if (!claims.getExpiration().before(new Date())) {
                     log.info("解析成功：Token有效");
                     log.info("解析token值:{}", claims);
