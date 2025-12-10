@@ -67,6 +67,10 @@ public class ToolController {
         return false;
     }
 
+    public boolean isNull(String obj) {
+        return obj != null;
+    }
+
     public boolean isNull(Integer i) {
         return i != null && i > 0;
     }

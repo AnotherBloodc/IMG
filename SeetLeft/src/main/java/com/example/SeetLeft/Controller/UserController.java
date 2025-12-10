@@ -164,7 +164,7 @@ public class UserController {
      * @return 登录操作的结果状态码
      */
     @PostMapping("/login")
-    public Return login(@RequestBody User user) {
+    public Return login(@RequestBody User user, @RequestParam(value = "token", required = false) String token) {
         log.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
@@ -174,8 +174,13 @@ public class UserController {
             //判断查询出来的用户是否合法
             if (T.isNull(users)) {
 
-                //生成 token
-                String token = JwtUtils.generateToken(users.getUsername());
+                //如果token存在而且过期就重新创建
+                //noinspection ConstantConditions
+                if (!T.isNull(token) || (T.isNull(token) && JwtUtils.getClaimsByToken(token).getExpiration().before(new Date()))) {
+                    log.info("token不存在或者是存在，但过期了");
+                    token = JwtUtils.generateToken(users.getUsername());
+                }
+
                 Return r = Return.ok().data("token", token).data("username", user.getUsername());//设置token的键值对
 
                 log.info("根据Username生成token成功:{}", token);

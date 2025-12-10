@@ -138,7 +138,9 @@ export default {
       }
     },
     Login() {
-      this.axiosTool.post("/user/login", this.user).then(res => {
+      this.axiosTool.post("/user/login", this.user, {
+        params: {token: this.token}
+      }).then(res => {
         if (res.data.message === "1") {
           alert("登录成功")
           this.token = res.data.returns.token;
