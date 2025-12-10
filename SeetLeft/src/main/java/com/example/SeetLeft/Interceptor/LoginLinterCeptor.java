@@ -8,7 +8,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 //HandlerInterceptor：Spring MVC框架提供的拦截器接口
 @Slf4j
 @Component
-public class Loginlnterceptor implements HandlerInterceptor {
+public class LoginLinterCeptor implements HandlerInterceptor {
 
     @Resource
     private ToolController T;
@@ -31,7 +31,7 @@ public class Loginlnterceptor implements HandlerInterceptor {
      * @throws Exception 异常
      */
     @Override
-    public boolean preHandle(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
         //从请求头中获取 Authorization 字段的值，通常用于传递 JWT Token 或其他认证凭证
         String token = request.getHeader("Authorization");
 

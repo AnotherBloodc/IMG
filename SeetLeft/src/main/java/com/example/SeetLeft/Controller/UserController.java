@@ -98,7 +98,7 @@ public class UserController {
         if (T.isNull(id)) {
             if (T.isNull(userServiceImpl.delete(id))) {
                 log.info("删除成功");
-                T.usetStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
+                T.userStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
                 return Return.ok();
             }
             log.info("删除失败:逻辑");
@@ -122,7 +122,7 @@ public class UserController {
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
             if (T.isNull(userServiceImpl.update(user))) {
                 log.info("修改成功");
-                T.usetStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
+                T.userStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
                 return Return.ok();
             }
             log.info("修改失败:逻辑");
@@ -146,7 +146,7 @@ public class UserController {
             List<User> list = userServiceImpl.list(user);
             if (T.isNull(list)) {
                 log.info("查询成功");
-                T.usetStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+                T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
                 return Return.ok().data("list", list);
             }
             log.info("查询成功:无符合条件数据");
@@ -164,7 +164,7 @@ public class UserController {
      * @return 登录操作的结果状态码
      */
     @PostMapping("/login")
-    public Return login(@RequestBody User user, HttpServletRequest request) {
+    public Return login(@RequestBody User user) {
         log.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
@@ -183,7 +183,7 @@ public class UserController {
                 log.info("登录成功");
 
                 //存储操作记录
-                T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
+                T.userStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
                 return r;
             }
             log.info("查询失败：数据为空");
@@ -198,15 +198,18 @@ public class UserController {
      * 获取token信息：JSON<br/>
      * 注解：@GetMapping: 用于设置传递过来的Get请求的访问路径
      *
-     * @param token 用户token
+     * @param request 用户token
      * @return 登录操作的结果状态码
      */
     @GetMapping("/Tokens")
-    public Return Tokens(@RequestHeader("token") String token) {
+    public Return Tokens(HttpServletRequest request) {
+        String token = request.getHeader("token");
         log.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
         if (T.isNull(token)) {
             Claims claims = JwtUtils.getClaimsByToken(token);//解析token
+            //非空验证
             if (T.isNull(claims)) {
+                //noinspection ConstantConditions
                 if (!claims.getExpiration().before(new Date())) {
                     log.info("解析成功：Token有效");
                     log.info("解析token值:{}", claims);
@@ -242,7 +245,7 @@ public class UserController {
             List<User> list = userServiceImpl.selectStyle(user);
             log.info("查询成功：{}", list);
             System.out.println(list);
-            T.usetStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
+            T.userStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
             return Return.ok();
         }
         log.info("查询失败：条件");
@@ -261,7 +264,7 @@ public class UserController {
         log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
         if (T.isNull(user)) {
 
-            T.usetStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
+            T.userStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
             List<User> userList = userServiceImpl.list(user);
             log.info("查询成功PRO：{}", userList);
             return Return.ok();
@@ -282,7 +285,7 @@ public class UserController {
     public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         log.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
         if (T.isNull(pageNum + pageSize)) {
-            T.usetStyle("访问：Page,分页查询用户信息");//存储操作记录
+            T.userStyle("访问：Page,分页查询用户信息");//存储操作记录
             IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
             log.info("分页查询成功{}", ipage);
             return Return.ok();
@@ -305,7 +308,7 @@ public class UserController {
         if (T.isNull(file)) {
             String s = T.saveFile(name, file, request);//保存文件
             log.info("上传文件成功{}", s);
-            T.usetStyle("访问：postFile,上传文件");//存储操作记录
+            T.userStyle("访问：postFile,上传文件");//存储操作记录
             return Return.ok();
         }
         log.info("上传文件失败：条件，file为空");
