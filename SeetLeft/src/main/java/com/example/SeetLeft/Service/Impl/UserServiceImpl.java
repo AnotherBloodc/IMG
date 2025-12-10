@@ -11,6 +11,7 @@ import com.example.SeetLeft.Mapper.TableS.User_UserStyleMapper;
 import com.example.SeetLeft.MapperPro.UserMapperPro;
 import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.ToolController;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -134,7 +135,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapperPro, User> implements
                     .eq(T.isNull(user.getEmail()), "email", user.getEmail());
             return this.getOne(queryWrapper);
         }
-        logger.info("登录失败：用户不存在");
+        return null;
+    }
+
+    /**
+     * 获取单用户MybatisPlus验证Token
+     *
+     * @return 获取单用户MybatisPlus
+     */
+    public User getTokenOne(Claims claims) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        String username = claims.getSubject();
+        if (T.isNull(claims, username)) {
+            queryWrapper.eq("username", username);
+            return this.getOne(queryWrapper);
+        }
         return null;
     }
 

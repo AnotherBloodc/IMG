@@ -998,7 +998,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="288" parent="1" name="another">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-12-08.00:26:19</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-12-10.03:01:47</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_unicode_ci</CollationName>
     </schema>
     <schema id="289" parent="1" name="backdnd">
@@ -1016,7 +1016,7 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="293" parent="1" name="seetpro">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-12-08.00:26:19</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-12-10.03:01:47</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="294" parent="1" name="spring_boot">
@@ -3453,7 +3453,7 @@ job_group</ColNames>
       <UnderlyingIndexName>Email</UnderlyingIndexName>
     </key>
     <column id="721" parent="337" name="Id">
-      <AutoIncrement>3</AutoIncrement>
+      <AutoIncrement>4</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
@@ -3518,7 +3518,7 @@ job_group</ColNames>
       <UnderlyingIndexName>Email</UnderlyingIndexName>
     </key>
     <column id="734" parent="338" name="Id">
-      <AutoIncrement>316</AutoIncrement>
+      <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>

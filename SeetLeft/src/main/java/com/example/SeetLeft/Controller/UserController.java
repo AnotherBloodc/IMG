@@ -83,7 +83,6 @@ public class UserController {
         return Return.error();
     }
 
-
     /**
      * 删除用户信息：ID <br/>
      * 注解：@PathVariable：用于将请求体中的变量值绑定到方法的参数上
@@ -157,7 +156,6 @@ public class UserController {
         return Return.error();
     }
 
-
     /**
      * 登录用户：JSON<br/>
      * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
@@ -176,29 +174,19 @@ public class UserController {
             //判断查询出来的用户是否合法
             if (T.isNull(users)) {
 
-                //保存token数据
+                //生成 token
                 String token = JwtUtils.generateToken(users.getUsername());
-                log.info("根据Username生成token{}", token);
+                Return r = Return.ok().data("token", token).data("username", user.getUsername());//设置token的键值对
 
-                //讲token保存到session中，真实的token数据已经保存在上方，这里保存的是指向真实数据的Session ID
-                request.getSession().setAttribute("token", token);
-
-                Return r = Return.ok().data(user.getUsername(), token);//设置token的键值对
-
-                Claims claims = JwtUtils.getClaimsByToken(token);//解密token
-
-                log.info("查询成功");
-                log.info("通过用户名生成token:{}", token);
-                log.info("解密token:{}", claims);
+                log.info("根据Username生成token成功:{}", token);
                 log.info("设置token键值对:{}", r);
-                log.info("过期时间:{}", claims.getExpiration());
                 log.info("登录成功");
 
                 //存储操作记录
                 T.usetStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
-                return Return.ok().data("token", token);
+                return r;
             }
-            log.info("登录失败：逻辑");
+            log.info("查询失败：数据为空");
             return Return.error();
         }
 
@@ -217,22 +205,24 @@ public class UserController {
     public Return Tokens(@RequestHeader("token") String token) {
         log.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
         if (T.isNull(token)) {
-            Claims claims = JwtUtils.getClaimsByToken(token);//解密token
-            if (claims.getExpiration().before(new Date())) {
-                // token已过期
-                log.info("Token已过期");
+            Claims claims = JwtUtils.getClaimsByToken(token);//解析token
+            if (T.isNull(claims)) {
+                if (!claims.getExpiration().before(new Date())) {
+                    log.info("解析成功：Token有效");
+                    log.info("解析token值:{}", claims);
+                    log.info("解析token过期时间:{}", claims.getExpiration());
+                    User user = userServiceImpl.getTokenOne(claims);
+                    if (T.isNull(user, user.getId())) {
+                        return Return.ok().data("user", user);
+                    }
+                    log.info("查询失败：数据不存在");
+                }
+                log.info("解析失败：Token过期");
                 return Return.error();
             }
-            if (JwtUtils.validateToken(token)) {
-                log.info("Token无效");
-                return Return.error();
-            }
-            log.info("Token有效");
-            User user = new User();
-            user.setUsername(claims.get("username").toString());
-            user.setPassword(claims.get("password").toString());
-            User users = userServiceImpl.getOne(user);
-            return Return.ok().data("users", users);
+            log.info("解析失败：Token不正确");
+            return Return.error();
+
         }
         log.info("解析失败：条件");
         return Return.error();

@@ -19,13 +19,10 @@ import java.util.Date;
 public class JwtUtils {
 
     //token有效期,单位：毫秒
-    private static final long expire = 60 * 1000;
+    private static final long expire = 60 * 1000 * 2;
 
     //32位密钥
     private static final SecretKey key = Jwts.SIG.HS512.key().build();
-
-    //日志对象
-    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     //从yaml文件中jwt.secret中读取数据
     private static String jwtSecret;
@@ -45,35 +42,26 @@ public class JwtUtils {
         Date expireDate = new Date(now.getTime() + expire);
 
         //调用builder()方法，生成token
-        String token = Jwts.builder()
+        return Jwts.builder()
                 //.setHeaderParam("typ", "JWT")//设置token类型
                 .subject(username)//设置token的载荷，主体
                 .issuedAt(now)//设置token的生效时间
                 .expiration(expireDate)//设置token过期时间
                 .signWith(key)//设置签名算法和密钥
                 .compact();//生成token
-        log.info("生成token成功:{}", token);
-        return token;
     }
 
     //解析token
     public static Claims getClaimsByToken(String token) {
-        Jws<Claims> claims = Jwts.parser()//调用parser()方法，生成Claims对象
-                .verifyWith(key)//设置签名算法和密钥，查看token有没有被篡改
-                .build()//获取token并解析
-                .parseSignedClaims(token);//提供一个字符串进行解析得到一个Jws类型的对象claims
-        log.info("解析token成功:{}", claims);
-        return claims.getPayload();
-    }
-
-    //验证令牌有效期
-    public static boolean validateToken(String token) {
         try {
-            logger.error("token验证成功{}", getClaimsByToken(token));
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            logger.error("token验证失败", e);
+
+            Jws<Claims> claims = Jwts.parser()//调用parser()方法，生成Claims对象
+                    .verifyWith(key)//设置签名算法和密钥，查看token有没有被篡改
+                    .build()//获取token并解析
+                    .parseSignedClaims(token);//提供一个字符串进行解析得到一个Jws类型的对象claims
+            return claims.getPayload();
+        } catch (JwtException a) {
+            return null;
         }
-        return false;
     }
 }

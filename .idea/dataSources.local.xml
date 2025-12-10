@@ -13,8 +13,8 @@
       <schema-mapping>
         <introspection-scope>
           <node kind="schema">
-            <name qname="seetpro" />
             <name qname="another" />
+            <name qname="seetpro" />
           </node>
         </introspection-scope>
       </schema-mapping>

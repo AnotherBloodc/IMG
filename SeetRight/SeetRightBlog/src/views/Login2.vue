@@ -62,6 +62,7 @@
     </div>
 
   </div>
+
 </template>
 
 <style scoped>
@@ -70,7 +71,6 @@
 
 <script>
 import {useRouter} from 'vue-router'
-import {onMounted} from 'vue'
 
 export default {
   name: "Login2",
@@ -79,8 +79,8 @@ export default {
       user: {
         username: null,
         password: null,
-        token: null
       },
+      token: null,
       Text: "Login",
       Texts: "Register",
       Logins: false,  // 添加控制元素显示状态的数据
@@ -89,31 +89,28 @@ export default {
       LogGotBut: false,//欢迎页面按钮
     }
   },
-  beforeUnmount() {
-    localStorage.clear();
-  },
   setup() {
     const router = useRouter()
     return {router}
   },
   created: function () {
-    alert("Login2.vue被创建时");
-    alert(this.token);
-    localStorage.clear();
+    this.token = localStorage.getItem("token");
     if (this.token != null) {
       this.axiosTool.get("/user/Tokens", {
         headers: {token: this.token}
       }).then(res => {
-        if (res.data.message === "1") {
-          alert("登录成功")
-          this.router.push("/Header");
-        } else if (res.data.message === "0") {
-          alert("登录失败")
-        } else {
-          alert("系统错误")
-        }
-        localStorage.removeItem("token");
-      })
+            if (res.data.message === "1") {
+              this.user.username = res.data.returns.user.username;
+              this.user.password = res.data.returns.user.password;
+            } else if (res.data.message === "0") {
+              localStorage.removeItem("token");
+              this.token = null;
+            } else {
+              localStorage.removeItem("token");
+              this.token = null;
+            }
+          }
+      )
     }
   },
   methods: {
@@ -145,13 +142,16 @@ export default {
         if (res.data.message === "1") {
           alert("登录成功")
           this.token = res.data.returns.token;
-          // 保存数据在浏览器本地
           localStorage.setItem("token", this.token);
           this.router.push("/Header");
         } else if (res.data.message === "0") {
           alert("登录失败")
+          localStorage.removeItem("token");
+          this.token = null;
         } else {
           alert("系统错误")
+          localStorage.removeItem("token");
+          this.token = null;
         }
       })
     },
