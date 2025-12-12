@@ -63,6 +63,7 @@ public class UserController {
     @PostMapping("/register")
     public Return register(@RequestBody User user) {
         log.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
+
         //判断注册条件是否合法
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
 
@@ -94,6 +95,7 @@ public class UserController {
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     public Return Delete(@PathVariable int id) {
         log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
+
         //判断删除条件ID是否合法
         if (T.isNull(id)) {
             if (T.isNull(userServiceImpl.delete(id))) {
@@ -118,6 +120,7 @@ public class UserController {
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     public Return Update(@RequestBody(required = false) User user) {
         log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
+
         //非空验证
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
             if (T.isNull(userServiceImpl.update(user))) {
