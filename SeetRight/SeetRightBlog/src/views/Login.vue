@@ -1,12 +1,12 @@
 <template>
 
-  <div class="Login2_CSS">
+  <div class="Login_CSS">
 
-    <div class="Login2">
+    <div class="Login">
 
-      <div class="Login2_toggle" :class="{ 'Log': Log }">
+      <div class="Login_toggle" :class="{ 'Log': Log }">
 
-        <div class="Login2_toggle_panel">
+        <div class="Login_toggle_panel">
 
           <h1>Hello,Welcome</h1>
 
@@ -18,29 +18,33 @@
 
       </div>
 
-      <div class="Login2_Style" :class="{ 'Log': Log }">
+      <div class="Login_Style" :class="{ 'Log': Log }">
 
-        <div id="Login2_Style_DivID" :class="{ 'Logins': Logins }">
+        <div class="Login_Style_Div" :class="{ 'Logins': Logins }">
 
           <h1>{{ Text }}</h1>
 
-          <div>
+          <div class="Login_Style_Div_Div">
             <input type="text" placeholder="Username (Phone or Email)" v-model="user.username" required>
             <i class='bx  bx-user'></i>
           </div>
 
-          <div>
+          <div class="Login_Style_Div_Div">
             <input type="password" placeholder="Password" v-model="user.password" required>
             <i class='bx  bx-lock'></i>
           </div>
 
-          <a href="#">Forgot Password?</a>
+          <div class="Login_Style_Div_Div2">
+            <el-switch class="AutoLogin" size="large" v-model="AutoLogin" inline-prompt active-text="Automatic"
+                       inactive-text="Automatic" style="--el-switch-on-color: #1b1b1b;"/>
+            <a href="#">Forgot Password?</a>
+          </div>
 
           <button type="submit" @click="Login">{{ Text }}</button>
 
           <p>or login with social platform</p>
 
-          <div id="Login2_Style_icons">
+          <div id="Login_Style_icons">
             <a href="#">
               <i class='bxl  bx-google'></i>
             </a>
@@ -66,14 +70,14 @@
 </template>
 
 <style scoped>
-@import "../assets/css/Login2.css";
+@import "../assets/css/Login.css";
 </style>
 
 <script>
 import {useRouter} from 'vue-router'
 
 export default {
-  name: "Login2",
+  name: "Login",
   data: function () {
     return {
       user: {
@@ -87,21 +91,31 @@ export default {
       Registers: false,  // 添加控制元素显示状态的数据
       Log: false,
       LogGotBut: false,//欢迎页面按钮
+      AutoLogin: null,//自动登录
     }
   },
+
   setup() {
     const router = useRouter()
     return {router}
   },
+
   created: function () {
+    //验证Token是否正确
     this.token = localStorage.getItem("token");
     if (this.token != null) {
       this.axiosTool.get("/user/Tokens", {
-        headers: {token: this.token}
+        headers: {
+          token: this.token,
+          AutoLogin: this.AutoLogin
+        }
       }).then(res => {
             if (res.data.message === "1") {
-              this.user.username = res.data.returns.user.username;
-              this.user.password = res.data.returns.user.password;
+              if (res.data.returns.user != null) {
+                this.user.username = res.data.returns.user.username;
+                this.user.password = res.data.returns.user.password;
+              }
+              this.AutoLogin = res.data.returns.AutoLogin;
             } else if (res.data.message === "0") {
               localStorage.removeItem("token");
               this.token = null;
@@ -139,7 +153,9 @@ export default {
     },
     Login() {
       this.axiosTool.post("/user/login", this.user, {
-        params: {token: this.token}
+        params: {
+          token: this.token
+        }
       }).then(res => {
         if (res.data.message === "1") {
           alert("登录成功")
@@ -150,13 +166,15 @@ export default {
           alert("登录失败")
           localStorage.removeItem("token");
           this.token = null;
+          this.AutoLogin = false;
         } else {
           alert("系统错误")
           localStorage.removeItem("token");
           this.token = null;
+          this.AutoLogin = false;
         }
       })
-    },
+    }
   }
 }
 </script>

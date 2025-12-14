@@ -1,4 +1,4 @@
-package com.example.SeetLeft.domain;
+package com.example.SeetLeft.Domain;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.example.SeetLeft.Entity.User;

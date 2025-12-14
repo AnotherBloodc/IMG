@@ -1,7 +1,7 @@
 package com.example.SeetLeft.Service.Impl;
 
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.domain.LoginUserDetails;
+import com.example.SeetLeft.Domain.LoginUserDetails;
 import jakarta.annotation.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
