@@ -167,83 +167,56 @@ public class UserController {
      * @return 登录操作的结果状态码
      */
     @PostMapping("/login")
-    public Return login(@RequestBody User user, @RequestParam(required = false) String token) {
-        log.info("\n\n用户登录(/login){}", "\n条件：" + user + "\n结果：");
+    public Return login(@RequestBody User user, HttpServletRequest request) {
+        log.info("\n\n用户登录(/login){}", "\n条件user：" + user + "\n条件request：" + request + "\n结果：");
 
+        //判断条件是否存在
         if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword())) {
-            //根据条件查询此用户
-            User users = userServiceImpl.getOne(user);
+            log.info("条件正常");
+            User users = userServiceImpl.getOne(user);//根据条件获取此用户
+            String token = request.getHeader("token");//从请求头获取参数
+            boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));//从请求头获取参数
 
-            //判断查询出来的用户是否合法
-            if (T.isNull(users)) {
+            if(users == null){
 
-                //如果token存在而且过期就重新创建
-                //noinspection ConstantConditions
-                if (!T.isNull(token) || (T.isNull(token) && JwtUtils.getClaimsByToken(token).getExpiration().before(new Date()))) {
-                    log.info("token不存在或者过期了");
-                    token = JwtUtils.generateToken(users.getUsername());
-                }
-
-                Return r = Return.ok();
-                r.data("token", token);
-                r.data("username", user.getUsername());//设置token的键值对
-                r.data("AutoLogin", true);
-
-                log.info("根据Username生成token成功:{}", token);
-                log.info("设置token键值对:{}", r);
-                log.info("登录成功");
-
-                //存储操作记录
-                T.userStyle("访问：GetMapping.login,用户查询,插入记录:" + user);
-                return r;
             }
-            log.info("查询失败：数据为空");
-            return Return.error();
-        }
-
-        log.info("登录失败：条件");
-        return Return.error();
-    }
-
-    /**
-     * 获取token信息：JSON<br/>
-     * 注解：@GetMapping: 用于设置传递过来的Get请求的访问路径
-     *
-     * @param request 用户token
-     * @return 登录操作的结果状态码
-     */
-    @GetMapping("/Tokens")
-    public Return Tokens(HttpServletRequest request) {
-        String token = request.getHeader("token");
-        boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));
-        log.info("\n\n验证token(get/token){}", "\n条件：" + token + "\n结果：");
-        if (T.isNull(token)) {
-            log.info("解析成功：自动登录");
-            if (AutoLogin) {
+            //判断token是否存在,自动登录是否存在
+            if (token != null && AutoLogin && users != null) {
+                log.info("token存在,自动登录存在");
                 Claims claims = JwtUtils.getClaimsByToken(token);//解析token
-                if (T.isNull(claims)) {
-                    //noinspection ConstantConditions
-                    if (!claims.getExpiration().before(new Date())) {
-                        log.info("解析成功：Token有效");
-                        log.info("解析token值:{}", claims);
-                        log.info("解析token过期时间:{}", claims.getExpiration());
-                        User user = userServiceImpl.getTokenOne(claims);
-                        if (T.isNull(user, user.getId())) {
-                            return Return.ok().data("user", user);
-                        }
-                        log.info("查询失败：数据不存在");
-                    }
-                    log.info("解析失败：Token过期");
-                    return Return.error();
+
+                //判断token是否过期
+                if (claims != null && !claims.getExpiration().before(new Date())) {
+                    log.info("token未过期");
+
+                    //判断用户是否存在
+                    log.info("登录成功");
+                    return Return.ok()
+                            .data("token", token)
+                            .data("AutoLogin", true)
+                            .data("user", users);
                 }
-                log.info("解析失败：Token不正确");
+                log.info("token已过期,重新登陆");
                 return Return.error();
+            } else if (token == null && AutoLogin) {
+                log.info("token不存在,自动登录存在");
+                log.info("登录成功");
+                return Return.ok()
+                        .data("token", JwtUtils.generateToken(users.getUsername()))//生成token
+                        .data("AutoLogin", true)
+                        .data("user", users);
+
             } else {
-                log.info("解析成功：无自动登录");
-                return Return.ok();
+                log.info("token不存在,自动登录不存在");
+                log.info("登录成功");
+                return Return.ok()
+                        .data("token", null)//生成token
+                        .data("AutoLogin", false)
+                        .data("user", users);
             }
+
         }
-        log.info("解析失败：条件");
+        log.info("登录失败:条件不存在");
         return Return.error();
     }
 

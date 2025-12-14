@@ -104,7 +104,7 @@ export default {
     //验证Token是否正确
     this.token = localStorage.getItem("token");
     if (this.token != null) {
-      this.axiosTool.get("/user/Tokens", {
+      this.axiosTool.post("/user/login", this.user, {
         headers: {
           token: this.token,
           AutoLogin: this.AutoLogin
@@ -159,20 +159,17 @@ export default {
       }).then(res => {
         if (res.data.message === "1") {
           alert("登录成功")
-          this.token = res.data.returns.token;
-          localStorage.setItem("token", this.token);
-          this.router.push("/Header");
+          this.token = res.data.returns.token;//获取后端返回的token
+          localStorage.setItem("token", this.token);//保持 token
+          this.router.push("/Header");//跳转页面
         } else if (res.data.message === "0") {
           alert("登录失败")
-          localStorage.removeItem("token");
-          this.token = null;
-          this.AutoLogin = false;
         } else {
           alert("系统错误")
-          localStorage.removeItem("token");
-          this.token = null;
-          this.AutoLogin = false;
         }
+        localStorage.removeItem("token");//清空 token
+        this.token = null;
+        this.AutoLogin = false;
       })
     }
   }
