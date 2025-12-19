@@ -23,7 +23,6 @@ public class JwtUtils {
     //从yaml文件中jwt.secret中读取数据
     private static String jwtSecret;
 
-
     //生成密钥对象,HS256
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -50,7 +49,6 @@ public class JwtUtils {
     //解析token
     public static Claims getClaimsByToken(String token) {
         try {
-
             Jws<Claims> claims = Jwts.parser()//调用parser()方法，生成Claims对象
                     .verifyWith(key)//设置签名算法和密钥，查看token有没有被篡改
                     .build()//获取token并解析

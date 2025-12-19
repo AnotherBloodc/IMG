@@ -1,6 +1,6 @@
 <template>
 
-  <router-link to="/Login2"></router-link>
+  <router-link to="/Login"></router-link>
 
   <router-view></router-view>
 

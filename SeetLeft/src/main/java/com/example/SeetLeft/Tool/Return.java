@@ -1,63 +1,73 @@
 package com.example.SeetLeft.Tool;
 
+import com.example.SeetLeft.Enums.ReturnEnums;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.Map;
+import lombok.NoArgsConstructor;
 
 @Data
-public class Return {
-    private Boolean success;
-    private String message;
-    private Integer code;
-    private Map<String, Object> returns = new HashMap<>();
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
-    //重写构造方法，将构造方法私有化
-    private Return() {
-    }
+public class Return<T> {
+
+    @Schema(description = "请求状态：是否成功")
+    private Boolean success;
+
+    @Schema(description = "请求备注：提示信息")
+    private String message;
+
+    @Schema(description = "请求编码：状态码")
+    private Integer code;
+
+    @Schema(description = "请求结果：查询到的结果数据")
+    private T data;
 
     /**
-     * 成功结果Result对象
+     * 成功响应,包含数据
      *
      * @return 返回封装了成功状态信息的Result对象
      */
-    public static Return ok() {
-        Return r = new Return();//创建Result对象，用来封装用户状态数据
-        r.setSuccess(true);//设置状态码为真，代表成功
-        r.setCode(ResultCode.SUCCESS);//设置状态数据为成功状态码
-        r.setMessage("1");
-        return r;
+    public static <T> Return<T> ok(T data) {
+        //创建Result对象，用来封装用户状态数据
+        return new Return<>(
+                ReturnEnums.SUCCESS.getSuccess(),
+                ReturnEnums.SUCCESS.getMsg(),
+                ReturnEnums.SUCCESS.getCode(),
+                data
+        );
+    }
+
+    /**
+     * 成功响应,不包含数据
+     *
+     * @return 返回封装了请求状态，请求备注，请求编码，请求结果的Result对象
+     */
+    public static <T> Return<T> ok() {
+        //创建Result对象，用来封装用户状态数据
+        return new Return<>(
+                ReturnEnums.SUCCESS.getSuccess(),
+                ReturnEnums.SUCCESS.getMsg(),
+                ReturnEnums.SUCCESS.getCode(),
+                null
+        );
     }
 
     /**
      * 错误结果Result对象
      *
-     * @return Return 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
+     * @return ReturnEnums 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
      */
-    public static Return error() {
-        Return r = new Return();
-        r.setSuccess(false);//设置状态码为假，代表失败
-        r.setCode(ResultCode.ERROR);//设置状态数据为失败状态码
-        r.setMessage("0");
-        return r;
+    public static <T> Return<T> error(){
+        return new Return<>(
+                ReturnEnums.FAILURE.getSuccess(),
+                ReturnEnums.FAILURE.getMsg(),
+                ReturnEnums.FAILURE.getCode(),
+                null
+        );
     }
-
-    /**
-     * 向Result对象中的data属性添加token数据键值对
-     *
-     * @param key   数据的键名
-     * @param value 数据的值
-     * @return 返回当前Result对象，支持链式调用
-     */
-    public Return data(String key, Object value) {
-        this.returns.put(key, value);
-        return this;
-    }
-
-    public Return data(String key, Object[] value) {
-        this.returns.put(key, value);
-        return this;
-    }
-
 
 }
