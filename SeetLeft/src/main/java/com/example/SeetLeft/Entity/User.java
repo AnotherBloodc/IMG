@@ -45,4 +45,9 @@ public class User implements Serializable {
     @TableField(exist = false)
     @Transient
     private List<UserStyle> userStyle;
+
+    //Transient:标识一个数据库没有的字段，定义后MybatisPlus和JPA都不会去数据库中查询这个字段
+    @TableField(exist = false)
+    @Transient
+    private String token;
 }

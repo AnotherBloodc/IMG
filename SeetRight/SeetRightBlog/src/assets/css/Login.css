@@ -180,6 +180,13 @@
     margin-top: 2%
 }
 
+#Login_Style_icons i{
+    font-size:30px;
+    border:1px solid #000000;
+    margin:5px;
+    padding:5px;
+}
+
 .AutoLogin {
     font-size: 90px;
     color: #000000;
