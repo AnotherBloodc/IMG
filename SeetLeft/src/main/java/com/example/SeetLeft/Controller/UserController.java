@@ -48,9 +48,9 @@ public class UserController {
      * @return 固定返回1表示请求处理成功
      */
     @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
-    public Return Default(@RequestParam(required = false) String name) {
+    public Return<Integer> Default(@RequestParam(required = false) String name) {
         log.info("访问了默认页面{}", name);
-        return Return.ok();
+        return Return.ok(1);
     }
 
     /**
@@ -61,7 +61,7 @@ public class UserController {
      * @return 插入操作的结果状态码
      */
     @PostMapping("/register")
-    public Return register(@RequestBody User user) {
+    public Return<Void> register(@RequestBody User user) {
         log.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
 
         //判断注册条件是否合法
@@ -93,7 +93,7 @@ public class UserController {
      * @return 删除操作影响的行数
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
-    public Return Delete(@PathVariable int id) {
+    public Return<Void> Delete(@PathVariable int id) {
         log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
 
         //判断删除条件ID是否合法
@@ -118,7 +118,7 @@ public class UserController {
      * @return 更新操作影响的行数
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
-    public Return Update(@RequestBody(required = false) User user) {
+    public Return<Void> Update(@RequestBody(required = false) User user) {
         log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
 
         //非空验证
@@ -143,17 +143,17 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public Return select(@RequestBody(required = false) User user) {
+    public Return<List<User>> select(@RequestBody(required = false) User user) {
         log.info("\n\n用户查询(post/){}", "\n条件" + user + "\n结果=");
         if (T.isNull(user)) {
             List<User> list = userServiceImpl.list(user);
             if (T.isNull(list)) {
                 log.info("查询成功");
                 T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-                return Return.ok().data("list", list);
+                return Return.ok(list);
             }
             log.info("查询成功:无符合条件数据");
-            return Return.ok().data("list", list);
+            return Return.ok();
         }
         log.info("查询失败:条件");
         return Return.error();
@@ -173,36 +173,43 @@ public class UserController {
         User users = userServiceImpl.getOne(user);
         if (users != null) {
             String token = JwtUtils.generateToken(users.getUsername());
-            return Return.ok()
-                    .data("user", users)
-                    .data("token", token);
-        } else {
-            return Return.error();
+            return Return.ok(users);
         }
+        return Return.error();
     }
 
+    /**
+     * 获取用户信息：TOKEN<br/>
+     * 注解：@GetMapping:前端登录组件每次加载自动访问
+     *
+     * @param request 请求对象
+     * @return 登录操作的结果状态码
+     */
     @GetMapping("/loginToken")
     public Return loginToken(HttpServletRequest request) {
-        log.info("\n\n用户登录(GetMapping.loginToken){}", "\n条件request：" + request + "\n结果：");
-        String token = request.getHeader("token");
-        boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));
-        log.info("token={}", token);
-        log.info("AutoLogin={}", AutoLogin);
+        log.info("\n\n用户登录(GetMapping.loginToken)");
+        String token = request.getHeader("token");//获取请求头中的token
+        boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));//前端是否允许自动登录
+        log.info("条件\ntoken：{}", token);
+        log.info("request：{}", request);
+        log.info("AutoLogin：{}", AutoLogin);
+        log.info("结果");
+        //token存在并且前端允许自动登录
         if (token != null && AutoLogin) {
-            Claims claims = JwtUtils.getClaimsByToken(token);
+            Claims claims = JwtUtils.getClaimsByToken(token);//解析token
+            //token解析成功并且未过期
             if (claims != null && !claims.getExpiration().before(new Date())) {
-                String username = claims.getSubject();
-                if (username != null) {
+                //判断解析后的用户师傅存在
+                if (claims.getSubject() != null) {
                     log.info("\n验证通过");
                     User user = userServiceImpl.getTokenOne(claims);
-                    return Return.ok().data("user", user);
-                } else {
-                    log.info("\n用户不存在");
+                    return Return.ok(user);
                 }
-            } else {
-                log.info("\ntoken不存在或者过期");
+                log.info("\n无此用户");
             }
+            log.info("\ntoken解析错误或过期");
         }
+        log.info("\ntoken不存在或前端无自动登录");
         return Return.error();
     }
 
