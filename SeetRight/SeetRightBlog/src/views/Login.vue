@@ -16,9 +16,9 @@
 
         </div>
 
+      </div>
 
       <div class="Login_Style" :class="{ 'Log': Log }">
-      </div>
 
         <div class="Login_Style_Div" :class="{ 'Logins': Logins }">
 
@@ -74,10 +74,10 @@
 </style>
 
 <script>
+import {useRouter} from 'vue-router'
 
 export default {
   name: "Login",
-  //变量
   data: function () {
     return {
       user: {
@@ -94,11 +94,13 @@ export default {
       AutoLogin: false,//自动登录
     }
   },
-  //定义页面加载时执行函数
+  setup() {
+    const router = useRouter()
+    return {router}
+  },
   created: function () {
-    //获取token
+    //验证Token是否正确
     this.user.token = localStorage.getItem("token");
-    //判断token是否为空
     if (this.user.token != null) {
       this.axiosTool.get("/user/loginToken", {
         headers: {
@@ -107,7 +109,7 @@ export default {
         }
       }).then(res => {
             if (res.data.message === "1") {
-              if (res.data.returns.user != null) {another
+              if (res.data.returns.user != null) {
                 this.user.username = res.data.returns.user.username;
                 this.user.password = res.data.returns.user.password;
                 this.AutoLogin = localStorage.getItem("AutoLogin") === "true";
@@ -119,7 +121,6 @@ export default {
       )
     }
   },
-  //定义函数
   methods: {
     toLogin() {
       if (this.Text === "Login") {
@@ -152,7 +153,7 @@ export default {
               this.user.token = res.data.returns.token;//获取后端返回的token
               localStorage.setItem("token", this.user.token);//保持 token
               localStorage.setItem("AutoLogin", this.AutoLogin);//保持 token
-              this.$router.push("/Header");//跳转页面
+              this.router.push("/Header");//跳转页面
             } else if (res.data.message === "0") {
               alert("登录失败")
             } else {
