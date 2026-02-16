@@ -114,7 +114,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapperPro, User> implements
     public List<User> list(User user) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper
-                .eq(T.isNull(user.getId()), "id", user.getId())
                 .eq(T.isNull(user.getUsername()), "username", user.getUsername())
                 .eq(T.isNull(user.getEmail()), "email", user.getEmail());
         return this.list(queryWrapper);

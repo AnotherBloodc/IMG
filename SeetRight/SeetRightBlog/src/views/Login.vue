@@ -146,13 +146,10 @@ export default {
       }
     },
     Login() {
-      this.axiosTool.post("/user/login", this.user)
+      this.axiosTool.post("/Account/Login", this.user)
           .then(res => {
-            if (res.data.message === "1") {
-              alert("登录成功")
-              this.user.token = res.data.returns.token;//获取后端返回的token
-              localStorage.setItem("token", this.user.token);//保持 token
-              localStorage.setItem("AutoLogin", this.AutoLogin);//保持 token
+            if (res.data.success === true) {
+              this.user.token = res.data.data.token;//获取后端返回的token
               this.router.push("/Header");//跳转页面
             } else if (res.data.message === "0") {
               alert("登录失败")

@@ -11,9 +11,7 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +28,7 @@ import java.util.List;
  */
 @CrossOrigin
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/User")
 @Slf4j
 public class UserController {
 
@@ -39,50 +37,6 @@ public class UserController {
 
     @Resource
     private ToolController T;
-
-    /**
-     * 处理根路径的Get请求<br/>
-     * 注解：@GetMapping: 用于设置传递过来的GET请求的访问路径
-     * 注解：@RequestBody：用于将请求体中的JSON数据绑定到方法的参数上，required = false：允许请求体中的JSON数据可以为空
-     *
-     * @return 固定返回1表示请求处理成功
-     */
-    @GetMapping("/") //可用@RequestMapping(value = "/*", method = RequestMethod.GET)注解代替，效果一样
-    public Return<Integer> Default(@RequestParam(required = false) String name) {
-        log.info("访问了默认页面{}", name);
-        return Return.ok(1);
-    }
-
-    /**
-     * 注册用户：JSON<br/>
-     * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
-     *
-     * @param user 用户对象，可为null
-     * @return 插入操作的结果状态码
-     */
-    @PostMapping("/register")
-    public Return<Void> register(@RequestBody User user) {
-        log.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
-
-        //判断注册条件是否合法
-        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
-
-            //判断用户是否存在
-            if (T.isNull(userServiceImpl.list(user))) {
-                log.info("注册失败:用户已存在");
-                return Return.error();
-            }
-
-            //判断注册是否成功
-            if (T.isNull(userServiceImpl.insert(user))) {
-                log.info("注册成功");
-                return Return.ok();
-            }
-
-        }
-        log.info("注册失败：条件\n");
-        return Return.error();
-    }
 
     /**
      * 删除用户信息：ID <br/>
@@ -142,39 +96,16 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    public Return<List<User>> select(@RequestBody(required = false) User user) {
-        log.info("\n\n用户查询(post/){}", "\n条件" + user + "\n结果=");
-        if (T.isNull(user)) {
-            List<User> list = userServiceImpl.list(user);
-            if (T.isNull(list)) {
-                log.info("查询成功");
-                T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-                return Return.ok(list);
-            }
-            log.info("查询成功:无符合条件数据");
-            return Return.ok();
+    @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    public Return<List<User>> select(@ModelAttribute User user) {
+        log.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
+        List<User> list = userServiceImpl.list(user);
+        if (T.isNull(list)) {
+            log.info("查询成功");
+            T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+            return Return.ok(list);
         }
-        log.info("查询失败:条件");
-        return Return.error();
-    }
 
-    /**
-     * 登录用户：JSON<br/>
-     * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
-     *
-     * @param user 用户对象，可为null
-     * @return 登录操作的结果状态码
-     */
-    @PostMapping("/login")
-    public Return login(@RequestBody User user) {
-        log.info("\n\n用户登录(/login){}", "\n条件:");
-        log.info("登录详细user:{}", user);
-        User users = userServiceImpl.getOne(user);
-        if (users != null) {
-            String token = JwtUtils.generateToken(users.getUsername());
-            return Return.ok(users);
-        }
         return Return.error();
     }
 
@@ -186,7 +117,7 @@ public class UserController {
      * @return 登录操作的结果状态码
      */
     @GetMapping("/loginToken")
-    public Return loginToken(HttpServletRequest request) {
+    public Return<User> loginToken(HttpServletRequest request) {
         log.info("\n\n用户登录(GetMapping.loginToken)");
         String token = request.getHeader("token");//获取请求头中的token
         boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));//前端是否允许自动登录
@@ -220,7 +151,7 @@ public class UserController {
      * @return 用户列表（含关联的风格）
      */
     @PostMapping("/user_userStyle")
-    public Return user_userStyle(@RequestBody User user) {
+    public Return<Void> user_userStyle(@RequestBody User user) {
         log.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
 
         if (T.isNull(user)) {
@@ -242,7 +173,7 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @PostMapping("/pro")
-    public Return pro(@RequestBody User user) {
+    public Return<Void> pro(@RequestBody User user) {
         log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
         if (T.isNull(user)) {
 
@@ -264,7 +195,7 @@ public class UserController {
      * @return 分页查询结果
      */
     @GetMapping("/Page")
-    public Return Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
+    public Return<Void> Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         log.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
         if (T.isNull(pageNum + pageSize)) {
             T.userStyle("访问：Page,分页查询用户信息");//存储操作记录
@@ -276,24 +207,4 @@ public class UserController {
         return Return.error();
     }
 
-    /**
-     * 上传文件：文件和名字<br/>
-     * 注解：@PostMapping: 用于设置传递过来的Post请求的访问路径
-     *
-     * @param name 文件名
-     * @param file 文件
-     * @return postFile
-     */
-    @PostMapping("/postFile")
-    public Return postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        log.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
-        if (T.isNull(file)) {
-            String s = T.saveFile(name, file, request);//保存文件
-            log.info("上传文件成功{}", s);
-            T.userStyle("访问：postFile,上传文件");//存储操作记录
-            return Return.ok();
-        }
-        log.info("上传文件失败：条件，file为空");
-        return Return.error();
-    }
 }

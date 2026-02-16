@@ -68,7 +68,7 @@ public class ToolController {
     }
 
     public boolean isNull(String obj) {
-        return obj != null;
+        return obj != null && !obj.trim().isEmpty();
     }
 
     public boolean isNull(Integer i) {

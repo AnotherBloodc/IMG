@@ -134,8 +134,11 @@ export default {
   methods: {
     //访问：查询全部接口
     selectUser() {
-      this.axiosTool.post('/user', {}).then(res => {
-        this.user = res.data.returns.list;
+      this.axiosTool.get('/User', {
+        params: {}
+      }).then(res => {
+        this.user = res.data.data;
+        alert(this.user)
       })
     }
   }

@@ -1,0 +1,45 @@
+package com.example.SeetLeft.Controller;
+
+import com.example.SeetLeft.Tool.Return;
+import com.example.SeetLeft.Tool.ToolController;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+@CrossOrigin
+@RestController
+@RequestMapping("/File")
+@Slf4j
+public class FileController {
+
+    @Resource
+    private ToolController T;
+
+    /**
+     * 上传文件：文件和名字<br/>
+     * 注解：@PostMapping: 用于设置传递过来的Post请求的访问路径
+     *
+     * @param name 文件名
+     * @param file 文件
+     * @return postFile
+     */
+    @PostMapping("/postFile")
+    public Return<Void> postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
+        log.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
+        if (T.isNull(file)) {
+            String s = T.saveFile(name, file, request);//保存文件
+            log.info("上传文件成功{}", s);
+            T.userStyle("访问：postFile,上传文件");//存储操作记录
+            return Return.ok();
+        }
+        log.info("上传文件失败：条件，file为空");
+        return Return.error();
+    }
+}
