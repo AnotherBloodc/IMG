@@ -5,6 +5,8 @@ import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/User")
 @Slf4j
+@Tag(name = "管理员操作", description = "对系统的用户进行增删改查")
 public class UserController {
 
     @Resource
@@ -43,6 +46,7 @@ public class UserController {
      * @return 删除操作影响的行数
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
+    @Operation(summary = "删除用户", description = "提供ID删除用户")
     public Return<Void> Delete(@PathVariable int id) {
         log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
 
@@ -68,6 +72,7 @@ public class UserController {
      * @return 更新操作影响的行数
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
+    @Operation(summary = "更新用户", description = "根据提供的User的id更新用户信息")
     public Return<Void> Update(@RequestBody(required = false) User user) {
         log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
 
@@ -93,6 +98,7 @@ public class UserController {
      * @return 匹配的用户列表
      */
     @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    @Operation(summary = "查询用户", description = "提供User对象查询用户")
     public Return<List<User>> select(@ModelAttribute User user) {
         log.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
         List<User> list = UserService.list(user);
@@ -105,6 +111,27 @@ public class UserController {
         return Return.error();
     }
 
+    /**
+     * 查询用户信息 PRO JSON
+     *
+     * @param user 要查询的用户名
+     * @return 匹配的用户列表
+     */
+    @PostMapping("/pro")
+    @Operation(summary = "查询用户Plus", description = "提供User对象查询用户")
+    public Return<Void> pro(@RequestBody User user) {
+        log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
+        if (user != null) {
+
+            T.userStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
+            List<User> userList = UserService.list(user);
+            log.info("查询成功PRO：{}", userList);
+            return Return.ok();
+
+        }
+        log.info("查询失败PRO：条件");
+        return Return.error();
+    }
 
     /**
      * 查询多表用户信息 1对多（User→UserStyle） JSON
@@ -126,27 +153,6 @@ public class UserController {
         log.info("查询失败：条件");
         return Return.error();
 
-    }
-
-    /**
-     * 查询用户信息 PRO JSON
-     *
-     * @param user 要查询的用户名
-     * @return 匹配的用户列表
-     */
-    @PostMapping("/pro")
-    public Return<Void> pro(@RequestBody User user) {
-        log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
-        if (user != null) {
-
-            T.userStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
-            List<User> userList = UserService.list(user);
-            log.info("查询成功PRO：{}", userList);
-            return Return.ok();
-
-        }
-        log.info("查询失败PRO：条件");
-        return Return.error();
     }
 
     /**

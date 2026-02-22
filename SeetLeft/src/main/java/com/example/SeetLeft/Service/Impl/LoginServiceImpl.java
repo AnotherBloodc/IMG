@@ -8,8 +8,10 @@ import com.example.SeetLeft.Service.LoginService;
 import com.example.SeetLeft.Tool.UserValidator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 @Slf4j
+@Service
 public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implements LoginService {
 
     @Resource

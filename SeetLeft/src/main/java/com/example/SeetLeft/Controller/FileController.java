@@ -2,6 +2,7 @@ package com.example.SeetLeft.Controller;
 
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/File")
 @Slf4j
+@Tag(name = "用户操作", description = "用户执行文件上传")
 public class FileController {
 
     @Resource
@@ -30,6 +32,7 @@ public class FileController {
      * @param file 文件
      * @return postFile
      */
+    @Tag(name = "用户操作：上传文件", description = "提供文件名称，文件路径，文件本体")
     @PostMapping("/postFile")
     public Return<Void> postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         log.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");

@@ -1,24 +1,21 @@
 package com.example.SeetLeft.Controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.Impl.LoginServiceImpl;
-import com.example.SeetLeft.Service.Impl.UserServiceImpl;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
-import com.example.SeetLeft.Tool.ToolController;
-import io.jsonwebtoken.Claims;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/Login")
 @Slf4j
+@Tag(name = "用户操作:登录与注册", description = "用户执行登录操作")
 public class LoginController {
 
     @Resource
@@ -32,6 +29,7 @@ public class LoginController {
      * @return 登录操作的结果状态码
      */
     @PostMapping("/LoginUser")
+    @Operation(summary = "用户登录", description = "提供User对象以及登录后的token")
     public Return<Object> login(@RequestBody User user) {
         log.info("\n\n用户登录(/login){}", "\n条件:");
         log.info("登录详细user:{}", user);
@@ -48,6 +46,7 @@ public class LoginController {
      * @return 插入操作的结果状态码
      */
     @PostMapping("/Register")
+    @Operation(summary = "用户注册", description = "提供User对象")
     public Return<User> register(@RequestBody User user) {
         log.info("\n\n用户注册(post/register)：{}", "\n条件=" + user + "\n结果=");
         if (login.SetUser(user) > 0) {

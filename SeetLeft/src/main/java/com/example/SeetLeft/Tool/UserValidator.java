@@ -1,6 +1,7 @@
 package com.example.SeetLeft.Tool;
 
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 @Data
+@Component
 public class UserValidator {
     // 禁用的词汇列表
     private static final List<String> FORBIDDEN_WORDS = Arrays.asList(
