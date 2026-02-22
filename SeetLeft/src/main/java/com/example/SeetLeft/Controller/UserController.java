@@ -3,16 +3,12 @@ package com.example.SeetLeft.Controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
-import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
-import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 
 //@RestController：类，这个类下的所有方法返回值的返回形式设置成HTTP响应体形式返回
@@ -33,7 +29,7 @@ import java.util.List;
 public class UserController {
 
     @Resource
-    private UserServiceImpl userServiceImpl;
+    private UserServiceImpl UserService;
 
     @Resource
     private ToolController T;
@@ -51,8 +47,8 @@ public class UserController {
         log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
 
         //判断删除条件ID是否合法
-        if (T.isNull(id)) {
-            if (T.isNull(userServiceImpl.delete(id))) {
+        if (id > 0) {
+            if (UserService.DeleteUser(id)) {
                 log.info("删除成功");
                 T.userStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
                 return Return.ok();
@@ -76,8 +72,8 @@ public class UserController {
         log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
 
         //非空验证
-        if (T.isNull(user) && T.isNull(user.getUsername(), user.getPassword(), user.getEmail())) {
-            if (T.isNull(userServiceImpl.update(user))) {
+        if (user != null) {
+            if (UserService.update(user) > 0) {
                 log.info("修改成功");
                 T.userStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
                 return Return.ok();
@@ -99,8 +95,8 @@ public class UserController {
     @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     public Return<List<User>> select(@ModelAttribute User user) {
         log.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
-        List<User> list = userServiceImpl.list(user);
-        if (T.isNull(list)) {
+        List<User> list = UserService.list(user);
+        if (list != null) {
             log.info("查询成功");
             T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
             return Return.ok(list);
@@ -109,40 +105,6 @@ public class UserController {
         return Return.error();
     }
 
-    /**
-     * 获取用户信息：TOKEN<br/>
-     * 注解：@GetMapping:前端登录组件每次加载自动访问
-     *
-     * @param request 请求对象
-     * @return 登录操作的结果状态码
-     */
-    @GetMapping("/loginToken")
-    public Return<User> loginToken(HttpServletRequest request) {
-        log.info("\n\n用户登录(GetMapping.loginToken)");
-        String token = request.getHeader("token");//获取请求头中的token
-        boolean AutoLogin = Boolean.parseBoolean(request.getHeader("AutoLogin"));//前端是否允许自动登录
-        log.info("条件\ntoken：{}", token);
-        log.info("request：{}", request);
-        log.info("AutoLogin：{}", AutoLogin);
-        log.info("结果");
-        //token存在并且前端允许自动登录
-        if (token != null && AutoLogin) {
-            Claims claims = JwtUtils.getClaimsByToken(token);//解析token
-            //token解析成功并且未过期
-            if (claims != null && !claims.getExpiration().before(new Date())) {
-                //判断解析后的用户师傅存在
-                if (claims.getSubject() != null) {
-                    log.info("\n验证通过");
-                    User user = userServiceImpl.getTokenOne(claims);
-                    return Return.ok(user);
-                }
-                log.info("\n无此用户");
-            }
-            log.info("\ntoken解析错误或过期");
-        }
-        log.info("\ntoken不存在或前端无自动登录");
-        return Return.error();
-    }
 
     /**
      * 查询多表用户信息 1对多（User→UserStyle） JSON
@@ -154,8 +116,8 @@ public class UserController {
     public Return<Void> user_userStyle(@RequestBody User user) {
         log.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
 
-        if (T.isNull(user)) {
-            List<User> list = userServiceImpl.selectStyle(user);
+        if (user != null) {
+            List<User> list = UserService.selectStyle(user);
             log.info("查询成功：{}", list);
             System.out.println(list);
             T.userStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
@@ -175,10 +137,10 @@ public class UserController {
     @PostMapping("/pro")
     public Return<Void> pro(@RequestBody User user) {
         log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
-        if (T.isNull(user)) {
+        if (user != null) {
 
             T.userStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
-            List<User> userList = userServiceImpl.list(user);
+            List<User> userList = UserService.list(user);
             log.info("查询成功PRO：{}", userList);
             return Return.ok();
 
@@ -197,9 +159,9 @@ public class UserController {
     @GetMapping("/Page")
     public Return<Void> Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
         log.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
-        if (T.isNull(pageNum + pageSize)) {
+        if (pageNum + pageSize > 2) {
             T.userStyle("访问：Page,分页查询用户信息");//存储操作记录
-            IPage<User> ipage = userServiceImpl.selectPage(pageNum, pageSize);
+            IPage<User> ipage = UserService.selectPage(pageNum, pageSize);
             log.info("分页查询成功{}", ipage);
             return Return.ok();
         }

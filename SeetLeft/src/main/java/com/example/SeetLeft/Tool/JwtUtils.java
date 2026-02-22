@@ -1,16 +1,20 @@
 package com.example.SeetLeft.Tool;
 
+import com.example.SeetLeft.Config.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 //JWT工具类
+@Component
 @Slf4j
 public class JwtUtils {
 
@@ -18,18 +22,17 @@ public class JwtUtils {
     private static final long expire = 60 * 1000 * 2;
 
     //32位密钥
-    private static final SecretKey key = Jwts.SIG.HS512.key().build();
+    private static SecretKey key;
 
-    //从yaml文件中jwt.secret中读取数据
-    private static String jwtSecret;
-
-    //生成密钥对象,HS256
-    private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    public JwtUtils(JwtProperties jwtProperties) {
+        // 使用配置文件中的密钥
+        key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
+        log.info("JWT密钥已初始化");
     }
 
     //生成token
     public static String generateToken(String username) {
+
         //创建时间对象
         Date now = new Date();
 

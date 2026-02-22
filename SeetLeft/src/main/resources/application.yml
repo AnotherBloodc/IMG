@@ -1,6 +1,8 @@
 server:
-  port: 8080
+  port: 8081
 spring:
+  jwt:
+    secret: your-very-long-secret-key-at-least-32-characters
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration

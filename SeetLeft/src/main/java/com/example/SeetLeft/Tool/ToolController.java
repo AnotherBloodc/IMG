@@ -55,23 +55,4 @@ public class ToolController {
         us.setName(name);
         us.setUserid(1);
     }
-
-    public boolean isNull(Object... obj) {
-        if (obj != null) {
-            for (Object o : obj) {
-                if (o != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean isNull(String obj) {
-        return obj != null && !obj.trim().isEmpty();
-    }
-
-    public boolean isNull(Integer i) {
-        return i != null && i > 0;
-    }
 }

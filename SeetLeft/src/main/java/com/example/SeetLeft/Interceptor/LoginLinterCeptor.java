@@ -40,7 +40,7 @@ public class LoginLinterCeptor implements HandlerInterceptor {
 
         log.info("请求头中的token：{}", token);
         log.info("请求头中的Accept：{}", accept);
-        if (T.isNull(token)) {
+        if (token != null) {
 
             //判断token实际的JWT令牌字符串的前缀是否为 "Bearer "
             if (token.startsWith("Bearer ")) {

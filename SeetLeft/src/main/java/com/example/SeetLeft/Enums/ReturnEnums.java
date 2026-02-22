@@ -13,17 +13,17 @@ public enum ReturnEnums {
     FAILURE(5000, "failure", false);
 
     /**
-     * code
+     * 状态码
      */
     private final Integer code;
 
     /**
-     * Msg
+     * 提示信息
      */
-    private final String msg;
+    private final String message;
 
     /**
-     * success
+     * 成功状态
      */
     private final Boolean success;
 }

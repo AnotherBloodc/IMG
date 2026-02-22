@@ -1,4 +1,7 @@
 package com.example.SeetLeft.Service;
 
-public interface LoginService {
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.SeetLeft.Entity.User;
+
+public interface LoginService extends IService<User> {
 }

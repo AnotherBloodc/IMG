@@ -33,7 +33,7 @@ public class FileController {
     @PostMapping("/postFile")
     public Return<Void> postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
         log.info("\n\n上传文件(post/postFile){}", "\n条件:" + name + "\n结果：");
-        if (T.isNull(file)) {
+        if (file != null) {
             String s = T.saveFile(name, file, request);//保存文件
             log.info("上传文件成功{}", s);
             T.userStyle("访问：postFile,上传文件");//存储操作记录
