@@ -36,7 +36,7 @@ public class JwtUtils {
     }
 
     //生成token
-    public static String generateToken(User user) {
+    public String generateToken(User user) {
         log.info(LogH.GO);
         log.info("执行生成token");
         //创建时间对象
@@ -64,7 +64,7 @@ public class JwtUtils {
     }
 
     //解析token
-    public static Claims parseToken(String token) {
+    public Claims parseToken(String token) {
         log.info(LogH.GO);
         log.info("开始解析token：" + token);
         try {

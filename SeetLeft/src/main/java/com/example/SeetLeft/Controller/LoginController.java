@@ -1,6 +1,5 @@
 package com.example.SeetLeft.Controller;
 
-import com.example.SeetLeft.Config.RedisConfig;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LogH;
 import com.example.SeetLeft.Service.Impl.LoginServiceImpl;
@@ -27,8 +26,10 @@ public class LoginController {
     private LoginServiceImpl login;
 
     // 注入Redis操作模板（Spring会自动装配，前提是Redis配置正确）
+    @Resource
     private final StringRedisTemplate stringRedisTemplate;
 
+    @Resource
     private final JwtUtils jwtUtils;
 
     // 构造器注入（推荐的依赖注入方式）
@@ -63,7 +64,7 @@ public class LoginController {
         log.info("登录成功，判断自动登录的值：" + isLogin);
         if (isLogin) {
             log.info("开启自动登录，将生成token并且储存Redis");
-            String token = JwtUtils.generateToken(users);
+            String token = jwtUtils.generateToken(users);
             log.info("token:{}", token);
             // 将token存入Redis（核心逻辑）
             try {
