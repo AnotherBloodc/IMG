@@ -19,7 +19,7 @@ import java.util.Date;
 public class JwtUtils {
 
     //token有效期,单位：毫秒
-    private static final long expire = 60 * 1000 * 2;
+    private static final long EXPIRATION_TIME = 2 * 60 * 60 * 1000;
 
     //32位密钥
     private static SecretKey key;
@@ -37,7 +37,7 @@ public class JwtUtils {
         Date now = new Date();
 
         //设置token的失效时间，用now.getTime()获取当前时间戳，设置置未来何时到期
-        Date expireDate = new Date(now.getTime() + expire);
+        Date expireDate = new Date(now.getTime() + EXPIRATION_TIME);
 
         //调用builder()方法，生成token
         return Jwts.builder()

@@ -7,10 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReturnEnums {
     //成功
-    SUCCESS(2000, "success", true),
+    SUCCESS(2000, "成功", true),
 
-    //失败
-    FAILURE(5000, "failure", false);
+    //不成功
+    FAILURE(5000, "不成功", false);
 
     /**
      * 状态码

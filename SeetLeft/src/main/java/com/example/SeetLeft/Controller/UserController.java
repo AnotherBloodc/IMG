@@ -2,6 +2,7 @@ package com.example.SeetLeft.Controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Enums.LogH;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
 import com.example.SeetLeft.Tool.Return;
 import com.example.SeetLeft.Tool.ToolController;
@@ -47,25 +48,29 @@ public class UserController {
      */
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     @Operation(summary = "删除用户", description = "提供ID删除用户")
-    public Return<Void> Delete(@PathVariable int id) {
-        log.info("\n\n用户删除(Delete/){}", "\n条件：" + id + "\n结果：");
-
+    public Return<Boolean> Delete(@PathVariable int id) {
+        log.info(LogH.GO);
+        log.info("你在删除用户，你提供的ID：\n" + id);
         //判断删除条件ID是否合法
-        if (id > 0) {
-            if (UserService.DeleteUser(id)) {
-                log.info("删除成功");
-                T.userStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-                return Return.ok();
-            }
-            log.info("删除失败:逻辑");
+        if (id < 0) {
+            log.info("\nID不合法");
+            log.info(LogH.EXIT);
             return Return.error();
         }
-        log.info("删除失败:条件\n");
+        //执行删除操作
+        boolean list = UserService.DeleteUser(id);
+        if (list) {
+            log.info("\n删除成功");
+            log.info(LogH.EXIT);
+            T.userStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
+            return Return.ok(list);
+        }
         return Return.error();
+
     }
 
     /**
-     * 修改用户信息：JSON
+     * 更新用户信息：JSON
      * 注解：@PutMapping: 用于设置传递过来的Put请求的访问路径
      *
      * @param user 要更新的用户对象，可以为null
@@ -73,20 +78,25 @@ public class UserController {
      */
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     @Operation(summary = "更新用户", description = "根据提供的User的id更新用户信息")
-    public Return<Void> Update(@RequestBody(required = false) User user) {
-        log.info("\n\n用户修改(put/){}", "\n条件" + user + "\n结果=");
-
+    public Return<Boolean> Update(@RequestBody(required = false) User user) {
+        log.info(LogH.GO);
+        log.info("你在更新用户，你提供的新信息：\n" + user);
         //非空验证
-        if (user != null) {
-            if (UserService.update(user) > 0) {
-                log.info("修改成功");
-                T.userStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
-                return Return.ok();
-            }
-            log.info("修改失败:逻辑");
+        if (user == null) {
+            log.info("\n无新信息");
             return Return.error();
         }
-        log.info("修改失败:条件");
+        //执行更新操作
+        boolean list = UserService.update(user);
+        log.info("\n更新记录数：\n" + list);
+        //判断是否成功
+        if (list) {
+            log.info(LogH.EXIT);
+            T.userStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
+            return Return.ok(list);
+        }
+        log.info("\n无更新");
+        log.info(LogH.EXIT);
         return Return.error();
     }
 
@@ -97,18 +107,23 @@ public class UserController {
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
-    @GetMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     @Operation(summary = "查询用户", description = "提供User对象查询用户")
     public Return<List<User>> select(@ModelAttribute User user) {
-        log.info("\n\n用户查询(get/){}", "\n条件" + user + "\n结果=");
+        log.info(LogH.GO);
+        log.info("你在查询用户，你提供的条件：\n" + user);
+        //执行查询操作
         List<User> list = UserService.list(user);
-        if (list != null) {
-            log.info("查询成功");
-            T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-            return Return.ok(list);
+        //判断查询结果
+        if (list == null) {
+            log.info("\n无结果");
+            log.info(LogH.EXIT);
+            return Return.error();
         }
-
-        return Return.error();
+        log.info("\n查询出的结果：\n" + list);
+        T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
+        log.info(LogH.EXIT);
+        return Return.ok(list);
     }
 
     /**
@@ -119,17 +134,21 @@ public class UserController {
      */
     @PostMapping("/pro")
     @Operation(summary = "查询用户Plus", description = "提供User对象查询用户")
-    public Return<Void> pro(@RequestBody User user) {
-        log.info("\n\n查询用户信息 PRO(/pro){}", "\n条件：" + user + "\n结果：");
-        if (user != null) {
-
-            T.userStyle("访问：pro,查询用户信息PRO,条件：" + user);//存储操作记录
-            List<User> userList = UserService.list(user);
-            log.info("查询成功PRO：{}", userList);
-            return Return.ok();
+    public Return<List<User>> pro(@RequestBody User user) {
+        log.info(LogH.GO);
+        log.info("你在查询用户PRO，你提供的条件：\n" + user);
+        //执行查询操作
+        List<User> list = UserService.list(user);
+        //判断查询结果
+        if (list != null) {
+            log.info("\nPRO查询出的结果：\n" + list);
+            log.info(LogH.EXIT);
+            T.userStyle("你在查询用户PRO,查询出的结果：" + list);//存储操作记录
+            return Return.ok(list);
 
         }
-        log.info("查询失败PRO：条件");
+        log.info("\n无结果");
+        log.info(LogH.EXIT);
         return Return.error();
     }
 
@@ -141,16 +160,12 @@ public class UserController {
      */
     @PostMapping("/user_userStyle")
     public Return<Void> user_userStyle(@RequestBody User user) {
-        log.info("\n\n查询多表用户信息(/user_userStyle){}", "\n条件：" + user + "\n结果：");
-
         if (user != null) {
             List<User> list = UserService.selectStyle(user);
-            log.info("查询成功：{}", list);
             System.out.println(list);
             T.userStyle("访问：userStyle,一对多查询,条件：" + user);//存储操作记录
             return Return.ok();
         }
-        log.info("查询失败：条件");
         return Return.error();
 
     }
@@ -164,14 +179,11 @@ public class UserController {
      */
     @GetMapping("/Page")
     public Return<Void> Page(@RequestParam(defaultValue = "1") Integer pageNum, Integer pageSize) {
-        log.info("\n\n分页查询信息(/Page){}", "\n条件：pageNum:" + pageNum + "pageSize:" + pageSize + "\n结果：");
         if (pageNum + pageSize > 2) {
             T.userStyle("访问：Page,分页查询用户信息");//存储操作记录
             IPage<User> ipage = UserService.selectPage(pageNum, pageSize);
-            log.info("分页查询成功{}", ipage);
             return Return.ok();
         }
-        log.info("分页查询失败：条件");
         return Return.error();
     }
 
