@@ -91,5 +91,19 @@ public class Return<T> {
                 null
         );
     }
+    /**
+     * 错误，返回结果不包含数据
+     *
+     * @return ReturnEnums 返回一个预设的错误结果对象，包含失败状态、错误码和错误信息
+     */
+    public static <T> Return<T> error(String message) {
+        return new Return<>(
+                ReturnEnums.SUCCESS.getCode(),
+                message,
+                ReturnEnums.SUCCESS.getSuccess(),
+                null,
+                null
+        );
+    }
 
 }

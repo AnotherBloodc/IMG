@@ -50,7 +50,7 @@ public class LoginLinterCeptor implements HandlerInterceptor {
                 log.info("请求发送成功，正在验证令牌合理性");
                 try {
                     //开始对提取出的JWT令牌进行解析和验证
-                    JwtUtils.getClaimsByToken(tokens);
+                    JwtUtils.parseToken(tokens);
                     log.info("token验证成功");
                 } catch (ExpiredJwtException e) {
 

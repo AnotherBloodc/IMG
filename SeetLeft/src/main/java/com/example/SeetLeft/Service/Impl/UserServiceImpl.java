@@ -38,8 +38,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapperPro, User> implements
      * @param user 包含更新信息的用户对象
      * @return 受影响的行数
      */
-    public int update(User user) {
-        return userMapper.update(user);
+    public boolean update(User user) {
+        return this.updateById(user);
     }
 
     /**
