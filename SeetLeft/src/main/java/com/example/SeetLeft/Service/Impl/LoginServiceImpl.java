@@ -25,12 +25,13 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
     public User GetUser(User user) {
         if (user != null) {
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq(user.getUsername() != null, "username", user.getUsername()).eq(user.getUsername() != null, "password", user.getPassword());
+            queryWrapper.
+                    eq("username", user.getUsername()).
+                    eq("password", user.getPassword());
             return this.getOne(queryWrapper);
         }
         return null;
     }
-
 
     /**
      * 注册: 新增一个用户，成功则返回新增的用户数量

@@ -3,11 +3,18 @@ package com.example.SeetLeft.Config;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.example.SeetLeft.Enums.LoginEnums;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Slf4j
 public class MybatisPlusConfig {
+
+    public MybatisPlusConfig() {
+        log.info(LoginEnums.GO + "MybatisPlusConfig:分页插件");
+    }
 
     /**
      * 添加分页插件

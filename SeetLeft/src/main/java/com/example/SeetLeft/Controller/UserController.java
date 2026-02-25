@@ -1,11 +1,13 @@
 package com.example.SeetLeft.Controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.SeetLeft.Controller.ControllerRequest.ResponseResult;
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Enums.LogH;
+import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Service.Impl.UserServiceImpl;
+import com.example.SeetLeft.Tool.ControllerUtils;
 import com.example.SeetLeft.Tool.Return;
-import com.example.SeetLeft.Tool.ToolController;
+import com.example.SeetLeft.Tool.FileUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -33,10 +35,16 @@ import java.util.List;
 public class UserController {
 
     @Resource
-    private UserServiceImpl UserService;
+    private final UserServiceImpl UserService;
+
 
     @Resource
-    private ToolController T;
+    private FileUtils T;
+
+    public UserController(UserServiceImpl userService) {
+        log.info(LoginEnums.GO + "UserController-管理员操作用户类");
+        this.UserService = userService;
+    }
 
     /**
      * 删除用户信息：ID <br/>
@@ -49,21 +57,18 @@ public class UserController {
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     @Operation(summary = "删除用户", description = "提供ID删除用户")
     public Return<Boolean> Delete(@PathVariable int id) {
-        log.info(LogH.GO);
         log.info("你在删除用户，你提供的ID：\n" + id);
         //判断删除条件ID是否合法
         if (id < 0) {
             log.info("\nID不合法");
-            log.info(LogH.EXIT);
             return Return.error();
         }
         //执行删除操作
         boolean list = UserService.DeleteUser(id);
         if (list) {
             log.info("\n删除成功");
-            log.info(LogH.EXIT);
             T.userStyle("访问：DeleteMapping.Delete,根据ID删除记录,ID" + id);//存储操作记录
-            return Return.ok(list);
+            return Return.ok(true);
         }
         return Return.error();
 
@@ -79,24 +84,21 @@ public class UserController {
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     @Operation(summary = "更新用户", description = "根据提供的User的id更新用户信息")
     public Return<Boolean> Update(@RequestBody(required = false) User user) {
-        log.info(LogH.GO);
-        log.info("你在更新用户，你提供的新信息：\n" + user);
+        log.info("你在更新用户，你提供的新信息：{}", user);
         //非空验证
         if (user == null) {
-            log.info("\n无新信息");
+            log.info("无新信息");
             return Return.error();
         }
         //执行更新操作
         boolean list = UserService.update(user);
-        log.info("\n更新记录数：\n" + list);
+        log.info("更新记录数：{}", list);
         //判断是否成功
         if (list) {
-            log.info(LogH.EXIT);
             T.userStyle("访问：PutMapping.user,更新用户信息,更新记录:" + user);//存储操作记录
-            return Return.ok(list);
+            return Return.ok(true);
         }
-        log.info("\n无更新");
-        log.info(LogH.EXIT);
+        log.info("无更新");
         return Return.error();
     }
 
@@ -110,20 +112,28 @@ public class UserController {
     @PostMapping//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     @Operation(summary = "查询用户", description = "提供User对象查询用户")
     public Return<List<User>> select(@ModelAttribute User user) {
-        log.info(LogH.GO);
-        log.info("你在查询用户，你提供的条件：\n" + user);
         //执行查询操作
         List<User> list = UserService.list(user);
-        //判断查询结果
-        if (list == null) {
-            log.info("\n无结果");
-            log.info(LogH.EXIT);
-            return Return.error();
-        }
-        log.info("\n查询出的结果：\n" + list);
+        log.info("你在查询用户，你提供的条件：{}", user);
+        log.info("查询出的结果：{}", list);
         T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
-        log.info(LogH.EXIT);
         return Return.ok(list);
+    }
+
+    /**
+     * 查询用户信息 JSON<br/>
+     * 注解@ModelAttribute：获取请求路径中的对象类型参数，如果对象为null，这创建所有属性为空的对象
+     *
+     * @param user 要查询的用户名
+     * @return 匹配的用户列表
+     */
+    @PostMapping("/serverPRO")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
+    @Operation(summary = "查询用户PRO", description = "提供User对象查询用户")
+    public ResponseResult<List<User>> selectPRO(@ModelAttribute User user) {
+        ResponseResult<List<User>> R = ControllerUtils.messageHandler(() -> UserService.list(user));
+        log.info("查询用户PRO");
+        log.info("{}", R);
+        return R;
     }
 
     /**
@@ -135,21 +145,13 @@ public class UserController {
     @PostMapping("/pro")
     @Operation(summary = "查询用户Plus", description = "提供User对象查询用户")
     public Return<List<User>> pro(@RequestBody User user) {
-        log.info(LogH.GO);
-        log.info("你在查询用户PRO，你提供的条件：\n" + user);
         //执行查询操作
         List<User> list = UserService.list(user);
-        //判断查询结果
-        if (list != null) {
-            log.info("\nPRO查询出的结果：\n" + list);
-            log.info(LogH.EXIT);
-            T.userStyle("你在查询用户PRO,查询出的结果：" + list);//存储操作记录
-            return Return.ok(list);
+        log.info("你在查询用户PRO，你提供的条件：{}", user);
+        log.info("PRO查询出的结果：{}", list);
+        T.userStyle("你在查询用户PRO,查询出的结果：" + list);//存储操作记录
+        return Return.ok(list);
 
-        }
-        log.info("\n无结果");
-        log.info(LogH.EXIT);
-        return Return.error();
     }
 
     /**
@@ -160,6 +162,7 @@ public class UserController {
      */
     @PostMapping("/user_userStyle")
     public Return<Void> user_userStyle(@RequestBody User user) {
+        log.info("你正在进行多表一对多查询");
         if (user != null) {
             List<User> list = UserService.selectStyle(user);
             System.out.println(list);

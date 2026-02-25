@@ -15,7 +15,7 @@ spring:
   application:
     name: SeetLeft
   datasource:
-    url: jdbc:mysql://localhost:3306/seetpro
+    url: jdbc:mysql://127.0.0.1:3306/seetpro
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -75,7 +75,12 @@ spring:
       #     max-idle: 10
       #     min-idle: 5
       #     max-wait: 5000ms
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
 mybatis:
   mapper-locations: classpath*:Mapper/*.xml
   configuration:

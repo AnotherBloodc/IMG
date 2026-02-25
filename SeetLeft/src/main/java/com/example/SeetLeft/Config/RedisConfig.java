@@ -1,9 +1,11 @@
 package com.example.SeetLeft.Config;
 
+import com.example.SeetLeft.Enums.LoginEnums;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +21,13 @@ import java.time.Duration;
 
 @Configuration
 @EnableCaching
+@Slf4j
 public class RedisConfig {
+
+    public RedisConfig() {
+        log.info(LoginEnums.GO + "RedisConfig:Redis配置文件");
+    }
+
     /**
      * 配置自定义的RedisTemplate
      * 设置Key和Value的序列化方式

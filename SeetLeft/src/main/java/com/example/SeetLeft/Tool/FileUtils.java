@@ -2,14 +2,16 @@ package com.example.SeetLeft.Tool;
 
 import com.example.SeetLeft.Entity.UserStyle;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 
+@Slf4j
 @Component
-public class ToolController {
+public class FileUtils {
 
     //获取当前项目路径
     private static final String UPLOADED_FOLDER = System.getProperty("user.dir");
@@ -51,8 +53,9 @@ public class ToolController {
      * @param name 被操作的记录
      */
     public void userStyle(String name) {
-        UserStyle us = new UserStyle();
+        /*UserStyle us = new UserStyle();
         us.setName(name);
-        us.setUserid(1);
+        us.setUserid(1);*/
+        log.info("用户操作记录：{}", name);
     }
 }

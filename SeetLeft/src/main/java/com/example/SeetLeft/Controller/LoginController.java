@@ -1,10 +1,11 @@
 package com.example.SeetLeft.Controller;
 
 import com.example.SeetLeft.Entity.User;
-import com.example.SeetLeft.Enums.LogH;
+import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Service.Impl.LoginServiceImpl;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -34,6 +35,7 @@ public class LoginController {
 
     // 构造器注入（推荐的依赖注入方式）
     public LoginController(StringRedisTemplate stringRedisTemplate, LoginServiceImpl login, JwtUtils jwtUtils) {
+        log.info(LoginEnums.GO + "LoginController-用户登录与注册");
         this.stringRedisTemplate = stringRedisTemplate;
         this.login = login;
         this.jwtUtils = jwtUtils;
@@ -51,17 +53,30 @@ public class LoginController {
     public Return<Object> login(
             @RequestBody User user,
             @RequestParam(value = "isLogin", required = false, defaultValue = "false") boolean isLogin) {
-        log.info(LogH.GO);
-        log.info("你正在执行用户登录，你提供的条件：" + user);
+        log.info("你正在执行用户登录，你提供的条件：{}", user);
+        //获取Redis中的token
+        String tokens = stringRedisTemplate.opsForValue().get("token:" + user.getUsername());
+        log.info("查询是否有token：{}", tokens);
+        if (tokens != null) {
+            log.info("Redis中已存在此用户，将解析token:");
+            Claims claims = jwtUtils.parseToken(tokens);
+            log.info("获取claims对象：{}", claims);
+            log.info("通过claims对象获取用户信息Subject值：{}", claims.getSubject());
+            user.setId(claims.get("id", Integer.class));
+            user.setUsername(claims.get("username", String.class));
+            //通过用户ID查询用户信息
+            User list = login.GetUser(user);
+            return Return.ok(list);
+        }
+        log.info("Redis中不存在token开始查询mysql");
         //查询此用户
         User users = login.GetUser(user);
         //判断用户是否存在
         if (users == null) {
             log.info("你当前登录的数据不存在");
-            log.info(LogH.EXIT);
             return Return.error("用户登录，没有此用户");
         }
-        log.info("登录成功，判断自动登录的值：" + isLogin);
+        log.info("登录成功，判断自动登录的值：{}", isLogin);
         if (isLogin) {
             log.info("开启自动登录，将生成token并且储存Redis");
             String token = jwtUtils.generateToken(users);
@@ -73,16 +88,13 @@ public class LoginController {
                 // 设置token到Redis，并指定过期时间，参数：key, value, 过期时间, 时间单位
                 stringRedisTemplate.opsForValue().set(redisKey, token, 2, TimeUnit.HOURS);
                 log.info("用户的token已成功存入Redis，key:{}", redisKey);
-                log.info(LogH.EXIT);
                 return Return.ok(user, token);
             } catch (Exception e) {
                 log.info("存入Redis失败", e);
-                log.info(LogH.EXIT);
                 return Return.error("登录失败：token存储异常");
             }
         }
-        log.info(LogH.EXIT);
-        return Return.ok(user, null);
+        return Return.ok(user);
     }
 
     /**
@@ -95,8 +107,8 @@ public class LoginController {
     @PostMapping("/Register")
     @Operation(summary = "用户注册", description = "提供User对象")
     public Return<User> register(@RequestBody User user) {
-        log.info("用户注册(post/register)：{}", "条件：");
-        log.info("{}", user);
+        log.info("用户注册");
+        log.info("条件：{}", user);
         if (login.SetUser(user) > 0) {
             log.info("用户注册成功");
             return Return.ok(user);
