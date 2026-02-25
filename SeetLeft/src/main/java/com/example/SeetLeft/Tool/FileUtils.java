@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Component
-public class ToolController {
+public class FileUtils {
 
     //获取当前项目路径
     private static final String UPLOADED_FOLDER = System.getProperty("user.dir");

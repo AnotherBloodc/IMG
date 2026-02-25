@@ -2,7 +2,7 @@ package com.example.SeetLeft.Interceptor;
 
 
 import com.example.SeetLeft.Tool.JwtUtils;
-import com.example.SeetLeft.Tool.ToolController;
+import com.example.SeetLeft.Tool.FileUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
@@ -19,7 +19,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoginLinterCeptor implements HandlerInterceptor {
 
     @Resource
-    private ToolController T;
+    private FileUtils T;
+
+    @Resource
+    private JwtUtils jwtUtils;
 
     /**
      * 拦截器：带有拦截器的接口被请求访问时，会先经过拦截器，再经过控制器，最后经过视图解析器，返回给前端
@@ -50,7 +53,7 @@ public class LoginLinterCeptor implements HandlerInterceptor {
                 log.info("请求发送成功，正在验证令牌合理性");
                 try {
                     //开始对提取出的JWT令牌进行解析和验证
-                    JwtUtils.parseToken(tokens);
+                    jwtUtils.parseToken(tokens);
                     log.info("token验证成功");
                 } catch (ExpiredJwtException e) {
 
