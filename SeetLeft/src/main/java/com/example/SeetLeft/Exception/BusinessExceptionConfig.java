@@ -1,8 +1,10 @@
 package com.example.SeetLeft.Exception;
 
 import com.example.SeetLeft.Enums.LoginEnums;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+@Getter
 @Slf4j
 public class BusinessExceptionConfig extends RuntimeException {
 
@@ -27,7 +29,4 @@ public class BusinessExceptionConfig extends RuntimeException {
         return new BusinessExceptionConfig(500, message);
     }
 
-    public int getCode() {
-        return code;
-    }
 }

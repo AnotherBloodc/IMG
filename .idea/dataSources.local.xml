@@ -12,11 +12,19 @@
       <user-name>root</user-name>
       <schema-mapping>
         <introspection-scope>
-          <node kind="schema">
-            <name qname="Seetpro" />
-            <name qname="another" />
-            <name qname="seetpro" />
-          </node>
+          <node kind="schema" qname="Seetpro" />
+        </introspection-scope>
+      </schema-mapping>
+    </data-source>
+    <data-source name="Redis" uuid="8c2c4a38-b678-48fa-9bd8-13ca2f7f35ea">
+      <database-info product="Redis Standalone" version="8.6.1" jdbc-version="4.2" driver-name="Redis JDBC Driver" driver-version="1.5" dbms="REDIS" exact-version="8.6.1" exact-driver-version="1.5">
+        <jdbc-catalog-is-schema>true</jdbc-catalog-is-schema>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <secret-storage>master_key</secret-storage>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="schema" negative="1" />
         </introspection-scope>
       </schema-mapping>
     </data-source>

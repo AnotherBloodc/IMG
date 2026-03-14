@@ -13,17 +13,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j
 @ControllerAdvice
 public class PublicExceptionHandler {
-    public PublicExceptionHandler() {
-        log.info(LoginEnums.GO + "PublicExceptionHandler异常集中处理类");
-    }
-
     /**
      * 处理自定义业务异常
      */
     @ExceptionHandler(BusinessExceptionConfig.class)
     @ResponseBody
     public ResponseEntity<ResponseResult<Void>> handleBusinessException(BusinessExceptionConfig e) {
-        log.warn("业务异常 - code: {}, message: {}", e.getCode(), e.getMessage());
+        log.warn(LoginEnums.GO + "业务异常 - code: {}, message: {}", e.getCode(), e.getMessage());
         ResponseResult<Void> result = ResponseResult.error(e.getMessage(), e.getCode());
         return ResponseEntity.status(e.getCode()).body(result);
     }

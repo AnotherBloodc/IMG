@@ -11,7 +11,7 @@ import 'element-plus/dist/index.css' //引入element-plus相关样式
 
 const app = createApp(App)
 
-axios.defaults.baseURL = 'http://localhost:8080'
+axios.defaults.baseURL = 'http://localhost:8081'
 app.config.globalProperties.axiosTool = axios
 
 //注册组件

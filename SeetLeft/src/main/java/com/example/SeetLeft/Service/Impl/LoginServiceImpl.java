@@ -3,11 +3,13 @@ package com.example.SeetLeft.Service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.SeetLeft.Entity.User;
+import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.MapperPro.LoginMapperPro;
 import com.example.SeetLeft.Service.LoginService;
 import com.example.SeetLeft.Tool.UserValidator;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -18,17 +20,44 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
     private UserValidator userValidator;
 
     /**
-     * 登录：查询单个用户，如果存在则返回用户信息
+     * 登录：用户登录，需要ID和邮箱，查询单个用户，如果存在则返回用户信息
+     *
+     * @return 用户信息
+     */
+    public User GetUser(int id, String username) {
+        log.info(LoginEnums.GO + "用户登录，需要ID和邮箱");
+        if (id < 0 && username == null) {
+            return null;
+        }
+        QueryWrapper<User> list = new QueryWrapper<>();
+        list.eq("id", id);
+        list.eq("username", username);
+        return this.getOne(list);
+    }
+
+    /**
+     * 登录：需要账号密码，查询单个用户，如果存在则返回用户信息
      *
      * @return 用户信息
      */
     public User GetUser(User user) {
-        if (user != null) {
-            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-            queryWrapper.
-                    eq("username", user.getUsername()).
-                    eq("password", user.getPassword());
-            return this.getOne(queryWrapper);
+        log.info(LoginEnums.GO + "用户登录，需要密码，还有手机号或者邮箱");
+
+        //判断账号密码是否为空
+        if (user.getPassword() == null || (user.getUsername() == null && user.getPhone() == null)) {
+            log.info("账号或密码为空");
+            return null;
+        }
+        //通过账号获取用户的信息
+        QueryWrapper<User> list = new QueryWrapper<>();
+        list.eq("username", user.getUsername());
+        String password = user.getPassword();//获取明文密码
+        user = getOne(list);
+        String passwordBCrypt = user.getPassword();//获取密文密码
+
+        //校验用户密码
+        if (BCrypt.checkpw(password, passwordBCrypt)) {
+            return user;
         }
         return null;
     }
@@ -42,19 +71,6 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
         //判断注册条件是否合法
         if (user != null) {
 
-            //判断用户名是否符合规则
-            String userMsg = userValidator.validateUser(user.getUsername()).getUserMsg();
-            String passMsg = userValidator.validateUser(user.getUsername()).getPassMsg();
-            Boolean username = userValidator.validateUser(user.getUsername()).getUsername();
-            Boolean password = userValidator.validateUser(user.getUsername()).getPassword();
-
-            //开始判断
-            if (username && password) {
-                log.info(userMsg);
-                log.info(passMsg);
-                return 0; // 或者抛出异常
-            }
-
             //判断用户是否存在
             QueryWrapper<User> checkWrapper = new QueryWrapper<>();
             checkWrapper.eq("username", user.getUsername());
@@ -62,6 +78,10 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
                 log.info("注册失败:用户已存在");
                 return 0;
             }
+            log.info("此用户在数据库中不存在，可注册");
+
+            //密码加密
+            user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 
             //执行注册
             boolean saveResult = this.save(user);

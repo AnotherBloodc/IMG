@@ -22,14 +22,11 @@ import java.io.IOException;
 @Slf4j
 @Tag(name = "用户操作：文件上传", description = "用户执行文件上传")
 public class FileController {
-    public FileController() {
-        log.info(LoginEnums.GO + "FileController-用户操作：文件上传");
-    }
 
     @Resource
     private FileUtils T;
 
-    /**
+     /**
      * 上传文件：文件和名字<br/>
      * 注解：@PostMapping: 用于设置传递过来的Post请求的访问路径
      *
@@ -40,7 +37,7 @@ public class FileController {
     @Operation(summary = "上传文件", description = "提供文件名称，文件路径，文件本体")
     @PostMapping("/postFile")
     public Return<Void> postFile(String name, MultipartFile file, HttpServletRequest request) throws IOException {
-        log.info("你正在执行上传文件操作{}", "\n条件:" + name + "\n结果：");
+        log.info(LoginEnums.GO +"你正在执行上传文件操作{}", "\n条件:" + name + "\n结果：");
         if (file != null) {
             String s = T.saveFile(name, file, request);//保存文件
             log.info("上传文件成功{}", s);

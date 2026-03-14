@@ -23,7 +23,7 @@ public class WebConfig implements WebMvcConfigurer {
     //注册拦截器
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.info("添加拦截器");
+        log.info(LoginEnums.GO + "添加拦截器");
         //添加拦截器，并添加拦截路径
         registry
                 .addInterceptor(loginLinterCeptor)//选中拦截器
@@ -33,7 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        log.info("添加允许的请求方式");
+        log.info(LoginEnums.GO + "添加允许的请求方式");
         registry.addMapping("/**")//允许所有请求
                 .allowedMethods("GET", "POST", "PUT", "DELETE")//允许所有请求方式
                 .allowedHeaders("*")//允许所有请求头

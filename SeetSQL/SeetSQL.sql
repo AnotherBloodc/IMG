@@ -9,23 +9,22 @@ use `Seetpro`;
 create table if not exists `Seetpro`.`User`
 (
     /* 主键，不能为0，不可重复 */
-    `id`       int         not null auto_increment primary key,
+    `id`       int          not null auto_increment primary key,
     /* 名字，不能为空，可重复 */
-    `name`     varchar(40) not null,
+    `name`     varchar(40)  not null,
     /* 账户，不能为空，可重复，只能用字母,@,_ */
-    `username` varchar(32) not null,
+    `username` varchar(32)  not null,
     constraint chk_username_format check (username REGEXP '^[a-zA-Z0-9@_]+$'),
-    /* 密码，不能为空，可重复，只能用字母,@,_ */
-    `password` varchar(16) not null,
-    constraint chk_password_format check (username REGEXP '^[a-zA-Z0-9_]+$'),
+    /* 密码，不能为空，可重复*/
+    `password` varchar(255) not null,
     /* 电话，不可重复 */
-    `phone`    varchar(11) not null unique,
+    `phone`    varchar(11) unique,
     /* 创建时间，不能为空，可重复 */
-    `datetime` datetime    not null default current_timestamp(),
+    `datetime` datetime     not null default current_timestamp(),
     /* 是否启用，不能为空，可重复 */
-    `effect`   boolean     not null default true,
+    `effect`   boolean      not null default true,
     /* 角色定位ID，不能为空,可重复 */
-    `roleID`   int         not null default 2
+    `roleID`   int          not null default 2
 );
 
 

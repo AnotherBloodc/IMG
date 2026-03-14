@@ -35,16 +35,10 @@ import java.util.List;
 public class UserController {
 
     @Resource
-    private final UserServiceImpl UserService;
-
+    private UserServiceImpl UserService;
 
     @Resource
     private FileUtils T;
-
-    public UserController(UserServiceImpl userService) {
-        log.info(LoginEnums.GO + "UserController-管理员操作用户类");
-        this.UserService = userService;
-    }
 
     /**
      * 删除用户信息：ID <br/>
@@ -57,7 +51,7 @@ public class UserController {
     @DeleteMapping("/{id}")//或者是@RequestMapping(value = "/Delete", method = RequestMethod.DELETE)注解，效果一样
     @Operation(summary = "删除用户", description = "提供ID删除用户")
     public Return<Boolean> Delete(@PathVariable int id) {
-        log.info("你在删除用户，你提供的ID：\n" + id);
+        log.info(LoginEnums.GO + "你在删除用户，你提供的ID：{}", id);
         //判断删除条件ID是否合法
         if (id < 0) {
             log.info("\nID不合法");
@@ -84,7 +78,7 @@ public class UserController {
     @PutMapping//或者是@RequestMapping(value = "/Update", method = RequestMethod.PUT)注解，效果一样
     @Operation(summary = "更新用户", description = "根据提供的User的id更新用户信息")
     public Return<Boolean> Update(@RequestBody(required = false) User user) {
-        log.info("你在更新用户，你提供的新信息：{}", user);
+        log.info(LoginEnums.GO + "你在更新用户，你提供的新信息：{}", user);
         //非空验证
         if (user == null) {
             log.info("无新信息");
@@ -114,7 +108,7 @@ public class UserController {
     public Return<List<User>> select(@ModelAttribute User user) {
         //执行查询操作
         List<User> list = UserService.list(user);
-        log.info("你在查询用户，你提供的条件：{}", user);
+        log.info(LoginEnums.GO + "你在查询用户，你提供的条件：{}", user);
         log.info("查询出的结果：{}", list);
         T.userStyle("访问：GetMapping.user,根据用户名获取用户列表,条件：" + user);//存储操作记录
         return Return.ok(list);
@@ -147,9 +141,9 @@ public class UserController {
     public Return<List<User>> pro(@RequestBody User user) {
         //执行查询操作
         List<User> list = UserService.list(user);
-        log.info("你在查询用户PRO，你提供的条件：{}", user);
+        log.info(LoginEnums.GO+"你在查询用户PRO，你提供的条件：{}", user);
         log.info("PRO查询出的结果：{}", list);
-        T.userStyle("你在查询用户PRO,查询出的结果：" + list);//存储操作记录
+        T.userStyle("查询出的结果：" + list);//存储操作记录
         return Return.ok(list);
 
     }
@@ -162,7 +156,7 @@ public class UserController {
      */
     @PostMapping("/user_userStyle")
     public Return<Void> user_userStyle(@RequestBody User user) {
-        log.info("你正在进行多表一对多查询");
+        log.info(LoginEnums.GO+"你正在进行多表一对多查询");
         if (user != null) {
             List<User> list = UserService.selectStyle(user);
             System.out.println(list);

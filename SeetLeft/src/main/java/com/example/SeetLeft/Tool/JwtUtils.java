@@ -32,12 +32,11 @@ public class JwtUtils {
     public JwtUtils(JwtProperties jwtProperties) {
         // 使用配置文件中的密钥
         key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
-        log.info(LoginEnums.GO + "JWT密钥已初始化");
     }
 
     //生成token
     public String generateToken(User user) {
-        log.info("执行生成token");
+        log.info("生成token");
         //创建时间对象
         Date now = new Date();
 
@@ -46,8 +45,8 @@ public class JwtUtils {
 
         //创建token的载荷
         Map<String, Object> customClaims = new HashMap<>();
-        customClaims.put("username", user.getUsername()); // 保留用户名
-        customClaims.put("userId", user.getId()); // 新增用户ID（非敏感，更唯一）
+        customClaims.put("username", user.getUsername()); // 保留用户名（非敏感，唯一）
+        customClaims.put("userId", user.getId()); // 用户ID（非敏感，唯一）
 
         log.info("用户信息为：{}", user);
         log.info("过期时间为：{}", expireDate);
@@ -63,17 +62,27 @@ public class JwtUtils {
 
     //解析token
     public Claims parseToken(String token) {
-        log.info("开始解析token：{}", token);
+        log.info("开始解析token");
         try {
             Jws<Claims> claims = Jwts.parser()//调用parser()方法，生成Claims对象
                     .verifyWith(key)//设置签名算法和密钥，查看token有没有被篡改
                     .build()//获取token并解析
                     .parseSignedClaims(token);//提供token进行解析得到一个Jws类型的对象claims
-            log.info("解析成功，结果为：" + claims);
+            log.info("解析成功");
             return claims.getPayload();
         } catch (JwtException a) {
-            log.error("解析Token失败", a);
+            log.error("无效的Token", a);
             throw new RuntimeException("无效的Token", a);
         }
+    }
+
+    //获取token中的用户信息
+    public User getUserFromToken(String token) {
+        log.info("获取token中的用户信息");
+        Claims claims = parseToken(token);
+        User user = new User();
+        user.setId(claims.get("userId", Integer.class));
+        user.setUsername(claims.get("username", String.class));
+        return user;
     }
 }

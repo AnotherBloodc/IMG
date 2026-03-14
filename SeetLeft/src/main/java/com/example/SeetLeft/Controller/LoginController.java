@@ -9,8 +9,13 @@ import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
@@ -28,73 +33,93 @@ public class LoginController {
 
     // 注入Redis操作模板（Spring会自动装配，前提是Redis配置正确）
     @Resource
-    private final StringRedisTemplate stringRedisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Resource
-    private final JwtUtils jwtUtils;
-
-    // 构造器注入（推荐的依赖注入方式）
-    public LoginController(StringRedisTemplate stringRedisTemplate, LoginServiceImpl login, JwtUtils jwtUtils) {
-        log.info(LoginEnums.GO + "LoginController-用户登录与注册");
-        this.stringRedisTemplate = stringRedisTemplate;
-        this.login = login;
-        this.jwtUtils = jwtUtils;
-    }
+    private JwtUtils jwtUtils;
 
     /**
      * 登录用户：JSON<br/>
      * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
      *
-     * @param user 用户对象，可为null
+     * @param user    用户对象，可为null
+     * @param isLogin 是否自动登录
      * @return 登录操作的结果状态码
      */
     @PostMapping("/LoginUser")
-    @Operation(summary = "用户登录", description = "提供User对象以及登录后的token")
+    @Operation(summary = "用户登录", description = "支持主动登录（账号密码）和自动登录（Token）")
     public Return<Object> login(
-            @RequestBody User user,
-            @RequestParam(value = "isLogin", required = false, defaultValue = "false") boolean isLogin) {
-        log.info("你正在执行用户登录，你提供的条件：{}", user);
-        //获取Redis中的token
+            @RequestBody(required = false) User user,
+            @RequestParam(required = false, value = "isLogin", defaultValue = "false") boolean isLogin,
+            HttpServletResponse response) {
+        log.info(LoginEnums.GO + "执行用户登录");
+
+        //从Redis中查询token并解析,如果正确则直接登录
         String tokens = stringRedisTemplate.opsForValue().get("token:" + user.getUsername());
-        log.info("查询是否有token：{}", tokens);
         if (tokens != null) {
-            log.info("Redis中已存在此用户，将解析token:");
-            Claims claims = jwtUtils.parseToken(tokens);
-            log.info("获取claims对象：{}", claims);
-            log.info("通过claims对象获取用户信息Subject值：{}", claims.getSubject());
-            user.setId(claims.get("id", Integer.class));
-            user.setUsername(claims.get("username", String.class));
-            //通过用户ID查询用户信息
-            User list = login.GetUser(user);
-            return Return.ok(list);
+            log.info("成功从Redis获取token，通过token获取用户信息查询数据库");
+            User list = jwtUtils.getUserFromToken(tokens);
+            list = login.GetUser(list.getId(), list.getUsername());
+            log.info("自动登录成功");
+            return Return.ok(list, "自动登录成功");
         }
-        log.info("Redis中不存在token开始查询mysql");
-        //查询此用户
-        User users = login.GetUser(user);
-        //判断用户是否存在
-        if (users == null) {
-            log.info("你当前登录的数据不存在");
-            return Return.error("用户登录，没有此用户");
+
+        //查询此用户并判断是否存在
+        User list = login.GetUser(user);
+        if (list == null) {
+            return Return.error("当前账号不存在");
         }
-        log.info("登录成功，判断自动登录的值：{}", isLogin);
+
+        //判断是否需要自动登录
         if (isLogin) {
-            log.info("开启自动登录，将生成token并且储存Redis");
-            String token = jwtUtils.generateToken(users);
-            log.info("token:{}", token);
-            // 将token存入Redis（核心逻辑）
+
+            //生成token
+            log.info("执行自动登录保存用户信息");
+            String token = jwtUtils.generateToken(list);
             try {
                 // 设计Redis Key：前缀+用户名（方便后续查找/删除），比如 "token:zhangsan"
-                String redisKey = "token:" + users.getUsername();
-                // 设置token到Redis，并指定过期时间，参数：key, value, 过期时间, 时间单位
+                String redisKey = "token:" + list.getUsername();
+
+                // 保存token到Redis，并指定过期时间，参数：key, value, 过期时间, 时间单位
                 stringRedisTemplate.opsForValue().set(redisKey, token, 2, TimeUnit.HOURS);
-                log.info("用户的token已成功存入Redis，key:{}", redisKey);
-                return Return.ok(user, token);
+
+                // 保存token到Cookie,设置HttpOnly Cookie（核心：防XSS）
+                Cookie cookie = new Cookie("token", token);
+                cookie.setHttpOnly(true); // 前端JS无法读取，防XSS
+                cookie.setSecure(true); // 仅HTTPS传输（生产环境开启，本地测试可注释）
+                cookie.setPath("/"); // 全站所有接口都能携带这个Cookie
+                cookie.setMaxAge(2 * 3600); // Cookie过期时间（和Redis Token一致，2小时）
+
+                // 把Cookie返回给客户端
+                response.addCookie(cookie);
+                log.info("用户的token已成功存入Redis和Cookie");
             } catch (Exception e) {
-                log.info("存入Redis失败", e);
-                return Return.error("登录失败：token存储异常");
+                log.info("用户信息保存失败", e);
+                return Return.error("自动登录信息保存失败");
             }
         }
-        return Return.ok(user);
+        log.info("登录成功");
+        return Return.ok(list, "登录成功");
+    }
+
+
+    /**
+     * 登出用户：JSON<br/>
+     * 注解：@GetMapping: 用于设置传递过来的GET请求的访问路径
+     *
+     * @param username 用户名
+     * @return 登出操作的结果状态码
+     */
+    @GetMapping("/LoginExit")
+    @Operation(summary = "用户登出", description = "注销登录")
+    public Return<Object> loginExit(String username) {
+        log.info(LoginEnums.GO + "用户登出");
+        log.info("用户名：{}", username);
+        // 删除Redis中的token
+        String redisKey = "token:" + username;
+        stringRedisTemplate.delete(redisKey);
+        log.info("用户已登出，Redis中的token已删除，key:{}", redisKey);
+        return Return.ok("账号退出成功");
     }
 
     /**
@@ -107,14 +132,13 @@ public class LoginController {
     @PostMapping("/Register")
     @Operation(summary = "用户注册", description = "提供User对象")
     public Return<User> register(@RequestBody User user) {
-        log.info("用户注册");
-        log.info("条件：{}", user);
+        log.info(LoginEnums.GO + "用户注册");
         if (login.SetUser(user) > 0) {
             log.info("用户注册成功");
-            return Return.ok(user);
+            return Return.ok(user, "注册成功");
         }
         log.info("用户注册失败");
-        return Return.error();
+        return Return.error("注册失败系统出错");
     }
 
 }
