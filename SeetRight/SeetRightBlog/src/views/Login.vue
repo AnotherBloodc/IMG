@@ -146,17 +146,17 @@ export default {
       }
     },
     Login() {
-      this.axiosTool.post("/Account/Login", this.user)
+      this.axiosTool.post("/Login/LoginUser", this.user)
           .then(res => {
             if (res.data.success === true) {
               this.user.token = res.data.data.token;//获取后端返回的token
               if (this.AutoLogin) {
                 // 自动登录：持久化存储（localStorage）
-                localStorage.setItem("token", token);
+                localStorage.setItem("token", this.user.token);
                 localStorage.setItem("AutoLogin", "true"); // 保存自动登录状态
               } else {
                 // 非自动登录：会话级存储（sessionStorage）
-                sessionStorage.setItem("token", token);
+                sessionStorage.setItem("token", this.user.token);
                 localStorage.setItem("AutoLogin", "false"); // 记录自动登录状态
               }
               this.router.push("/Header");//跳转页面

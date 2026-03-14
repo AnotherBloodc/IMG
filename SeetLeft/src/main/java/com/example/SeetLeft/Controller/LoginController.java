@@ -51,23 +51,57 @@ public class LoginController {
     public Return<Object> login(
             @RequestBody(required = false) User user,
             @RequestParam(required = false, value = "isLogin", defaultValue = "false") boolean isLogin,
-            HttpServletResponse response) {
-        log.info(LoginEnums.GO + "执行用户登录");
+            HttpServletResponse response,
+            HttpServletRequest request) {
+        log.info(LoginEnums.GO + "用户执行登录操作");
 
-        //从Redis中查询token并解析,如果正确则直接登录
-        String tokens = stringRedisTemplate.opsForValue().get("token:" + user.getUsername());
-        if (tokens != null) {
-            log.info("成功从Redis获取token，通过token获取用户信息查询数据库");
-            User list = jwtUtils.getUserFromToken(tokens);
-            list = login.GetUser(list.getId(), list.getUsername());
-            log.info("自动登录成功");
-            return Return.ok(list, "自动登录成功");
+        //从Cookie中查询token,与Redis中的token对比看看是否匹配，若匹配成功则解析,正确且无过期则直接登录
+        String tokenCookie = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    tokenCookie = cookie.getValue();
+                    break;
+                }
+            }
+        }
+        //判断Cookie中是否有token
+        if (tokenCookie != null) {
+            try {
+                log.info("成功，Cookie中存在该用户的token");
+                User list = jwtUtils.getUserFromToken(tokenCookie);
+
+                //用cookie中的token中的用户信息为条件，从Redis中获取Token并解析，得到其中的数据
+                String token = stringRedisTemplate.opsForValue().get("token:" + list.getUsername());
+
+                //判断Redis中的token是否为空
+                if (token == null) {
+                    log.warn("失败，没有从 Redis 中得到该用户的 token");
+                    return Return.error("无登录凭证，请重新登录");
+                }
+
+                //判断Cookie中的token是否与Redis中的token一致
+                if (!tokenCookie.equals(token)) {
+                    log.warn("失败，Cookie 与 Redis 中的 token 不一致，可能已被替换");
+                    return Return.error("登录凭证无效");
+                }
+                list = login.GetUser(list.getId(), list.getUsername());//通过token中的用户信息查询数据库
+                log.info("成功，Redis中的Token与Cookie中的Token验证通过");
+                return Return.ok(list, "自动登录");
+            } catch (Exception e) {
+                log.warn("失败，Token 验证失败（可能已过期或被篡改），继续执行普通登录流程", e);
+            }
         }
 
-        //查询此用户并判断是否存在
+        //token为空，通过用户提供的账号密码查询数据库
+        if (user == null) {
+            return Return.error("没有提供账号");
+        }
+
         User list = login.GetUser(user);
         if (list == null) {
-            return Return.error("当前账号不存在");
+            log.warn("提供的账号不存在");
+            return Return.error("提供的账号不存在");
         }
 
         //判断是否需要自动登录
@@ -105,34 +139,81 @@ public class LoginController {
 
     /**
      * 登出用户：JSON<br/>
-     * 注解：@GetMapping: 用于设置传递过来的GET请求的访问路径
+     * 注解：@GetMapping: 用于设置传递过来的 GET 请求的访问路径
      *
-     * @param username 用户名
      * @return 登出操作的结果状态码
      */
-    @GetMapping("/LoginExit")
-    @Operation(summary = "用户登出", description = "注销登录")
-    public Return<Object> loginExit(String username) {
+    @PostMapping("/LoginExit")
+    @Operation(summary = "用户登出", description = "注销登录，需要携带 Token")
+    public Return<Object> loginExit(
+            HttpServletRequest request,
+            HttpServletResponse response) {
         log.info(LoginEnums.GO + "用户登出");
-        log.info("用户名：{}", username);
-        // 删除Redis中的token
-        String redisKey = "token:" + username;
-        stringRedisTemplate.delete(redisKey);
-        log.info("用户已登出，Redis中的token已删除，key:{}", redisKey);
-        return Return.ok("账号退出成功");
+
+        // 从 Cookie 获取 Token
+        String tokenFromCookie = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    tokenFromCookie = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (tokenFromCookie == null || tokenFromCookie.isEmpty()) {
+            return Return.error("未找到登录凭证");
+        }
+
+        try {
+            // 解析 Token 得到用户名
+            User tokenUser = jwtUtils.getUserFromToken(tokenFromCookie);
+            String username = tokenUser.getUsername();
+
+            // 删除 Redis 中的 token
+            String redisKey = "token:" + username;
+            stringRedisTemplate.delete(redisKey);
+
+            // 清除 Cookie
+            Cookie cookie = new Cookie("token", null);
+            cookie.setPath("/");
+            cookie.setMaxAge(0); // 立即过期
+            response.addCookie(cookie);
+
+            log.info("用户已登出，Redis 中的 token 已删除，key:{}", redisKey);
+            return Return.ok("账号退出成功");
+
+        } catch (Exception e) {
+            log.warn("Token 无效，登出失败", e);
+            return Return.error("无效的登录凭证");
+        }
     }
 
     /**
      * 注册用户：JSON<br/>
-     * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
+     * 注解：@PostMapping: 用于设置传递过来的 POST 请求的访问路径
      *
-     * @param user 用户对象，可为null
+     * @param user 用户对象，可为 null
      * @return 插入操作的结果状态码
      */
     @PostMapping("/Register")
-    @Operation(summary = "用户注册", description = "提供User对象")
+    @Operation(summary = "用户注册", description = "提供 User 对象")
     public Return<User> register(@RequestBody User user) {
         log.info(LoginEnums.GO + "用户注册");
+
+        // 添加参数校验
+        if (user == null) {
+            return Return.error("用户信息不能为空");
+        }
+
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            return Return.error("用户名不能为空");
+        }
+
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return Return.error("密码不能为空");
+        }
+
         if (login.SetUser(user) > 0) {
             log.info("用户注册成功");
             return Return.ok(user, "注册成功");

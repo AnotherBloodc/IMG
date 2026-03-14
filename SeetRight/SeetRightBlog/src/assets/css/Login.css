@@ -191,3 +191,10 @@
     font-size: 90px;
     color: #000000;
 }
+
+.el-alert {
+    margin: 20px 0 0;
+}
+.el-alert:first-child {
+    margin: 0;
+}

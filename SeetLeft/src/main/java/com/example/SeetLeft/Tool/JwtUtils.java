@@ -30,6 +30,8 @@ public class JwtUtils {
 
     //密钥初始化
     public JwtUtils(JwtProperties jwtProperties) {
+        log.info(LoginEnums.GO);
+
         // 使用配置文件中的密钥
         key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));
     }
@@ -47,9 +49,9 @@ public class JwtUtils {
         Map<String, Object> customClaims = new HashMap<>();
         customClaims.put("username", user.getUsername()); // 保留用户名（非敏感，唯一）
         customClaims.put("userId", user.getId()); // 用户ID（非敏感，唯一）
-
         log.info("用户信息为：{}", user);
         log.info("过期时间为：{}", expireDate);
+
         //调用builder()方法，生成token
         return Jwts.builder()
                 .claims(customClaims)//设置token的载荷，主体
@@ -78,8 +80,8 @@ public class JwtUtils {
 
     //获取token中的用户信息
     public User getUserFromToken(String token) {
-        log.info("获取token中的用户信息");
         Claims claims = parseToken(token);
+        log.info("解析成功，获取token中的用户信息");
         User user = new User();
         user.setId(claims.get("userId", Integer.class));
         user.setUsername(claims.get("username", String.class));

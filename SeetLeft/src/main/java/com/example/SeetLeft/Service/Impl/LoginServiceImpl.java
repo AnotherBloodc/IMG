@@ -6,8 +6,6 @@ import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.MapperPro.LoginMapperPro;
 import com.example.SeetLeft.Service.LoginService;
-import com.example.SeetLeft.Tool.UserValidator;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -16,16 +14,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implements LoginService {
 
-    @Resource
-    private UserValidator userValidator;
-
     /**
      * 登录：用户登录，需要ID和邮箱，查询单个用户，如果存在则返回用户信息
      *
      * @return 用户信息
      */
     public User GetUser(int id, String username) {
-        log.info(LoginEnums.GO + "用户登录，需要ID和邮箱");
+        log.info(LoginEnums.GO + "Token 用户登录，需要ID和邮箱");
         if (id < 0 && username == null) {
             return null;
         }
@@ -41,19 +36,23 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
      * @return 用户信息
      */
     public User GetUser(User user) {
-        log.info(LoginEnums.GO + "用户登录，需要密码，还有手机号或者邮箱");
+        log.info(LoginEnums.GO + "账号密码用户登录，需要密码，还有手机号或者邮箱");
 
         //判断账号密码是否为空
         if (user.getPassword() == null || (user.getUsername() == null && user.getPhone() == null)) {
-            log.info("账号或密码为空");
+            log.info("用户提供的账号或密码为空");
             return null;
         }
-        //通过账号获取用户的信息
+        //先通过账号获取用户的信息，然后判断密码是否正确
         QueryWrapper<User> list = new QueryWrapper<>();
-        list.eq("username", user.getUsername());
-        String password = user.getPassword();//获取明文密码
-        user = getOne(list);
-        String passwordBCrypt = user.getPassword();//获取密文密码
+        list.eq("username", user.getUsername());//设定条件，账号
+        String password = user.getPassword();//这是用户提供的密码
+        user = getOne(list);//获取数据库中的用户对象
+        if (user == null) {
+            log.info("用户提供的账号不存在");
+            return null;
+        }
+        String passwordBCrypt = user.getPassword();//获取数据库中对应的密码
 
         //校验用户密码
         if (BCrypt.checkpw(password, passwordBCrypt)) {
