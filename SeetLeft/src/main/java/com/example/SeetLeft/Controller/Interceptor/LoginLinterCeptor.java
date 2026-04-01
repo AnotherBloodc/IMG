@@ -1,8 +1,7 @@
-package com.example.SeetLeft.Interceptor;
+package com.example.SeetLeft.Controller.Interceptor;
 
 
 import com.example.SeetLeft.Tool.JwtUtils;
-import com.example.SeetLeft.Tool.FileUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
@@ -10,16 +9,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 //HandlerInterceptor：Spring MVC框架提供的拦截器接口
 @Slf4j
-@Component
+@Component //设置此类受Spring容器管理，标识一个由 Spring 管理的组件（Bean）
 public class LoginLinterCeptor implements HandlerInterceptor {
-
-    @Resource
-    private FileUtils T;
 
     @Resource
     private JwtUtils jwtUtils;
@@ -34,7 +33,9 @@ public class LoginLinterCeptor implements HandlerInterceptor {
      * @throws Exception 异常
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
+    public boolean preHandle(@NonNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
+        log.info("拦截器preHandle");
+
         //从请求头中获取 Authorization 字段的值，通常用于传递 JWT Token 或其他认证凭证
         String token = request.getHeader("Authorization");
 
@@ -70,6 +71,17 @@ public class LoginLinterCeptor implements HandlerInterceptor {
             throw new Exception("无效的Authorization头格式，需要Bearer token");
         }
         log.info("token为空");
-        return false;
+        return true;
     }
+
+    @Override
+    public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable ModelAndView modelAndView) throws Exception {
+        log.info("拦截器postHandle");
+    }
+
+    @Override
+    public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable Exception ex) throws Exception {
+        log.info("拦截器afterCompletion");
+    }
+
 }

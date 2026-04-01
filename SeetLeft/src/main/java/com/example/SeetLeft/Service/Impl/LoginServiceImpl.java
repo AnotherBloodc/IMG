@@ -40,7 +40,7 @@ public class LoginServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
 
         //判断账号密码是否为空
         if (user.getPassword() == null || (user.getUsername() == null && user.getPhone() == null)) {
-            log.info("用户提供的账号或密码为空");
+            log.info("账号或密码为空");
             return null;
         }
         //先通过账号获取用户的信息，然后判断密码是否正确

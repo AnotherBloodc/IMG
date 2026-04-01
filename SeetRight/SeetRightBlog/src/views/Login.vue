@@ -81,9 +81,8 @@ export default {
   data: function () {
     return {
       user: {
-        username: null,
-        password: null,
-        token: null
+        username: '',
+        password: ''
       },
       Text: "Login",
       Texts: "Register",
@@ -99,29 +98,26 @@ export default {
     return {router}
   },
   created: function () {
-    //验证Token是否正确
-    this.user.token = localStorage.getItem("token");
-    if (this.user.token != null) {
-      this.axiosTool.get("/user/loginToken", {
-        headers: {
-          token: this.user.token,
-          AutoLogin: localStorage.getItem("AutoLogin"),
-        }
-      }).then(res => {
-            if (res.data.message === "1") {
-              if (res.data.returns.user != null) {
-                this.user.username = res.data.returns.user.username;
-                this.user.password = res.data.returns.user.password;
-                this.AutoLogin = localStorage.getItem("AutoLogin") === "true";
-              }
-            } else {
-              localStorage.removeItem("token");
-            }
-          }
-      )
-    }
+    // 页面加载时检查是否有自动登录凭证
+    this.checkAutoLogin();
   },
   methods: {
+    checkAutoLogin() {
+      this.axiosTool.post("/Login/LoginUser", {
+            params: {
+              AutoLogin: this.AutoLogin
+            }
+          }
+      ).then(res => {
+        if (res.data.success === true && res.data.data) {
+          // 自动登录成功
+          sessionStorage.setItem('user', JSON.stringify(res.data.data));
+          this.user.username = res.data.data.username;
+          this.user.password = res.data.data.password;
+          this.AutoLogin = localStorage.getItem("AutoLogin") === "true";
+        }
+      })
+    },
     toLogin() {
       if (this.Text === "Login") {
         this.Registers = false;  // 触发隐藏元素
@@ -144,28 +140,30 @@ export default {
           this.LogGotBut = false;
         }, 180)
       }
-    },
+    }
+    ,
     Login() {
-      this.axiosTool.post("/Login/LoginUser", this.user)
-          .then(res => {
-            if (res.data.success === true) {
-              this.user.token = res.data.data.token;//获取后端返回的token
-              if (this.AutoLogin) {
-                // 自动登录：持久化存储（localStorage）
-                localStorage.setItem("token", this.user.token);
-                localStorage.setItem("AutoLogin", "true"); // 保存自动登录状态
-              } else {
-                // 非自动登录：会话级存储（sessionStorage）
-                sessionStorage.setItem("token", this.user.token);
-                localStorage.setItem("AutoLogin", "false"); // 记录自动登录状态
-              }
-              this.router.push("/Header");//跳转页面
-            } else if (res.data.message === "0") {
-              alert("登录失败")
-            } else {
-              alert("系统错误")
-            }
-          })
+      // 确保用户名和密码不为空
+      if (!this.user.username || !this.user.password) {
+        alert("请输入用户名和密码");
+        return;
+      }
+      this.axiosTool.post("/Login/LoginUser", this.user, {
+        params: {
+          AutoLogin: this.AutoLogin
+        }
+      }).then(res => {
+        if (res.data.success === true) {
+          this.router.push("/Header");//跳转页面
+        } else if (res.data.success === false) {
+          alert("登录失败")
+        } else {
+          alert("系统错误")
+        }
+      }).catch(error => {
+        console.error("登录请求失败:", error);
+        alert("网络错误，请稍后重试");
+      });
     }
   }
 }

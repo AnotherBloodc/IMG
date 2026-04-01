@@ -51,7 +51,7 @@ export default {
   methods: {
     //访问：查询全部接口
     selectUser() {
-      this.axiosTool.get('/User', {
+      this.axiosTool.post('/User', {
         params: {}
       }).then(res => {
         this.user = res.data.data;

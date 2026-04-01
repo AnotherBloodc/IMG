@@ -8,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class SwaggerConfig {
     public SwaggerConfig() {
-        log.info(LoginEnums.GO + "SwaggerConfig:Swagger自定义配置文件");
+        log.info(LoginEnums.GO + "(Spring配置) SwaggerConfig:Swagger自定义配置文件");
     }
 }

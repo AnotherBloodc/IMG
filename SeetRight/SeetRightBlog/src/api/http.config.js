@@ -1,16 +1,62 @@
-const axios = require('axios');
+import axios from 'axios';
 
-//发起一个get请求
-axios.get('/Server')
-    //处理成功响应结果
-    .then(function (response) {
-        console.log(response);
-    })
-    //处理失败响应结果
-    .catch(function (error) {
-        console.log(error)
-    })
-    //不管成功失败都会执行
-    .then(function () {
-        console.log("每次都会执行")
-    })
+
+// 创建 axios 实例并配置
+const http = axios.create({
+    baseURL: 'http://localhost:8081', // 你的后端地址，根据实际修改
+    withCredentials: true, // 允许携带 Cookie
+    timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
+
+// 请求拦截器
+http.interceptors.request.use(
+    config => {
+        // 从 sessionStorage 获取 token（如果需要的话）
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    error => {
+        console.error('请求错误:', error);
+        return Promise.reject(error);
+    }
+);
+
+// 响应拦截器
+http.interceptors.response.use(
+    response => {
+        return response;
+    },
+    error => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    console.error('未授权，请重新登录');
+                    // 清除 session 存储并跳转到登录页
+                    sessionStorage.removeItem('token');
+                    sessionStorage.removeItem('user');
+                    sessionStorage.removeItem('AutoLogin');
+                    if (window.location.pathname !== '/Login') {
+                        window.location.href = '/Login';
+                    }
+                    break;
+                case 403:
+                    console.error('拒绝访问');
+                    break;
+                case 500:
+                    console.error('服务器错误');
+                    break;
+                default:
+                    console.error('请求失败:', error.response.data);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+export default http;

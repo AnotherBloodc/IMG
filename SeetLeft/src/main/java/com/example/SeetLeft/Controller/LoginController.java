@@ -3,6 +3,9 @@ package com.example.SeetLeft.Controller;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Service.Impl.LoginServiceImpl;
+import com.example.SeetLeft.Service.Impl.UserServiceImpl;
+import com.example.SeetLeft.Service.UserService;
+import com.example.SeetLeft.Tool.ControllerUtils;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
 import io.jsonwebtoken.Claims;
@@ -23,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/Login")
+@RequestMapping("/SeetLogin")
 @Slf4j
 @Tag(name = "用户操作：登录与注册", description = "用户执行登录操作")
 public class LoginController {
@@ -38,19 +41,33 @@ public class LoginController {
     @Resource
     private JwtUtils jwtUtils;
 
+
+    /**
+     * 登录页面：用于前端访问<br/>
+     * 注解：@GetMapping: 用于设置传递过来的 GET 请求的访问路径
+     *
+     * @return 空字符串，表示这是一个有效的端点
+     */
+    @GetMapping
+    @Operation(summary = "登录界面测试", description = "前端访问登录页面")
+    public Return<Object> loginPage() {
+        log.info(LoginEnums.GO + "访问登录页面");
+        return Return.ok("测试接口");
+    }
+
     /**
      * 登录用户：JSON<br/>
      * 注解：@PostMapping: 用于设置传递过来的POST请求的访问路径
      *
-     * @param user    用户对象，可为null
-     * @param isLogin 是否自动登录
+     * @param user      用户对象，可为null
+     * @param AutoLogin 是否自动登录
      * @return 登录操作的结果状态码
      */
     @PostMapping("/LoginUser")
     @Operation(summary = "用户登录", description = "支持主动登录（账号密码）和自动登录（Token）")
     public Return<Object> login(
             @RequestBody(required = false) User user,
-            @RequestParam(required = false, value = "isLogin", defaultValue = "false") boolean isLogin,
+            @RequestParam(required = false, value = "AutoLogin", defaultValue = "false") boolean AutoLogin,
             HttpServletResponse response,
             HttpServletRequest request) {
         log.info(LoginEnums.GO + "用户执行登录操作");
@@ -103,13 +120,13 @@ public class LoginController {
             log.warn("提供的账号不存在");
             return Return.error("提供的账号不存在");
         }
-
+        String token = null;
         //判断是否需要自动登录
-        if (isLogin) {
+        if (AutoLogin) {
 
             //生成token
             log.info("执行自动登录保存用户信息");
-            String token = jwtUtils.generateToken(list);
+            token = jwtUtils.generateToken(list);
             try {
                 // 设计Redis Key：前缀+用户名（方便后续查找/删除），比如 "token:zhangsan"
                 String redisKey = "token:" + list.getUsername();
@@ -131,9 +148,11 @@ public class LoginController {
                 log.info("用户信息保存失败", e);
                 return Return.error("自动登录信息保存失败");
             }
+        } else {
+            log.info("无需自动登录");
         }
         log.info("登录成功");
-        return Return.ok(list, "登录成功");
+        return Return.ok(list, "登录成功", token);
     }
 
 
@@ -198,7 +217,7 @@ public class LoginController {
      */
     @PostMapping("/Register")
     @Operation(summary = "用户注册", description = "提供 User 对象")
-    public Return<User> register(@RequestBody User user) {
+    public Return<Integer> register(@RequestBody User user) {
         log.info(LoginEnums.GO + "用户注册");
 
         // 添加参数校验
@@ -214,12 +233,13 @@ public class LoginController {
             return Return.error("密码不能为空");
         }
 
-        if (login.SetUser(user) > 0) {
-            log.info("用户注册成功");
-            return Return.ok(user, "注册成功");
+        int list = login.SetUser(user);
+        if (login.SetUser(user) < 1) {
+            return Return.error("注册失败系统出错");
         }
-        log.info("用户注册失败");
-        return Return.error("注册失败系统出错");
+        Return<Integer> R = ControllerUtils.messageHandler(() -> list);
+        log.info("用户注册成功");
+        return R;
     }
 
 }

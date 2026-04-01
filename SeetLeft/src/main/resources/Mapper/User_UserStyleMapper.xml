@@ -5,9 +5,9 @@
     <!-- 定义结果映射 -->
     <resultMap id="UserWithStylesResultMap" type="com.example.SeetLeft.Entity.User">
         <id column="Id" property="id"/>
-        <result column="Username" property="username"/>
-        <result column="Password" property="password"/>
-        <result column="Email" property="email"/>
+        <result column="name" property="name"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
 
         <!-- 一对多关联查询 -->
         <collection property="userStyle"
