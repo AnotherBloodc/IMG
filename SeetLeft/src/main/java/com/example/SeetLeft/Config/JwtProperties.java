@@ -13,8 +13,9 @@ import org.springframework.stereotype.Component;
 public class JwtProperties {
 
     public JwtProperties() {
-        log.info(LoginEnums.GO + "JwtProperties:JWT配置文件");
+        log.info(LoginEnums.GO + "（标记为Spring组件）JwtProperties:JWT配置文件");
     }
 
+    //设置密钥
     private String secret;
 }

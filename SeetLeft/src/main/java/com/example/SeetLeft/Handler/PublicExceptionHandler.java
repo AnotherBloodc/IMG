@@ -1,8 +1,8 @@
 package com.example.SeetLeft.Handler;
 
-import com.example.SeetLeft.Controller.ControllerRequest.ResponseResult;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Exception.BusinessExceptionConfig;
+import com.example.SeetLeft.Tool.Return;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,9 +18,9 @@ public class PublicExceptionHandler {
      */
     @ExceptionHandler(BusinessExceptionConfig.class)
     @ResponseBody
-    public ResponseEntity<ResponseResult<Void>> handleBusinessException(BusinessExceptionConfig e) {
+    public ResponseEntity<Return<Void>> handleBusinessException(BusinessExceptionConfig e) {
         log.warn(LoginEnums.GO + "业务异常 - code: {}, message: {}", e.getCode(), e.getMessage());
-        ResponseResult<Void> result = ResponseResult.error(e.getMessage(), e.getCode());
+        Return<Void> result = Return.error(e.getMessage());
         return ResponseEntity.status(e.getCode()).body(result);
     }
 
@@ -29,7 +29,7 @@ public class PublicExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    public ResponseEntity<ResponseResult<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Return<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         StringBuilder errorMsg = new StringBuilder();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errorMsg.append(error.getField())
@@ -39,7 +39,7 @@ public class PublicExceptionHandler {
         );
 
         log.warn("参数验证失败: {}", errorMsg);
-        ResponseResult<Void> result = ResponseResult.error("参数验证失败: " + errorMsg, 400);
+        Return<Void> result = Return.error("参数验证失败: " + errorMsg);
         return ResponseEntity.badRequest().body(result);
     }
 
@@ -48,9 +48,9 @@ public class PublicExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     @ResponseBody
-    public ResponseEntity<ResponseResult<Void>> handleException(Exception e) {
+    public ResponseEntity<Return<Void>> handleException(Exception e) {
         log.error("系统未捕获异常", e);
-        ResponseResult<Void> result = ResponseResult.error("服务器内部错误，请稍后重试", 500);
+        Return<Void> result = Return.error("服务器内部错误，请稍后重试");
         return ResponseEntity.internalServerError().body(result);
     }
 }

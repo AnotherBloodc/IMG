@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisPlusConfig {
 
     public MybatisPlusConfig() {
-        log.info(LoginEnums.GO + "MybatisPlusConfig:分页插件");
+        log.info(LoginEnums.GO + "(Spring配置) MybatisPlusConfig:分页插件");
     }
 
     /**

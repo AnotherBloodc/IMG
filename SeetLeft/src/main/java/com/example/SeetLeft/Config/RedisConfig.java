@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -20,12 +19,12 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 import java.time.Duration;
 
 @Configuration
-@EnableCaching
+//@EnableCaching
 @Slf4j
 public class RedisConfig {
 
     public RedisConfig() {
-        log.info(LoginEnums.GO + "RedisConfig:Redis配置文件");
+        log.info(LoginEnums.GO + "(Spring配置) RedisConfig:Redis配置文件");
     }
 
     /**

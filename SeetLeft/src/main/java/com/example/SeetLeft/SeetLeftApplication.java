@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @Slf4j
 @SpringBootApplication
-@EnableCaching
+@EnableCaching//启用 Spring MVC 功能
 public class SeetLeftApplication {
     public static void main(String[] args) {
         SpringApplication.run(SeetLeftApplication.class, args);
