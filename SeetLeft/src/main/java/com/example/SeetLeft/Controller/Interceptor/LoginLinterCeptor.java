@@ -1,6 +1,7 @@
 package com.example.SeetLeft.Controller.Interceptor;
 
 
+import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Tool.JwtUtils;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -23,8 +24,13 @@ public class LoginLinterCeptor implements HandlerInterceptor {
     @Resource
     private JwtUtils jwtUtils;
 
+    public LoginLinterCeptor() {
+        log.info(LoginEnums.GO + "6.(自定义配置)LoginLinterCeptor拦截器初始化");
+    }
+
     /**
      * 拦截器：带有拦截器的接口被请求访问时，会先经过拦截器，再经过控制器，最后经过视图解析器，返回给前端
+     * preHandle：拦截指定请求之前，会运行的方法，返回true则放行，返回false则拦截
      *
      * @param request  接收前端请求对象
      * @param response 响应前端请求对象
@@ -34,7 +40,7 @@ public class LoginLinterCeptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(@NonNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
-        log.info("拦截器preHandle");
+        log.info("拦截器preHandle：拦截指定请求之前，会运行的方法");
 
         //从请求头中获取 Authorization 字段的值，通常用于传递 JWT Token 或其他认证凭证
         String token = request.getHeader("Authorization");
@@ -74,14 +80,32 @@ public class LoginLinterCeptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * 拦截器：拦截指定请求之后，会运行该方法
+     *
+     * @param request      接收前端请求对象
+     * @param response     响应前端请求对象
+     * @param handler      处理器对象
+     * @param modelAndView 模型和视图对象
+     * @throws Exception 抛出的异常
+     */
     @Override
     public void postHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable ModelAndView modelAndView) throws Exception {
-        log.info("拦截器postHandle");
+        log.info("拦截器postHandle：拦截指定请求之后，会运行该方法");
     }
 
+    /**
+     * 拦截器：拦截指定请求之后，处理完毕视图渲染之后，会运行该方法
+     *
+     * @param request  接收前端请求对象
+     * @param response 响应前端请求对象
+     * @param handler  处理器对象
+     * @param ex       抛出的异常
+     * @throws Exception 抛出的异常
+     */
     @Override
     public void afterCompletion(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull Object handler, @Nullable Exception ex) throws Exception {
-        log.info("拦截器afterCompletion");
+        log.info("拦截器afterCompletion：拦截指定请求之后，处理完毕视图渲染之后，会运行该方法");
     }
 
 }

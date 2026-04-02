@@ -30,7 +30,7 @@ public class JwtUtils {
 
     //密钥初始化
     public JwtUtils(JwtProperties jwtProperties) {
-        log.info(LoginEnums.GO);
+        log.info(LoginEnums.GO + "7.(自定义配置)JWT工具类初始化");
 
         // 使用配置文件中的密钥
         key = Keys.hmacShaKeyFor(jwtProperties.getSecret().getBytes(StandardCharsets.UTF_8));

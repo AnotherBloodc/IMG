@@ -25,9 +25,10 @@ spring:
     resources:
       #配置静态资源路径
       static-locations: classpath:/static/, file:./static/
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+# 是否使用AntPathMatcher匹配路径严格检查，此配置会严格检查请求格式，get请求无法被post请求方法接收
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
   data:
     #Redis配置信息!!!
     redis:

@@ -58,6 +58,8 @@ public class StyleServiceImpl extends ServiceImpl<LoginMapperPro, User> implemen
     public List<User> list(User user) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if (user != null) {
+            queryWrapper.eq(user.getId() != null, "id", user.getId());
+            queryWrapper.eq(user.getName() != null, "name", user.getName());
             queryWrapper.eq(user.getUsername() != null, "username", user.getUsername());
         }
         return this.list(queryWrapper);

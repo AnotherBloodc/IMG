@@ -3,22 +3,17 @@ package com.example.SeetLeft.Controller;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Service.Impl.LoginServiceImpl;
-import com.example.SeetLeft.Service.Impl.UserServiceImpl;
-import com.example.SeetLeft.Service.UserService;
 import com.example.SeetLeft.Tool.ControllerUtils;
 import com.example.SeetLeft.Tool.JwtUtils;
 import com.example.SeetLeft.Tool.Return;
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.TimeUnit;
@@ -234,7 +229,7 @@ public class LoginController {
         }
 
         int list = login.SetUser(user);
-        if (login.SetUser(user) < 1) {
+        if (list < 1) {
             return Return.error("注册失败系统出错");
         }
         Return<Integer> R = ControllerUtils.messageHandler(() -> list);

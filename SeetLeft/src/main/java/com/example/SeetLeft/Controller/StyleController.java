@@ -105,14 +105,14 @@ public class StyleController {
     }
 
     /**
-     * 查询用户信息 JSON<br/>
+     * 查询用户信息 PRO JSON<br/>
      * 形参注解配置：@ModelAttribute：如果给此请求传递空参数，则为此参数设置全属性为空的对象
      *
      * @param user 要查询的用户名
      * @return 匹配的用户列表
      */
     @PostMapping("/serverPRO")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
-    @Operation(summary = "查询用户", description = "提供User对象查询用户")
+    @Operation(summary = "查询用户PRO", description = "提供User对象查询用户")
     public Return<List<User>> selectPRO(User user) {
         log.info(LoginEnums.GO + "查询用户PRO，条件：{}", user);
         //判断查询条件

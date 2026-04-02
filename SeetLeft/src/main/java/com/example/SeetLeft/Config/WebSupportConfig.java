@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration//标记配置类,支持类级别的元数据配置，定义 Bean 的配置类
 public class WebSupportConfig implements WebMvcConfigurer {
     public WebSupportConfig() {
-        log.info(LoginEnums.GO + "(Spring配置) WebConfig配置拦截器");
+        log.info(LoginEnums.GO + "5.(Spring配置) WebConfig配置拦截器");
     }
 
     @Resource
@@ -26,7 +26,7 @@ public class WebSupportConfig implements WebMvcConfigurer {
         //添加拦截器，并添加拦截路径
         registry
                 .addInterceptor(loginLinterCeptor)//选中拦截器
-                .addPathPatterns("/Insert");//指定拦截请求
+                .addPathPatterns("/SeetStyle/serverPRO");//指定拦截请求
     }
 
     @Override

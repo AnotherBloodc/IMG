@@ -24,7 +24,7 @@ import java.time.Duration;
 public class RedisConfig {
 
     public RedisConfig() {
-        log.info(LoginEnums.GO + "(Spring配置) RedisConfig:Redis配置文件");
+        log.info(LoginEnums.GO + "3.(Spring配置) RedisConfig:Redis配置文件");
     }
 
     /**
