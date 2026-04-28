@@ -97,27 +97,7 @@ export default {
     const router = useRouter()
     return {router}
   },
-  created: function () {
-    // 页面加载时检查是否有自动登录凭证
-    this.checkAutoLogin();
-  },
   methods: {
-    checkAutoLogin() {
-      this.axiosTool.post("/Login/LoginUser", {
-            params: {
-              AutoLogin: this.AutoLogin
-            }
-          }
-      ).then(res => {
-        if (res.data.success === true && res.data.data) {
-          // 自动登录成功
-          sessionStorage.setItem('user', JSON.stringify(res.data.data));
-          this.user.username = res.data.data.username;
-          this.user.password = res.data.data.password;
-          this.AutoLogin = localStorage.getItem("AutoLogin") === "true";
-        }
-      })
-    },
     toLogin() {
       if (this.Text === "Login") {
         this.Registers = false;  // 触发隐藏元素
@@ -148,18 +128,15 @@ export default {
         alert("请输入用户名和密码");
         return;
       }
-      this.axiosTool.post("/Login/LoginUser", this.user, {
+      this.axiosTool.post("/SeetLogin/LoginUser", this.user, {
         params: {
           AutoLogin: this.AutoLogin
         }
       }).then(res => {
-        if (res.data.success === true) {
-          this.router.push("/Header");//跳转页面
-        } else if (res.data.success === false) {
-          alert("登录失败")
-        } else {
+        if (res.data.success === false) {
           alert("系统错误")
         }
+        this.router.push("/Header");//跳转页面
       }).catch(error => {
         console.error("登录请求失败:", error);
         alert("网络错误，请稍后重试");

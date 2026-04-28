@@ -66,3 +66,13 @@ create table if not exists `Seetpro`.`User_Style`
         foreign key (`Userid`) references `Seetpro`.`User` (`Id`)
 );
 
+
+create table if not exists `Seetpro`.`Header`
+(
+    `id`       int                                not null auto_increment primary key,
+    `userid`   int                                not null null,
+    `datetime` datetime default current_timestamp not null,
+    `name`     varchar(255) charset `Utf8mb3`     not null,
+    constraint `User_Style_User_Id_Fk`
+        foreign key (`Userid`) references `Seetpro`.`User` (`Id`)
+)

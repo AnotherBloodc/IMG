@@ -1010,209 +1010,212 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
     <schema id="292" parent="1" name="blog">
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
-    <schema id="293" parent="1" name="Seetpro">
+    <schema id="293" parent="1" name="jeecg-boot">
+      <CollationName>utf8mb4_unicode_ci</CollationName>
+    </schema>
+    <schema id="294" parent="1" name="Seetpro">
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2026-03-03.17:40:40</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2026-04-27.16:30:08</LastIntrospectionLocalTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
-    <user id="294" parent="1" name="mysql.infoschema">
+    <user id="295" parent="1" name="mysql.infoschema">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
     </user>
-    <user id="295" parent="1" name="mysql.session">
+    <user id="296" parent="1" name="mysql.session">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
     </user>
-    <user id="296" parent="1" name="mysql.sys">
+    <user id="297" parent="1" name="mysql.sys">
       <CanLogin>0</CanLogin>
       <Host>localhost</Host>
     </user>
-    <user id="297" parent="1" name="root">
+    <user id="298" parent="1" name="root">
       <Host>localhost</Host>
     </user>
-    <user id="298" parent="1" name="root"/>
-    <table id="299" parent="293" name="User">
+    <user id="299" parent="1" name="root"/>
+    <table id="300" parent="294" name="User">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="300" parent="293" name="User_Style">
+    <table id="301" parent="294" name="User_Style">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="301" parent="293" name="behavior">
+    <table id="302" parent="294" name="behavior">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="302" parent="293" name="role">
+    <table id="303" parent="294" name="role">
       <DetailsLevel>3</DetailsLevel>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <check id="303" parent="299" name="chk_username_format">
+    <check id="304" parent="300" name="chk_username_format">
       <Predicate>regexp_like(`username`,_utf8mb4\&apos;^[a-zA-Z0-9@_]+$\&apos;)</Predicate>
     </check>
-    <column id="304" parent="299" name="id">
-      <AutoIncrement>5</AutoIncrement>
+    <column id="305" parent="300" name="id">
+      <AutoIncrement>7</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="305" parent="299" name="name">
+    <column id="306" parent="300" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(40)|0s</StoredType>
     </column>
-    <column id="306" parent="299" name="username">
+    <column id="307" parent="300" name="username">
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>varchar(32)|0s</StoredType>
     </column>
-    <column id="307" parent="299" name="password">
+    <column id="308" parent="300" name="password">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
     </column>
-    <column id="308" parent="299" name="phone">
+    <column id="309" parent="300" name="phone">
       <Position>5</Position>
       <StoredType>varchar(11)|0s</StoredType>
     </column>
-    <column id="309" parent="299" name="datetime">
+    <column id="310" parent="300" name="datetime">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="310" parent="299" name="effect">
+    <column id="311" parent="300" name="effect">
       <DefaultExpression>1</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <StoredType>tinyint(1)|0s</StoredType>
     </column>
-    <column id="311" parent="299" name="roleID">
+    <column id="312" parent="300" name="roleID">
       <DefaultExpression>2</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>8</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <index id="312" parent="299" name="PRIMARY">
+    <index id="313" parent="300" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="313" parent="299" name="phone">
+    <index id="314" parent="300" name="phone">
       <ColNames>phone</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="314" parent="299" name="PRIMARY">
+    <key id="315" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="315" parent="299" name="phone">
+    <key id="316" parent="300" name="phone">
       <UnderlyingIndexName>phone</UnderlyingIndexName>
     </key>
-    <column id="316" parent="300" name="id">
+    <column id="317" parent="301" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="317" parent="300" name="userid">
+    <column id="318" parent="301" name="userid">
       <Position>2</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="318" parent="300" name="datetime">
+    <column id="319" parent="301" name="datetime">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>3</Position>
       <StoredType>datetime|0s</StoredType>
     </column>
-    <column id="319" parent="300" name="name">
+    <column id="320" parent="301" name="name">
       <NotNull>1</NotNull>
       <Position>4</Position>
       <StoredType>varchar(255)|0s</StoredType>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="320" parent="300" name="User_Style_User_Id_Fk">
+    <foreign-key id="321" parent="301" name="User_Style_User_Id_Fk">
       <ColNames>userid</ColNames>
       <RefColNames>id</RefColNames>
       <RefTableName>User</RefTableName>
     </foreign-key>
-    <index id="321" parent="300" name="PRIMARY">
+    <index id="322" parent="301" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="322" parent="300" name="User_Style_User_Id_Fk">
+    <index id="323" parent="301" name="User_Style_User_Id_Fk">
       <ColNames>userid</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="323" parent="300" name="PRIMARY">
+    <key id="324" parent="301" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="324" parent="301" name="id">
+    <column id="325" parent="302" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="325" parent="301" name="name">
+    <column id="326" parent="302" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(2)|0s</StoredType>
     </column>
-    <index id="326" parent="301" name="PRIMARY">
+    <index id="327" parent="302" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="327" parent="301" name="name">
+    <index id="328" parent="302" name="name">
       <ColNames>name</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="328" parent="301" name="PRIMARY">
+    <key id="329" parent="302" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="329" parent="301" name="name">
+    <key id="330" parent="302" name="name">
       <UnderlyingIndexName>name</UnderlyingIndexName>
     </key>
-    <column id="330" parent="302" name="id">
+    <column id="331" parent="303" name="id">
       <AutoIncrement>1</AutoIncrement>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StoredType>int|0s</StoredType>
     </column>
-    <column id="331" parent="302" name="name">
+    <column id="332" parent="303" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StoredType>varchar(2)|0s</StoredType>
     </column>
-    <index id="332" parent="302" name="PRIMARY">
+    <index id="333" parent="303" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="333" parent="302" name="name">
+    <index id="334" parent="303" name="name">
       <ColNames>name</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="334" parent="302" name="PRIMARY">
+    <key id="335" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="335" parent="302" name="name">
+    <key id="336" parent="303" name="name">
       <UnderlyingIndexName>name</UnderlyingIndexName>
     </key>
   </database-model>

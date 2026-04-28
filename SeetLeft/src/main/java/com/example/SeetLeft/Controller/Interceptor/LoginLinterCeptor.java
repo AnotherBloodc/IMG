@@ -1,20 +1,23 @@
 package com.example.SeetLeft.Controller.Interceptor;
 
 
+import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Tool.JwtUtils;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.concurrent.TimeUnit;
 
 //HandlerInterceptor：Spring MVC框架提供的拦截器接口
 @Slf4j
@@ -23,6 +26,10 @@ public class LoginLinterCeptor implements HandlerInterceptor {
 
     @Resource
     private JwtUtils jwtUtils;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
 
     public LoginLinterCeptor() {
         log.info(LoginEnums.GO + "6.(自定义配置)LoginLinterCeptor拦截器初始化");
@@ -42,41 +49,46 @@ public class LoginLinterCeptor implements HandlerInterceptor {
     public boolean preHandle(@NonNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Object handler) throws Exception {
         log.info("拦截器preHandle：拦截指定请求之前，会运行的方法");
 
-        //从请求头中获取 Authorization 字段的值，通常用于传递 JWT Token 或其他认证凭证
-        String token = request.getHeader("Authorization");
-
-        //获取请求头中的 Accept 字段，表示客户端期望接收的响应内容类型（如 application/json）
-        String accept = request.getHeader("Accept");
-
-        log.info("请求头中的token：{}", token);
-        log.info("请求头中的Accept：{}", accept);
-        if (token != null) {
-
-            //判断token实际的JWT令牌字符串的前缀是否为 "Bearer "
-            if (token.startsWith("Bearer ")) {
-
-                //去掉token前7个字符也就是"Bearer "，提取剩下的JWT令牌字符串
-                String tokens = token.substring(7);
-                log.info("请求发送成功，正在验证令牌合理性");
-                try {
-                    //开始对提取出的JWT令牌进行解析和验证
-                    jwtUtils.parseToken(tokens);
-                    log.info("token验证成功");
-                } catch (ExpiredJwtException e) {
-
-                    //说明令牌已过期，设置HTTP状态码为401并返回"Token expired"消息
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Token expired");
-                } catch (JwtException e) {
-
-                    //说明令牌无效，设置HTTP状态码为401并返回"Invalid token"消息
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Invalid token");
+        //从Cookie中查询token,与Redis中的token对比看看是否匹配，若匹配成功则解析,正确且无过期则直接登录
+        String tokenCookie = null;
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    tokenCookie = cookie.getValue();
+                    log.info("Cookie中存在该用户的token");
+                    break;
                 }
             }
-            throw new Exception("无效的Authorization头格式，需要Bearer token");
         }
-        log.info("token为空");
+        //判断Cookie中是否存在token
+        if (tokenCookie == null || tokenCookie.isEmpty()) {
+            log.warn("拦截，Cookie中不存在token");
+            return false;
+        }
+        log.info("已成功获取Cookie中的token");
+
+        //从token中解析出用户信息
+        User list = jwtUtils.getUserFromToken(tokenCookie);
+        String redisKey = "token:" + list.getUsername();
+        //用cookie中的token中的用户信息为条件，从Redis中获取Token并解析，得到其中的数据
+        String tokenRedis = stringRedisTemplate.opsForValue().get(redisKey);
+
+        //判断Redis中的token是否为空
+        if (tokenRedis == null) {
+            log.warn("拦截，没有从 Redis 中得到该用户的 token");
+            return false;
+        }
+
+        //判断Cookie中的token是否与Redis中的token一致
+        if (!tokenCookie.equals(tokenRedis)) {
+            log.warn("拦截，Cookie 与 Redis 中的 token 不一致，可能已被替换");
+            return false;
+        }
+        stringRedisTemplate.expire(redisKey, 2, TimeUnit.HOURS);
+        log.info("登录成功 - 用户名：{}, IP：{}, UserAgent：{}",
+                list.getUsername(),
+                request.getRemoteAddr(),
+                request.getHeader("User-Agent"));
         return true;
     }
 

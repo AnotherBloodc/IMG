@@ -1,10 +1,47 @@
 * {
     padding: 0;
     margin: 0;
+    border: 0;
+    color: #5A617A;
 }
 
-.HeaderCSS {
-    background: #303030;
-    width: 100vh;
-    height: 100vh;
+/* 全部 */
+.Header {
 }
+
+
+/* 头部 */
+.Navigation_bar {
+    display: flex; /*弹性布局*/
+    background-color: #E56B27;
+    height: 13vh !important; /*设置此盒子的高*/
+    align-items: center; /*设置盒子内元素垂直居中*/
+    justify-content: space-between; /*设置盒子内元素水平居中*/
+    padding: 0 5vh !important;
+}
+
+.Navigation_bar_div1 {
+}
+
+.Navigation_bar_div2 {
+    width: 160vh;
+}
+
+.Navigation_bar_div3 {
+    display: flex; /*弹性布局*/
+    align-items: center; /*设置盒子内元素垂直居中*/
+}
+
+.Navigation_bar_div3_div1 {
+    width: 7vh;
+    height: 7vh;
+    background-color: #00a9b9;
+    margin-right: 2vh;
+}
+
+.Content {
+    background-color: #FCFFBE;
+    height: calc(100vh - 13vh);
+}
+
+/* 内容 */

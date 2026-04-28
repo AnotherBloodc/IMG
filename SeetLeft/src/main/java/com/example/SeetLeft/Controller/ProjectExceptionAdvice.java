@@ -1,15 +1,32 @@
-package com.example.SeetLeft.Tool;
+package com.example.SeetLeft.Controller;
 
+import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Exception.BusinessExceptionConfig;
+import com.example.SeetLeft.Tool.Return;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.function.Supplier;
 
-
-//统一处理异常
+/**
+ * 异常处理器类：负责全部异常的处理
+ */
 @Slf4j
-public class ControllerUtils {
+@ControllerAdvice
+public class ProjectExceptionAdvice {
+
+    public ProjectExceptionAdvice() {
+        log.info(LoginEnums.GO + "异常处理类加载完毕");
+    }
+
+    @ExceptionHandler
+    public Return<User> doException(Exception e) {
+        log.info(LoginEnums.GO + "异常：+", e);
+        return new Return<User>(501, "服务器异常", false, null, null);
+    }
+
 
     //包含数据
     public static <T> Return<T> messageHandler(Supplier<T> supplier) {
@@ -27,7 +44,7 @@ public class ControllerUtils {
     }
 
 
-    //无数据返回统一操作
+    //无数据
     public static Return<Void> messageHandler(Runnable runnable) {
         log.info(LoginEnums.GO + "ResponseResult异常处理类:无数据返回统一操作");
         try {

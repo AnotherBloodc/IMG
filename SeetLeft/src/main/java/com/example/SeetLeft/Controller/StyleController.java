@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.example.SeetLeft.Entity.User;
 import com.example.SeetLeft.Enums.LoginEnums;
 import com.example.SeetLeft.Service.Impl.StyleServiceImpl;
-import com.example.SeetLeft.Tool.ControllerUtils;
 import com.example.SeetLeft.Tool.Return;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -52,7 +51,7 @@ public class StyleController {
         }
         //执行删除操作
         boolean list = StyleService.DeleteUser(id);
-        Return<Boolean> R = ControllerUtils.messageHandler(() -> list);
+        Return<Boolean> R = ProjectExceptionAdvice.messageHandler(() -> list);
         //判断是否成功
         if (!list) {
             return Return.error();
@@ -77,7 +76,7 @@ public class StyleController {
         }
         //执行更新操作
         boolean list = StyleService.update(user);
-        Return<Boolean> R = ControllerUtils.messageHandler(() -> list);
+        Return<Boolean> R = ProjectExceptionAdvice.messageHandler(() -> list);
         //判断是否成功
         if (!list) {
             return Return.error("数据无变动");
@@ -101,7 +100,7 @@ public class StyleController {
             return Return.error("没有提供用户信息");
         }
         //执行查询操作
-        return ControllerUtils.messageHandler(() -> StyleService.list(user));
+        return ProjectExceptionAdvice.messageHandler(() -> StyleService.list(user));
     }
 
     /**
@@ -114,13 +113,14 @@ public class StyleController {
     @PostMapping("/serverPRO")//或者是@RequestMapping(value = "/Server", method = RequestMethod.GET)注解，效果一样
     @Operation(summary = "查询用户PRO", description = "提供User对象查询用户")
     public Return<List<User>> selectPRO(User user) {
+        int i = 1/0;
         log.info(LoginEnums.GO + "查询用户PRO，条件：{}", user);
         //判断查询条件
         if (user == null) {
             return Return.error("没有提供用户信息");
         }
         //执行查询操作
-        return ControllerUtils.messageHandler(() -> StyleService.list(user));
+        return ProjectExceptionAdvice.messageHandler(() -> StyleService.list(user));
     }
 
 
@@ -139,7 +139,7 @@ public class StyleController {
             return Return.error("没有提供用户信息");
         }
         //执行查询操作
-        return ControllerUtils.messageHandler(() -> StyleService.selectStyle(user));
+        return ProjectExceptionAdvice.messageHandler(() -> StyleService.selectStyle(user));
     }
 
     /**
@@ -157,6 +157,6 @@ public class StyleController {
             return Return.error();
         }
         //执行查询操作
-        return ControllerUtils.messageHandler(() -> StyleService.selectPage(pageNum, pageSize));
+        return ProjectExceptionAdvice.messageHandler(() -> StyleService.selectPage(pageNum, pageSize));
     }
 }

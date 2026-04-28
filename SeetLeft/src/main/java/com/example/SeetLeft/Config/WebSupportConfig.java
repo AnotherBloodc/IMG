@@ -7,17 +7,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Slf4j
 @Configuration//标记配置类,支持类级别的元数据配置，定义 Bean 的配置类
-public class WebSupportConfig implements WebMvcConfigurer {
+public class WebSupportConfig implements WebMvcConfigurer/* extends WebMvcConfigurationSupport */{
     public WebSupportConfig() {
         log.info(LoginEnums.GO + "5.(Spring配置) WebConfig配置拦截器");
     }
 
     @Resource
     private LoginLinterCeptor loginLinterCeptor;
+
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        log.info(LoginEnums.GO + "添加静态资源映射");
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/static/");    }
 
     //注册拦截器
     @Override
@@ -26,13 +34,13 @@ public class WebSupportConfig implements WebMvcConfigurer {
         //添加拦截器，并添加拦截路径
         registry
                 .addInterceptor(loginLinterCeptor)//选中拦截器
-                .addPathPatterns("/SeetStyle/serverPRO");//指定拦截请求
+                .addPathPatterns("/SeetStyle/**");//指定拦截请求
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         log.info(LoginEnums.GO + "添加允许的请求方式");
-        registry.addMapping("/**")//允许所有请求
+        registry.addMapping("/SeetLogin")//允许的请求
                 .allowedOriginPatterns("*")//允许所有源 (比 allowedOrigins 更灵活)
                 .allowedMethods("GET", "POST", "PUT", "DELETE")//允许所有请求方式
                 .allowedHeaders("*")//允许所有请求头
